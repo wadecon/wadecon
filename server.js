@@ -1,6 +1,8 @@
 /// <reference path="typings/node/node.d.ts"/>
 var express = require("express");
 var app = express();
+var path = require('path');
+require('colors');
 
 app.set("view engine", "ejs");
 app.set("views", __dirname+"/app/views");
@@ -21,3 +23,4 @@ app.route(/\/group\/.*/)
 	});
 
 app.listen(3000);
+console.log("3000번 포트에서 서버 시작".green);
