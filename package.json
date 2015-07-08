@@ -1,0 +1,23 @@
+{
+  "name": "wadecon",
+  "version": "1.0.0",
+  "description": "조아하고 유려한 와동개발자협동조합에 오신걸 환영합니다. 레포이름에 한글을 쓰면, 한글은 죄 똑같아 보이는 양놈의 시선에 따라 충실하게 - 로 검열해 버리기에 어쩔 수 없이 wadong developers consortium의 약자인 wadecon으로 이름을 정했습니다.",
+  "main": "server.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node server.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/wadecon/wadecon.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/wadecon/wadecon/issues"
+  },
+  "homepage": "https://github.com/wadecon/wadecon#readme",
+  "dependencies": {
+    "ejs": "^2.3.2"
+  }
+}
