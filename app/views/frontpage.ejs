@@ -8,11 +8,24 @@
     <header>
         <% include ./templates/header.ejs %>
     </header>
-    <section>
-        <!--groups goes here-->
-        <%= for 
+    <section id="createGroup">
+        <div>제목:</div>
+        <input type="text">
+        <div>목적:</div>
+        <input type="text">
     </section>
-    <section>
+    <section id="openedGroups">
+        <!--groups go here-->
+        <ul>
+            <% for( var i = 0; i < groups.length; i++) { %>
+            <li>
+                <a href=""><%= groups[i].name %></a>
+                <div><%= groups[i].contents %></div>
+            </li>
+            <% } %>
+        </ul>
+    </section>
+    <section id="joinedGroups">
         <!--user specific group-->
     </section>
     <footer>
