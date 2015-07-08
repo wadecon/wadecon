@@ -9,11 +9,12 @@
         <% include ./templates/header.ejs %>
     </header>
     <section id="createGroup">
-        <form action="" method="post">
+        <form action="/" method="post">
             <div>제목:</div>
-            <input type="text">
+            <input type="text" name="group_name">
             <div>목적:</div>
-            <input type="text">    
+            <input type="text" name="purpose">
+            <input type="submit">
         </form>
     </section>
     <section id="openedGroups">
@@ -21,8 +22,8 @@
         <ul>
             <% for( var i = 0; i < groups.length; i++) { %>
             <li>
-                <a href=""><%= groups[i].name %></a>
-                <div><%= groups[i].contents %></div>
+                <a href=""><%= groups[i].Group_name %></a>
+                <div><%= groups[i].Purpose %></div>
             </li>
             <% } %>
         </ul>
