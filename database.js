@@ -1,10 +1,10 @@
 database = function(global) {
-    var mysql = require("mysql");
     var Sqlize = require('Sequelize');
     console.log("DB 접속 정보 : ".cyan, set.db.database, set.db.user, set.db.password);
     var sqlize = new Sqlize(set.db.database, set.db.user, set.db.password, {
         host :'localhost',
         port : 3306,
+        dialect: 'mysql',
         log: false,
         define: {
             charset: 'utf8',
@@ -31,7 +31,6 @@ database = function(global) {
         email: Sqlize.STRING(256),
         name: Sqlize.STRING(256), //실제 이름
         image: Sqlize.STRING(256), //path
-        phone: Sqlize.INTEGER(11), //phone number
         karma: { //업보
             type: Sqlize.INTEGER,
             defaultValue: 10000 }
@@ -42,7 +41,8 @@ database = function(global) {
         }, //공작 이름
         desc: Sqlize.STRING(256), //plain text
         needs: Sqlize.STRING(256), //path
-        frontboard: Sqlize.STRING(256) //path
+        frontboard: Sqlize.STRING(256), //path
+        dislike: Sqlize.INTEGER // 유저 싫어요의 총합
     });
     Badges = sqlize.define('Badges', {
         name: Sqlize.STRING(256),
@@ -80,7 +80,14 @@ database = function(global) {
     Users.belongsToMany(Badges, {foreignKey: 'userId', through: 'BadgeMaps'});
     Badges.belongsToMany(Users, {foreignKey: 'BadgeId', through: 'BadgeMaps'});
 
-    
+    Comments = sqlize.define('Comments', {
+        userId: Sqlize.INTEGER,
+        workId: Sqlize.INTEGER,
+        parentId: Sqlize.INTEGER,
+        text: Sqlize.STRING(1024)
+    });
+    Users.belongsToMany(Works, {foreignKey: 'userId', through: 'Comments'});
+    Works.belongsToMany(Users, {foreignKey: 'workId', through: 'Comments'});
     //DB 싱크 : 테이블 없으면 생성 그리고 동기화
     Users.sync();
     Works.sync();
@@ -88,6 +95,7 @@ database = function(global) {
     Logs.sync();
     Joins.sync();
     BadgeMaps.sync();
+    Comments.sync();
     // Users.sync({force: true});
     // Works.sync({force: true});
     // Badges.sync({force: true});
