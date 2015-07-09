@@ -26,37 +26,40 @@ app.route("/")
                 res.render("frontpage.ejs", {works: works});
             }
         });
-	})
-app.get('/work/:workId', function(req, res){
-		var workId = req.params.workId;
-		Works.findOne({
-			where: {
-				id: workId
-			}
-		}).then(function(work, err) {
-			if(err) console.error(err);
-			else {
-				console.log("공작 조회 :".cyan, work.name);
-				res.render("workpage.ejs", {work: work} );
-			}
-		});
-		
-	})
-app.post('/work', function(req, res){
-		var workId = req.params.workId;
-		Works.findOrCreate({
-			where: {
-				name: req.body.name,
-				desc: req.body.desc
-			}
-		}).then(function(work, err) {
-			if(err) console.error(err);
-            else {
-				console.log("공작 생성 :".cyan, work.name);
-                res.redirect('/');
-            }
-		});
 	});
+app.get('/join', function(req, res) {
+	res.render('join.ejs')
+});
+app.get('/work/:workId', function(req, res){
+	var workId = req.params.workId;
+	Works.findOne({
+		where: {
+			id: workId
+		}
+	}).then(function(work, err) {
+		if(err) console.error(err);
+		else {
+			console.log("공작 조회 :".cyan, work.name);
+			res.render("workpage.ejs", {work: work} );
+		}
+	});
+	
+})
+app.post('/work', function(req, res){
+	var workId = req.params.workId;
+	Works.findOrCreate({
+		where: {
+			name: req.body.name,
+			desc: req.body.desc
+		}
+	}).then(function(work, err) {
+		if(err) console.error(err);
+        else {
+			console.log("공작 생성 :".cyan, work.name);
+            res.redirect('/');
+        }
+	});
+});
 
 app.listen(3000);
 console.log("3000번 포트에서 서버 시작".green);

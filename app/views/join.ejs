@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>가입</title>
+    <script src="/js/jquery-2.1.4.min.js"></script>
+    <script>
+      window.fbAsyncInit = function() {
+        FB.init({
+          appId      : '1610016475924040',
+          xfbml      : true,
+          version    : 'v2.4'
+        });
+      };
+
+      (function(d, s, id){
+         var js, fjs = d.getElementsByTagName(s)[0];
+         if (d.getElementById(id)) {return;}
+         js = d.createElement(s); js.id = id;
+         js.src = "//connect.facebook.net/ko_KR/sdk.js";
+         fjs.parentNode.insertBefore(js, fjs);
+       }(document, 'script', 'facebook-jssdk'));
+       
+       function login() {
+           FB.getLoginStatus(function(response) {
+               if (response.status === 'connected') {
+                   console.log('Logged in.');
+                   getInfo();
+               }
+               else {
+                   FB.login(function(response) {
+                      if (response.status === 'connected') {
+                          getInfo();
+                        console.log(response.authResponse.accessToken);
+                      } else if (response.status === 'not_authorized') {
+                        // The person is logged into Facebook, but not your app.
+                      } else {
+                        // The person is not logged into Facebook, so we're not sure if
+                        // they are logged into this app or not.
+                      }
+                    });
+               }
+           });
+       }
+       
+       function getInfo() {
+           FB.api('/me', function(response) {
+               $('#loginStatus').text(response.name+"로 로그인 됨");
+              document.getElementById('status').innerHTML =
+                'Thanks for logging in, ' + response.name + '!';
+            });
+       }
+       
+    </script>
+</head>
+<body>
+    <header>
+        <% include ./templates/header.ejs %>
+    </header>
+        <button onclick="login()">페이스북 로그인</button>
+        <div id="loginStatus"></div>
+    <footer>
+        <% include ./templates/footer.ejs %>
+    </footer>
+</body>
+</html>
