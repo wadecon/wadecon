@@ -68,5 +68,20 @@ app.route(/\/group\/.*/)
 		// create group
 	});
 
+app.route(/\/user\/.*/)
+	.get(function(req, res){
+		var user_nickname = req.path.split("/").slice(-1)[0];
+		connection.query("select * from users where Nickname='"+user_nickname+"' limit 1",function(err, rows){
+			if (err) {
+				console.error(err);
+				throw err;
+			}
+			res.render( "userpage.ejs", {users: rows} );
+		});
+	})
+	.post(function(req, res){
+		// edit information
+	});
+
 app.listen(3000);
 console.log("3000번 포트에서 서버 시작".green);
