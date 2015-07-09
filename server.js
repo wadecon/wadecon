@@ -22,41 +22,40 @@ app.route("/")
         Works.findAll().then(function(works, err) {
             if(err) console.error(err);
             else {
-                res.render("frontpage.ejs", {groups: works});
+				//console.log(works);
+                res.render("frontpage.ejs", {works: works});
             }
         });
 	})
-	.post(function(req, res){
-		var data = {
-			group_name : req.body.group_name,
-			purpose : req.body.purpose
-		};
-		Works.create({
-			name: req.body.group_name,
-			desc: req.body.purpose
+app.get('/work/:workId', function(req, res){
+		var workId = req.params.workId;
+		Works.findOne({
+			where: {
+				id: workId
+			}
+		}).then(function(work, err) {
+			if(err) console.error(err);
+			else {
+				console.log("공작 조회 :".cyan, work.name);
+				res.render("workpage.ejs", {work: work} );
+			}
+		});
+		
+	})
+app.post('/work', function(req, res){
+		var workId = req.params.workId;
+		Works.findOrCreate({
+			where: {
+				name: req.body.name,
+				desc: req.body.desc
+			}
 		}).then(function(work, err) {
 			if(err) console.error(err);
             else {
+				console.log("공작 생성 :".cyan, work.name);
                 res.redirect('/');
             }
 		});
-	});
-
-app.route(/\/group\/.*/)
-	.get(function(req, res){
-		var group_name = req.path.split("/").slice(-1)[0];
-		// connection.query("select * from groups where group_name='"+group_name+"' limit 1",function(err, rows){
-	    //     if (err) {
-	    //         console.error(err);
-	    //         throw err;
-	    //     }
-		// 	console.log(rows);
-		// 	res.render("grouppage.ejs", {groups: rows} );
-	    // });
-		
-	})
-	.post(function(req, res){
-		// create group
 	});
 
 app.listen(3000);

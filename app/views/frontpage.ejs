@@ -8,28 +8,28 @@
     <header>
         <% include ./templates/header.ejs %>
     </header>
-    <section id="createGroup">
-        <form action="/" method="post">
+    <section id="createWork">
+        <form action="/work" method="post">
             <div>제목:</div>
-            <input type="text" name="group_name">
+            <input type="text" name="name">
             <div>목적:</div>
-            <input type="text" name="purpose">
+            <input type="text" name="desc">
             <input type="submit">
         </form>
     </section>
-    <section id="openedGroups">
-        <!--groups go here-->
+    <section id="openedWorks">
+        <!--works go here-->
         <ul>
-            <% for( var i = 0; i < groups.length; i++) { %>
+            <% for( var i = 0; i < works.length; i++) { %>
             <li>
-                <a href="group/<%=groups[i].Group_name%>"><%= groups[i].Group_name %></a>
-                <div><%= groups[i].Purpose %></div>
+                <a href="work/<%=works[i].id%>"><%= works[i].name %></a>
+                <div><%= works[i].desc %></div>
             </li>
             <% } %>
         </ul>
     </section>
-    <section id="joinedGroups">
-        <!--user specific group-->
+    <section id="joinedWorks">
+        <!--user specific work-->
     </section>
     <footer>
         <% include ./templates/footer.ejs %>

@@ -5,7 +5,7 @@ database = function(global) {
     var sqlize = new Sqlize(set.db.database, set.db.user, set.db.password, {
         host :'localhost',
         port : 3306,
-        //log: false,
+        log: false,
         define: {
             charset: 'utf8',
             timestamps: true,
