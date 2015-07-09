@@ -1,8 +1,8 @@
 /// <reference path="typings/node/node.d.ts"/>
 var express = require("express");
 var app = express();
-var mysql = require("mysql");
-var bodyParser = require("body-parser");
+var path = require('path');
+require('colors');
 
 app.set("view engine", "ejs");
 app.set("views", __dirname+"/app/views");
@@ -54,6 +54,7 @@ app.route("/")
 app.route(/\/group\/.*/)
 	.get(function(req, res){
 		// get group info
+		console.log("path"+req.path);
 		res.render(".ejs", { title : "john", groups: [{name:"fuck the world", contents:"haha"}, {name:"just fuck", contents:"ha.."}]});
 	})
 	.post(function(req, res){
@@ -61,3 +62,4 @@ app.route(/\/group\/.*/)
 	});
 
 app.listen(3000);
+console.log("3000번 포트에서 서버 시작".green);
