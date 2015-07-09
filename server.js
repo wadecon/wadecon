@@ -1,6 +1,8 @@
 /// <reference path="typings/node/node.d.ts"/>
 var express = require("express");
 var app = express();
+var mysql = require("mysql");
+var bodyParser = require("body-parser");
 var path = require('path');
 require('colors');
 
@@ -27,12 +29,11 @@ connection.connect(function(err){
 
 app.route("/")
 	.get(function(req, res){
-		var query = connection.query("select * from groups",function(err, rows){
+		connection.query("select * from groups",function(err, rows){
 			if (err) {
 				console.error(err);
 				throw err;
 			}
-			console.log(query);
 			res.render( "frontpage.ejs", {groups: rows} );
 		});
 	})
@@ -41,21 +42,27 @@ app.route("/")
 			group_name : req.body.group_name,
 			purpose : req.body.purpose
 		};
-		var query = connection.query("insert into groups SET ?", data,function(err,result){
+		connection.query("insert into groups SET ?", data,function(err, rows){
 	        if (err) {
 	            console.error(err);
 	            throw err;
 	        }
-	        console.log(query);
 			res.redirect("/");
 	    });
 	});
 
 app.route(/\/group\/.*/)
 	.get(function(req, res){
-		// get group info
-		console.log("path"+req.path);
-		res.render(".ejs", { title : "john", groups: [{name:"fuck the world", contents:"haha"}, {name:"just fuck", contents:"ha.."}]});
+		var group_name = req.path.split("/").slice(-1)[0];
+		connection.query("select * from groups where group_name='"+group_name+"' limit 1",function(err, rows){
+	        if (err) {
+	            console.error(err);
+	            throw err;
+	        }
+			console.log(rows);
+			res.render("grouppage.ejs", {groups: rows} );
+	    });
+		
 	})
 	.post(function(req, res){
 		// create group

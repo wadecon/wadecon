@@ -22,7 +22,7 @@
         <ul>
             <% for( var i = 0; i < groups.length; i++) { %>
             <li>
-                <a href=""><%= groups[i].Group_name %></a>
+                <a href="group/<%=groups[i].Group_name%>"><%= groups[i].Group_name %></a>
                 <div><%= groups[i].Purpose %></div>
             </li>
             <% } %>
