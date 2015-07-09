@@ -3,3 +3,4 @@ node_modules/*
 Code
 typings/*
 query/*
+setting.json

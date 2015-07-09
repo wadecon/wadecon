@@ -19,6 +19,7 @@
   "homepage": "https://github.com/wadecon/wadecon#readme",
   "dependencies": {
     "colors": "^1.1.2",
-    "ejs": "^2.3.2"
+    "ejs": "^2.3.2",
+    "sequelize": "^3.3.2"
   }
 }
