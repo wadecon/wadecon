@@ -28,27 +28,55 @@ database = function(global) {
         nickname: {
             type: Sqlize.STRING(256)
         }, //닉네임
-        email: Sqlize.STRING(256),
-        name: Sqlize.STRING(256), //실제 이름
-        image: Sqlize.STRING(256), //path
-        phone: Sqlize.INTEGER(11), //phone number
+        email: {
+            type: Sqlize.STRING(256),
+            allowNull: true
+        },
+        name: {
+            type: Sqlize.STRING(256),
+            allowNull: false
+        }, //실제 이름
+        picture: Sqlize.STRING(256), //path
         karma: { //업보
             type: Sqlize.INTEGER,
-            defaultValue: 10000 }
+            defaultValue: 10000 },
+        fbId: {
+            type: Sqlize.INTEGER(20)
+        },
+        fbToken: {
+            type: Sqlize.STRING(256)
+        }
     });
     Works = sqlize.define('Works', {
         name: {
-            type: Sqlize.STRING(256)
+            type: Sqlize.STRING(256),
+            allowNull: false
         }, //공작 이름
-        desc: Sqlize.STRING(256), //plain text
-        needs: Sqlize.STRING(256), //path
+        desc: {
+            type: Sqlize.STRING(256),
+            allowNull: false
+        }, //plain text
+        needs: {
+            type: Sqlize.STRING(256),
+            allowNull: false
+        }, //path
         frontboard: Sqlize.STRING(256) //path
     });
     Badges = sqlize.define('Badges', {
-        name: Sqlize.STRING(256),
-        desc: Sqlize.STRING(256), //plain 
-        image: Sqlize.STRING(256), //path
-        karma: Sqlize.INTEGER // 업보 가감
+        name: {
+            type: Sqlize.STRING(256),
+            allowNull: false
+        },
+        desc: {
+            type: Sqlize.STRING(256),
+            allowNull: false
+        }, //plain 
+        picture: Sqlize.STRING(256), //path
+        karma: {
+            type: Sqlize.INTEGER,
+            allowNull: false,
+            defaultValue: 0
+        }, // 업보 가감
     });
     
     // M:N 테이블의 정의와 관계 설정
@@ -67,18 +95,30 @@ database = function(global) {
     Works.belongsToMany(Users, {foreignKey: 'workId', through: 'Logs'});
     
     Joins = sqlize.define('Joins', {
-        userId: Sqlize.INTEGER,
-        workId: Sqlize.INTEGER
+        userId: {
+            type: Sqlize.INTEGER,
+            primaryKey: true
+        },
+        workId: {
+            type: Sqlize.INTEGER,
+            primaryKey: true
+        }
     });
     Users.belongsToMany(Works, {foreignKey: 'userId', through: 'Joins'});
     Works.belongsToMany(Users, {foreignKey: 'workId', through: 'Joins'});
 
     BadgeMaps = sqlize.define('BadgeMaps', {
-        userId: Sqlize.INTEGER,
-        BadgeId: Sqlize.INTEGER
+        userId: {
+            type: Sqlize.INTEGER,
+            primaryKey: true
+        },
+        badgeId: {
+            type: Sqlize.INTEGER,
+            primaryKey: true
+        }
     });
     Users.belongsToMany(Badges, {foreignKey: 'userId', through: 'BadgeMaps'});
-    Badges.belongsToMany(Users, {foreignKey: 'BadgeId', through: 'BadgeMaps'});
+    Badges.belongsToMany(Users, {foreignKey: 'badgeId', through: 'BadgeMaps'});
 
     
     //DB 싱크 : 테이블 없으면 생성 그리고 동기화
