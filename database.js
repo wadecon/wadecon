@@ -1,6 +1,15 @@
 module.exports = function(global) {
     var set = require('./setting.json');
     var Sqlize = require('Sequelize');
+    
+    var DOMAIN = {
+        SHORT_CHAR  : Sqlize.STRING(64),
+        MIDDLE_CHAR : Sqlize.STRING(141),
+        LONG_CHAR   : Sqlize.STRING(256),
+        URL         : Sqlize.STRING(64),
+        INT32       : Sqlize.INTEGER(32)
+    };  // domain macros
+    
     console.log("DB 접속 정보 : ".cyan, set.db.database, set.db.user, set.db.password);
     var sqlize = new Sqlize(set.db.database, set.db.user, set.db.password, {
         host :'localhost',
@@ -13,6 +22,7 @@ module.exports = function(global) {
             id: true
         }
     });
+    
     sqlize
       .authenticate()
       .then(function(err) {
@@ -26,54 +36,54 @@ module.exports = function(global) {
     // 테이블들
     Users = sqlize.define('Users', {
         nickname: {
-            type: Sqlize.STRING(256)
+            type: DOMAIN.SHORT_CHAR
         }, //닉네임
         email: {
-            type: Sqlize.STRING(256),
+            type: DOMAIN.SHORT_CHAR,
             allowNull: true
         },
         name: {
-            type: Sqlize.STRING(256),
+            type: DOMAIN.SHORT_CHAR,
             allowNull: false
         }, //실제 이름
-        picture: Sqlize.STRING(256), //path
+        picture: DOMAIN.URL, //path
         karma: { //업보
-            type: Sqlize.INTEGER,
-            defaultValue: 10000 },
+            type: DOMAIN.INT32,
+            defaultValue: 1000000 },
         fbId: {
-            type: Sqlize.STRING(20)
+            type: DOMAIN.SHORT_CHAR
         },
         fbToken: {
-            type: Sqlize.STRING(256)
+            type: DOMAIN.LONG_CHAR
         }
     });
     Works = sqlize.define('Works', {
         name: {
-            type: Sqlize.STRING(256),
+            type: DOMAIN.SHORT_CHAR,
             allowNull: false
         }, //공작 이름
         desc: {
-            type: Sqlize.STRING(256),
+            type: DOMAIN.MIDDLE_CHAR,
             allowNull: false
         }, //plain text
         needs: {
-            type: Sqlize.STRING(256),
+            type: DOMAIN.MIDDLE_CHAR,
             allowNull: true
         }, //path
-        frontboard: Sqlize.STRING(256) //path
+        frontboard: DOMAIN.URL //path
     });
     Badges = sqlize.define('Badges', {
         name: {
-            type: Sqlize.STRING(256),
+            type: DOMAIN.SHORT_CHAR,
             allowNull: false
         },
         desc: {
-            type: Sqlize.STRING(256),
+            type: DOMAIN.MIDDLE_CHAR,
             allowNull: false
         }, //plain 
-        picture: Sqlize.STRING(256), //path
+        picture: DOMAIN.URL, //path
         karma: {
-            type: Sqlize.INTEGER,
+            type: DOMAIN.INT32,
             allowNull: false,
             defaultValue: 0
         }, // 업보 가감
@@ -82,25 +92,25 @@ module.exports = function(global) {
     // M:N 테이블의 정의와 관계 설정
     Logs = sqlize.define('Logs', {
         userId: {
-            type: Sqlize.INTEGER,
+            type: DOMAIN.INT32,
             primaryKey: true
         },
         workId: {
-            type: Sqlize.INTEGER,
+            type: DOMAIN.INT32,
             primaryKey: true
         },
-        text: Sqlize.STRING(141), //트위터보다 1자 더 지원합니다
+        text: DOMAIN.MIDDLE_CHAR, //트위터보다 1자 더 지원합니다
     });
     Users.belongsToMany(Works, {foreignKey: 'userId', through: 'Logs'});
     Works.belongsToMany(Users, {foreignKey: ['workId', 'name'], through: 'Logs'});
     
     Joins = sqlize.define('Joins', {
         userId: {
-            type: Sqlize.INTEGER,
+            type: DOMAIN.INT32,
             primaryKey: true
         },
         workId: {
-            type: Sqlize.INTEGER,
+            type: DOMAIN.INT32,
             primaryKey: true
         }
     });
@@ -109,11 +119,11 @@ module.exports = function(global) {
 
     BadgeMaps = sqlize.define('BadgeMaps', {
         userId: {
-            type: Sqlize.INTEGER,
+            type: DOMAIN.INT32,
             primaryKey: true
         },
         badgeId: {
-            type: Sqlize.INTEGER,
+            type: DOMAIN.INT32,
             primaryKey: true
         }
     });
