@@ -34,7 +34,7 @@ module.exports = function(global) {
       });
 
     // 테이블들
-    var Users = sqlize.define('Users', {
+    Users = sqlize.define('Users', {
         nickname: {
             type: DOMAIN.SHORT_CHAR
         }, //닉네임
@@ -57,7 +57,7 @@ module.exports = function(global) {
             type: DOMAIN.LONG_CHAR
         }
     });
-    var Works = sqlize.define('Works', {
+    Works = sqlize.define('Works', {
         name: {
             type: DOMAIN.SHORT_CHAR,
             allowNull: false
@@ -72,7 +72,7 @@ module.exports = function(global) {
         }, //path
         frontboard: DOMAIN.URL //path
     });
-    var Badges = sqlize.define('Badges', {
+    Badges = sqlize.define('Badges', {
         name: {
             type: DOMAIN.SHORT_CHAR,
             allowNull: false
@@ -90,7 +90,7 @@ module.exports = function(global) {
     });
     
     // M:N 테이블의 정의와 관계 설정
-    var Logs = sqlize.define('Logs', {
+    Logs = sqlize.define('Logs', {
         userId: {
             type: DOMAIN.INT32,
             primaryKey: true
@@ -104,7 +104,7 @@ module.exports = function(global) {
     Users.belongsToMany(Works, {foreignKey: 'userId', through: 'Logs'});
     Works.belongsToMany(Users, {foreignKey: ['workId', 'name'], through: 'Logs'});
     
-    var Joins = sqlize.define('Joins', {
+    Joins = sqlize.define('Joins', {
         userId: {
             type: DOMAIN.INT32,
             primaryKey: true
@@ -117,7 +117,7 @@ module.exports = function(global) {
     Users.belongsToMany(Works, {foreignKey: 'userId', through: 'Joins'});
     Works.belongsToMany(Users, {foreignKey: ['workId', 'name'], through: 'Joins'});
 
-    var BadgeMaps = sqlize.define('BadgeMaps', {
+    BadgeMaps = sqlize.define('BadgeMaps', {
         userId: {
             type: DOMAIN.INT32,
             primaryKey: true
