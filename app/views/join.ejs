@@ -63,21 +63,20 @@
     //         );
     //    }
     //    
-    //    function register() {
-    //        userData.nickname = $('#nameField').val();
-    //        $.post('/join', userData, function(data, status) {
-    //            console.log(data, status);
-    //        });
-    //    }
-    //    
-    //    var userData = {
-    //        name: "",
-    //        nickname: "",
-    //        email: "",
-    //        picture: "",
-    //        accessToken: ""
-    //    }
-    //    
+       function register() {
+           $.post('/join', {nickname: $('#nameField').val()}, function(data, status) {
+               console.log(data, status);
+               switch(status) {
+                   case 201: {
+                       location.href='/';
+                       break;
+                   }
+                   case 409: {
+                        $('#status').text("이미 존재하는 닉네임!");
+                   }
+               }
+           });
+       }
     </script>
 </head>
 <body>
@@ -87,7 +86,8 @@
         <div><%=name%></div>
         <img src="<%=picture%>" alt="" />
         <input type="text" id="nameField" name="nickname" placeholder="닉네임">
-        <button id="register" onClick="register()">가입!</button>
+        <button id="register" onClick="register()">가입!</button><br>
+        <div id="status"></div>
     <footer>
         <% include ./templates/footer.ejs %>
     </footer>

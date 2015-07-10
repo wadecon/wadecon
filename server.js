@@ -109,32 +109,55 @@ app.route("/")
         });
 	});
 app.get('/join', ensureAuthenticated, function(req, res) {
-	console.log(req.user.name, req.user.picture)
-	res.render('join.ejs', {
-		name: req.user.name,
-		picture: req.user.picture
-	})
-});
-app.post('/join', function(req, res) {
 	Users.findOne({
+		where: {
+			fbId: req.user.fbId
+		}
+	}).then(function(user) {
+		if(!user.nickname) {
+			res.render('join.ejs', {
+				name: req.user.name,
+				picture: req.user.picture
+			});
+		} else {
+			res.redirect('/'); //닉네임 이미 등록됨.
+		}
+	})
+	
+});
+app.post('/join', ensureAuthenticated, function(req, res) {
+	console.log(req.body);
+	Users.findOne({ // 해당 닉네임 있는지 확인
 		where: {
 			nickname: req.body.nickname
 		}
-	}).then(function(user) {
-		if(!user) {
-			Users.create(req.body).then(function(user ,err) {
-				if(err) {
-					console.error(err);
-					res.sendStatus(500);
-				}
-				else {
-					console.log("유저 생성 :".cyan, user.name);
-					res.sendStatus(201);
+	}).then(function(user, err) {
+		if(err) console.error(err);
+		if(!user) { // 가능한 닉네임
+			Users.findOne({
+				fbId: req.user.fbId, // 현재 세션의 페이스북 uid로 찾는다
+			}).then(function(user, err) {
+				if(err) console.error(err);
+				else if(!user){ // 그 세션의 uid에 해당하는 게 등록 안되어있음 (이상한 케이스)
+					res.redirect('/');
+				} else {
+					user.updateAttributes({ // 찾은 유저정보에서 닉네임을 받은 닉네임으로 바꿔준다
+						nickname: req.body.nickname
+					}).then(function(user, err) {
+						if(err) {
+							console.error(err);
+							res.status(500).end();
+						}
+						else {
+							console.log("유저 생성 :".cyan, user.name);
+							res.status(201).end();
+						}
+					});
 				}
 			});
 		} else {
 			// 이미 존재하는 닉네임
-			res.status(409)
+			res.status(409).end();
 		}
 	})
 });

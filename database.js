@@ -41,7 +41,7 @@ database = function(global) {
             type: Sqlize.INTEGER,
             defaultValue: 10000 },
         fbId: {
-            type: Sqlize.INTEGER(20)
+            type: Sqlize.STRING(20)
         },
         fbToken: {
             type: Sqlize.STRING(256)
