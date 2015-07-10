@@ -10,13 +10,6 @@ var async = require('async');
 
 require('colors');	// for fantastic debug
 
-// homemade modules
-var auth = require("./auth.js");
-auth.init(app);
-var passport = auth.getPassport();
-
-require('./database.js')();
-
 // setting app -> too dizzy to fuck with
 app.use(cookieParser());
 app.use(session({ secret: "secret" }));
@@ -25,6 +18,13 @@ app.set("view engine", "ejs");
 app.set("views", __dirname+"/app/views");
 app.use( express.static( __dirname + "/public" ));
 app.use(bodyParser.urlencoded({ extended: false }));
+
+// homemade modules
+var auth = require("./auth.js");
+auth.init(app);
+var passport = auth.getPassport();
+
+require('./database.js')();
 
 // fucking routing
 app.get('/auth/fb', passport.authenticate('facebook'));
