@@ -26,12 +26,11 @@ database = function(global) {
     // 테이블들
     Users = sqlize.define('Users', {
         nickname: {
-            type: Sqlize.STRING(256),
-            allowNull: false
+            type: Sqlize.STRING(256)
         }, //닉네임
         email: {
             type: Sqlize.STRING(256),
-            allowNull: false
+            allowNull: true
         },
         name: {
             type: Sqlize.STRING(256),
@@ -40,7 +39,13 @@ database = function(global) {
         picture: Sqlize.STRING(256), //path
         karma: { //업보
             type: Sqlize.INTEGER,
-            defaultValue: 10000 }
+            defaultValue: 10000 },
+        fbId: {
+            type: Sqlize.INTEGER(20)
+        },
+        fbToken: {
+            type: Sqlize.STRING(256)
+        }
     });
     Works = sqlize.define('Works', {
         name: {
@@ -66,7 +71,7 @@ database = function(global) {
             type: Sqlize.STRING(256),
             allowNull: false
         }, //plain 
-        image: Sqlize.STRING(256), //path
+        picture: Sqlize.STRING(256), //path
         karma: {
             type: Sqlize.INTEGER,
             allowNull: false,
@@ -90,18 +95,30 @@ database = function(global) {
     Works.belongsToMany(Users, {foreignKey: 'workId', through: 'Logs'});
     
     Joins = sqlize.define('Joins', {
-        userId: Sqlize.INTEGER,
-        workId: Sqlize.INTEGER
+        userId: {
+            type: Sqlize.INTEGER,
+            primaryKey: true
+        },
+        workId: {
+            type: Sqlize.INTEGER,
+            primaryKey: true
+        }
     });
     Users.belongsToMany(Works, {foreignKey: 'userId', through: 'Joins'});
     Works.belongsToMany(Users, {foreignKey: 'workId', through: 'Joins'});
 
     BadgeMaps = sqlize.define('BadgeMaps', {
-        userId: Sqlize.INTEGER,
-        BadgeId: Sqlize.INTEGER
+        userId: {
+            type: Sqlize.INTEGER,
+            primaryKey: true
+        },
+        badgeId: {
+            type: Sqlize.INTEGER,
+            primaryKey: true
+        }
     });
     Users.belongsToMany(Badges, {foreignKey: 'userId', through: 'BadgeMaps'});
-    Badges.belongsToMany(Users, {foreignKey: 'BadgeId', through: 'BadgeMaps'});
+    Badges.belongsToMany(Users, {foreignKey: 'badgeId', through: 'BadgeMaps'});
 
     
     //DB 싱크 : 테이블 없으면 생성 그리고 동기화
