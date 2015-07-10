@@ -1,4 +1,7 @@
 var express = require("express");
+var app = express();
+
+// fucking dependencies
 var bodyParser = require("body-parser");
 var cookieParser = require("cookie-parser");
 var session = require('express-session');
@@ -7,11 +10,14 @@ var async = require('async');
 
 require('colors');	// for fantastic debug
 
-var app = express();
+// homemade modules
 var auth = require("./auth.js");
-require('./database.js')();
-require('./facebook.js')(app);
+auth.init(app);
+var passport = auth.getPassport();
 
+require('./database.js')();
+
+// setting app -> too dizzy to fuck with
 app.use(cookieParser());
 app.use(session({ secret: "secret" }));
 
@@ -20,6 +26,15 @@ app.set("views", __dirname+"/app/views");
 app.use( express.static( __dirname + "/public" ));
 app.use(bodyParser.urlencoded({ extended: false }));
 
+// fucking routing
+app.get('/auth/fb', passport.authenticate('facebook'));
+
+app.get('/auth/fb/callback',
+    passport.authenticate('facebook', {
+		successRedirect: '/join',
+        failureRedirect: '/loginFail'
+	})
+);
 
 app.get('/loginSuccess', auth.checkAuthState, function(req, res){
 	console.log("로그인성공");
