@@ -26,29 +26,52 @@ database = function(global) {
     // 테이블들
     Users = sqlize.define('Users', {
         nickname: {
-            type: Sqlize.STRING(256)
+            type: Sqlize.STRING(256),
+            allowNull: false
         }, //닉네임
-        email: Sqlize.STRING(256),
-        name: Sqlize.STRING(256), //실제 이름
-        image: Sqlize.STRING(256), //path
-        phone: Sqlize.INTEGER(11), //phone number
+        email: {
+            type: Sqlize.STRING(256),
+            allowNull: false
+        },
+        name: {
+            type: Sqlize.STRING(256),
+            allowNull: false
+        }, //실제 이름
+        picture: Sqlize.STRING(256), //path
         karma: { //업보
             type: Sqlize.INTEGER,
             defaultValue: 10000 }
     });
     Works = sqlize.define('Works', {
         name: {
-            type: Sqlize.STRING(256)
+            type: Sqlize.STRING(256),
+            allowNull: false
         }, //공작 이름
-        desc: Sqlize.STRING(256), //plain text
-        needs: Sqlize.STRING(256), //path
+        desc: {
+            type: Sqlize.STRING(256),
+            allowNull: false
+        }, //plain text
+        needs: {
+            type: Sqlize.STRING(256),
+            allowNull: false
+        }, //path
         frontboard: Sqlize.STRING(256) //path
     });
     Badges = sqlize.define('Badges', {
-        name: Sqlize.STRING(256),
-        desc: Sqlize.STRING(256), //plain 
+        name: {
+            type: Sqlize.STRING(256),
+            allowNull: false
+        },
+        desc: {
+            type: Sqlize.STRING(256),
+            allowNull: false
+        }, //plain 
         image: Sqlize.STRING(256), //path
-        karma: Sqlize.INTEGER // 업보 가감
+        karma: {
+            type: Sqlize.INTEGER,
+            allowNull: false,
+            defaultValue: 0
+        }, // 업보 가감
     });
     
     // M:N 테이블의 정의와 관계 설정
