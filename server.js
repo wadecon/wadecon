@@ -2,15 +2,18 @@ var express = require("express");
 var bodyParser = require("body-parser");
 var cookieParser = require("cookie-parser")
 var session = require('express-session');
-var app = express();
-app.use(cookieParser());
-app.use(session({
-	secret: "secret"
-}));
 require('colors');
+
 
 set = require('./setting.json');
 require('./database.js')(this);
+
+
+var app = express();
+app.use(cookieParser());
+app.use(session({ secret: "secret" }));
+
+
 
 app.set("view engine", "ejs");
 app.set("views", __dirname+"/app/views");
@@ -24,8 +27,8 @@ var async = require('async');
 var FB = require('facebook-node');
 var passport = require('passport')
     , FacebookStrategy = require('passport-facebook').Strategy;
-	app.use(passport.initialize());
-	app.use(passport.session());
+app.use(passport.initialize());
+app.use(passport.session());
 	
 // serialize
 // 인증후 사용자 정보를 세션에 저장
@@ -98,6 +101,7 @@ function ensureAuthenticated(req, res, next) {
 		res.redirect('/');
 	}
 }
+
 app.route("/")
 	.get(function(req, res){
         Works.findAll().then(function(works, err) {
@@ -107,82 +111,82 @@ app.route("/")
                 res.render("frontpage.ejs", {works: works});
             }
         });
-	});
-app.get('/join', ensureAuthenticated, function(req, res) {
-	console.log(req.user.name, req.user.picture)
-	res.render('join.ejs', {
-		name: req.user.name,
-		picture: req.user.picture
 	})
-});
-app.post('/join', function(req, res) {
-	Users.findOne({
-		where: {
-			nickname: req.body.nickname
-		}
-	}).then(function(user) {
-		if(!user) {
-			Users.create(req.body).then(function(user ,err) {
-				if(err) {
-					console.error(err);
-					res.sendStatus(500);
-				}
-				else {
-					console.log("유저 생성 :".cyan, user.name);
-					res.sendStatus(201);
-				}
-			});
-		} else {
-			// 이미 존재하는 닉네임
-			res.status(409)
-		}
-	})
-});
-
-app.get('/work/:workId', function(req, res){
-	var workId = req.params.workId;
-	Works.findOne({
-		where: {
-			id: workId
-		}
-	}).then(function(work, err) {
-		if(err) console.error(err);
-		else {
-			console.log("공작 조회 :".cyan, work.name);
-			res.render("workpage.ejs", {work: work} );
-		}
-	});
-	
-})
-app.post('/work', function(req, res){
-	var workId = req.params.workId;
-	Works.findOrCreate({
-		where: {
-			name: req.body.name,
-			desc: req.body.desc
-		}
-	}).then(function(work, err) {
-		if(err) console.error(err);
-        else {
-			console.log("공작 생성 :".cyan, work.name);
-            res.redirect('/');
-        }
-	});
-});
-
-app.route(/\/user\/.*/)
-	.get(function(req, res){
-		var user_nickname = req.path.split("/").slice(-1)[0];
-		connection.query("select * from users where Nickname='"+user_nickname+"' limit 1",function(err, rows){
-			if (err) {
-				console.error(err);
-				throw err;
+	.post(function(req, res){
+		var workId = req.params.workId;
+		Works.findOrCreate({
+			where: {
+				name: req.body.name,
+				desc: req.body.desc
 			}
-			res.render( "userpage.ejs", {users: rows} );
+		}).then(function(work, err) {
+			if(err) console.error(err);
+	        else {
+				console.log("공작 생성 :".cyan, work.name);
+	            res.redirect('/');
+	        }
+		});
+	});
+
+app.route("/join")
+	.get(ensureAuthenticated, function(req, res) {
+		console.log(req.user.name, req.user.picture)
+		res.render('join.ejs', {
+			name: req.user.name,
+			picture: req.user.picture
+		})
+	})
+	.post(function(req, res) {
+		Users.findOne({
+			where: {
+				nickname: req.body.nickname
+			}
+		}).then(function(user) {
+			if(!user) {
+				Users.create(req.body).then(function(user ,err) {
+					if(err) {
+						console.error(err);
+						res.sendStatus(500);
+					}
+					else {
+						console.log("유저 생성 :".cyan, user.name);
+						res.sendStatus(201);
+					}
+				});
+			} else {
+				// 이미 존재하는 닉네임
+				res.status(409)
+			}
+		})
+	});
+
+
+app.route("/work/:workId/:workName")
+	.get(function(req, res){
+		var workId = req.params.workId;
+		var workName = req.params.workName;
+		Works.findOne({
+			where: {
+				id: workId
+			}
+		}).then(function(work, err) {
+			if(err) console.error(err);
+			else {
+				console.log("공작 조회 :".cyan, work.name);
+				res.render("workpage.ejs", {work: work} );
+			}
 		});
 	})
 	.post(function(req, res){
-		// edit information
+		
+	});
+
+app.route("user/:userNick")
+	.get(function(req, res){
+		var userNick = req.parmas.userNick;
+	})
+	.post(function(req, res){
+		// edit user information
 	});
 
 app.listen(3000);

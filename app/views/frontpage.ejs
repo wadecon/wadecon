@@ -1,3 +1,4 @@
+<!DOCTYPE html>
 <% include ./templates/head.ejs %>
 <body>
     <button onclick="location.href='/auth/fb'">페이스북으로 가입</button>
@@ -5,7 +6,7 @@
         <% include ./templates/header.ejs %>
     </header>
     <section id="createWork">
-        <form action="/work" method="post">
+        <form action="/" method="post">
             <div>제목:</div>
             <input type="text" name="name">
             <div>목적:</div>
@@ -18,7 +19,7 @@
         <ul>
             <% for( var i = 0; i < works.length; i++) { %>
             <li>
-                <a href="work/<%=works[i].id%>"><%= works[i].name %></a>
+                <a href="work/<%=works[i].id%>/<%= works[i].name %>"><%= works[i].name %></a>
                 <div><%= works[i].desc %></div>
             </li>
             <% } %>

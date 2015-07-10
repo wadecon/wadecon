@@ -84,10 +84,12 @@
     <header>
         <% include ./templates/header.ejs %>
     </header>
+    <section>
         <div><%=name%></div>
         <img src="<%=picture%>" alt="" />
         <input type="text" id="nameField" name="nickname" placeholder="닉네임">
         <button id="register" onClick="register()">가입!</button>
+    </section>
     <footer>
         <% include ./templates/footer.ejs %>
     </footer>

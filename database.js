@@ -41,7 +41,7 @@ database = function(global) {
             type: Sqlize.INTEGER,
             defaultValue: 10000 },
         fbId: {
-            type: Sqlize.INTEGER(20)
+            type: Sqlize.STRING(20)
         },
         fbToken: {
             type: Sqlize.STRING(256)
@@ -58,7 +58,7 @@ database = function(global) {
         }, //plain text
         needs: {
             type: Sqlize.STRING(256),
-            allowNull: false
+            allowNull: true
         }, //path
         frontboard: Sqlize.STRING(256) //path
     });
@@ -92,7 +92,7 @@ database = function(global) {
         text: Sqlize.STRING(141), //트위터보다 1자 더 지원합니다
     });
     Users.belongsToMany(Works, {foreignKey: 'userId', through: 'Logs'});
-    Works.belongsToMany(Users, {foreignKey: 'workId', through: 'Logs'});
+    Works.belongsToMany(Users, {foreignKey: ['workId', 'name'], through: 'Logs'});
     
     Joins = sqlize.define('Joins', {
         userId: {
@@ -105,7 +105,7 @@ database = function(global) {
         }
     });
     Users.belongsToMany(Works, {foreignKey: 'userId', through: 'Joins'});
-    Works.belongsToMany(Users, {foreignKey: 'workId', through: 'Joins'});
+    Works.belongsToMany(Users, {foreignKey: ['workId', 'name'], through: 'Joins'});
 
     BadgeMaps = sqlize.define('BadgeMaps', {
         userId: {
