@@ -1,4 +1,4 @@
-database = function(global) {
+module.exports = function(global) {
     var mysql = require("mysql");
     var Sqlize = require('Sequelize');
     console.log("DB 접속 정보 : ".cyan, set.db.database, set.db.user, set.db.password);
@@ -135,5 +135,3 @@ database = function(global) {
     // Joins.sync({force: true});
     // BadgeMaps.sync({force: true});
 };
-
-module.exports = database;

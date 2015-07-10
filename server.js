@@ -1,25 +1,23 @@
 var express = require("express");
 var bodyParser = require("body-parser");
-var cookieParser = require("cookie-parser")
+var cookieParser = require("cookie-parser");
 var session = require('express-session');
 require('colors');
 
+var auth = require("./auth.js");
+console.log("#############".red + auth +"#############".red);
 
 set = require('./setting.json');
 require('./database.js')(this);
-
 
 var app = express();
 app.use(cookieParser());
 app.use(session({ secret: "secret" }));
 
-
-
 app.set("view engine", "ejs");
 app.set("views", __dirname+"/app/views");
 app.use( express.static( __dirname + "/public" ));
 app.use(bodyParser.urlencoded({ extended: false }));
-
 
 var path = require('path');
 var async = require('async');
@@ -83,7 +81,8 @@ app.get('/auth/fb/callback',
         failureRedirect: '/loginFail'
 	})
 );
-app.get('/loginSuccess', ensureAuthenticated, function(req, res){
+
+app.get('/loginSuccess', auth.checkAuthState, function(req, res){
 	console.log("로그인성공");
     res.send(req.user);
 });
@@ -91,16 +90,7 @@ app.get('/logout', function(req, res){
     req.logout();
     res.redirect('/');
 });
-function ensureAuthenticated(req, res, next) {
-	console.log("auth check");
-    // 로그인이 되어 있으면, 다음 파이프라인으로 진행
-    if (req.isAuthenticated()) { return next(); }
-    // 로그인이 안되어 있으면, login 페이지로 진행
-	else {
-		console.log("not logged");
-		res.redirect('/');
-	}
-}
+
 
 app.route("/")
 	.get(function(req, res){
@@ -129,7 +119,7 @@ app.route("/")
 	});
 
 app.route("/join")
-	.get(ensureAuthenticated, function(req, res) {
+	.get(auth.checkAuthState, function(req, res) {
 		console.log(req.user.name, req.user.picture)
 		res.render('join.ejs', {
 			name: req.user.name,
