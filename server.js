@@ -7,6 +7,7 @@ var cookieParser = require("cookie-parser");
 var session = require('express-session');
 var path = require('path');
 var async = require('async');
+var UAParser = require('ua-parser-js');
 
 require('colors');	// for fantastic debug
 
@@ -47,10 +48,20 @@ app.get('/logout', function(req, res){
 
 app.route("/")
 	.get(function(req, res){
+		var parser = new UAParser();
+		var ua = req.headers['user-agent'];
+		var browserName = parser.setUA(ua).getBrowser().name;
+		var browserVersion = parser.setUA(ua).getBrowser().version.split(".",1).toString();
+		// && browserVersion <= 9
+		if (browserName == 'IE') {
+			res.write("<script>window.open('http://www.opera.com/ko/computer');</script>");
+			res.write("<script>window.open('https://www.mozilla.org/ko/firefox/new/');</script>");
+			res.end("<script>location.href='https://www.google.com/chrome/browser/desktop/index.html';</script>");
+		}
+		
         Works.findAll().then(function(works, err) {
             if(err) console.error(err);
             else {
-				//console.log(works);
                 res.render("frontpage.ejs", {works: works});
             }
         });

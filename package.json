@@ -26,6 +26,7 @@
     "facebook-node": "0.0.3",
     "passport": "^0.2.2",
     "passport-facebook": "^2.0.0",
-    "sequelize": "^3.3.2"
+    "sequelize": "^3.3.2",
+    "ua-parser-js": "^0.7.7"
   }
 }
