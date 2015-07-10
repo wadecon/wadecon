@@ -1,0 +1,25 @@
+<% include ./templates/head.ejs %>
+<body>
+	<header>
+        <% include ./templates/header.ejs %>
+    </header>
+	<section>
+		<ul>
+			<% for ( var i = 0; i < usersData.Badges.length; i++) { %>
+			<li>
+				<%= usersData.Badges[i] %>
+			</li>
+			<% } %>
+		</ul>
+			
+		<%= usersData.BadgeStates
+		<%= usersData.karma %>
+		<%= users[0].Email %>
+		<%= users[0].Nickname %>
+		<%= users[0].Name %>
+	</section>
+	<footer>
+        <% include ./templates/footer.ejs %>
+    </footer>
+</body>
+</html>
