@@ -5,7 +5,6 @@ var session = require('express-session');
 require('colors');
 
 var auth = require("./auth.js");
-console.log("#############".red + auth +"#############".red);
 
 set = require('./setting.json');
 require('./database.js')(this);
