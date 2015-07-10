@@ -30,6 +30,27 @@ app.route("/")
 app.get('/join', function(req, res) {
 	res.render('join.ejs')
 });
+app.post('/join', function(req, res) {
+	Users.findOne({
+		where: {
+			nickname: req.body.nickname
+		}
+	}).then(function(user) {
+		if(!user) {
+			Users.create(req.body).then(function(user ,err) {
+				if(err) console.error(err);
+				else {
+					console.log("유저 생성 :".cyan, user.name);
+					res.sendStatus(201);
+				}
+			});
+		} else {
+			// 이미 존재하는 닉네임
+			res.status(409)
+		}
+	})
+	
+})
 app.get('/work/:workId', function(req, res){
 	var workId = req.params.workId;
 	Works.findOne({

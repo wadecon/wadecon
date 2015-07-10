@@ -21,16 +21,19 @@
          fjs.parentNode.insertBefore(js, fjs);
        }(document, 'script', 'facebook-jssdk'));
        
-       function login() {
+       function FBlogin() {
            FB.getLoginStatus(function(response) {
                if (response.status === 'connected') {
                    console.log('Logged in.');
-                   getInfo();
+                   console.log(response)
+                   getInfo(response.authResponse.userID);
+                   userData.accessToken = response.authResponse.accessToken;
                }
                else {
                    FB.login(function(response) {
                       if (response.status === 'connected') {
-                          getInfo();
+                          getInfo(response.authResponse.userID);
+                          userData.accessToken = response.authResponse.accessToken;
                         console.log(response.authResponse.accessToken);
                       } else if (response.status === 'not_authorized') {
                         // The person is logged into Facebook, but not your app.
@@ -43,12 +46,36 @@
            });
        }
        
-       function getInfo() {
+       function getInfo(userId) {
            FB.api('/me', function(response) {
                $('#loginStatus').text(response.name+"로 로그인 됨");
-              document.getElementById('status').innerHTML =
-                'Thanks for logging in, ' + response.name + '!';
+               console.log(response)
+               userData.name = response.name;
+               userData.email = response.email;
             });
+            FB.api("/"+userId+"/picture", function (response) {
+                  if (response && !response.error) {
+                      console.log('https://graph.facebook.com/v2.4/'+userId+'/picture')
+                     $('img').attr('src', 'https://graph.facebook.com/v2.4/'+userId+'/picture')
+                     userData.picture = 'https://graph.facebook.com/v2.4/'+userId+'/picture';
+                  }
+                }
+            );
+       }
+       
+       function register() {
+           userData.nickname = $('#nameField').val();
+           $.post('/join', userData, function(data, status) {
+               console.log(data, status);
+           });
+       }
+       
+       var userData = {
+           name: "",
+           nickname: "",
+           email: "",
+           picture: "",
+           accessToken: ""
        }
        
     </script>
@@ -57,8 +84,11 @@
     <header>
         <% include ./templates/header.ejs %>
     </header>
-        <button onclick="login()">페이스북 로그인</button>
+        <button onclick="FBlogin()">페이스북 로그인</button>
         <div id="loginStatus"></div>
+        <img src="" alt="" />
+        <input type="text" id="nameField" name="nickname" placeholder="닉네임">
+        <button id="register" onClick="register()">가입!</button>
     <footer>
         <% include ./templates/footer.ejs %>
     </footer>
