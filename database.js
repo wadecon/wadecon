@@ -1,5 +1,5 @@
 module.exports = function(global) {
-    var mysql = require("mysql");
+    var set = require('./setting.json');
     var Sqlize = require('Sequelize');
     console.log("DB 접속 정보 : ".cyan, set.db.database, set.db.user, set.db.password);
     var sqlize = new Sqlize(set.db.database, set.db.user, set.db.password, {
