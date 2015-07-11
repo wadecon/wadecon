@@ -15,6 +15,7 @@ require('colors');	// for fantastic debug
 app.use(cookieParser());
 app.use(session({ secret: "secret" }));
 
+var set = require('./setting.json');
 app.set("view engine", "ejs");
 app.set("views", __dirname+"/app/views");
 app.use( express.static( __dirname + "/public" ));
@@ -163,5 +164,5 @@ app.route("user/:userNick")
 		// edit user information
 	});
 
-app.listen(3000);
-console.log("3000".cyan+"번 포트에서 서버 시작".green);
+app.listen(set.port);
+console.log((set.host+':'+set.port).cyan+"에서 서버 시작".green);

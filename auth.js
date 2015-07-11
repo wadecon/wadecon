@@ -26,7 +26,7 @@ function getPassport(){
 	passport.use(new FacebookStrategy({
 	        clientID: '1610016475924040',
 	        clientSecret: set.fb.secret,
-	        callbackURL: "http://localhost:3000/auth/fb/callback"
+	        callbackURL: "http://"+set.host+":"+set.port+"/auth/fb/callback"
 	    },
 	    function(accessToken, refreshToken, profile, done) {
 			console.log("P",profile)
