@@ -32,7 +32,7 @@ function getPassport(){
 			console.log("P",profile)
 			//console.log(user);
 			Users.findOne({
-				fbId: profile.id
+                where: {fbId: profile.id}
 			}).then(function(user, err) {
 				console.log("USER?".red, user)
 				if(err) {
