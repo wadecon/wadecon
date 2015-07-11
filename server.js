@@ -163,5 +163,17 @@ app.route("user/:userNick")
 		// edit user information
 	});
 
-app.listen(3000);
-console.log("3000".cyan+"번 포트에서 서버 시작".green);
+
+
+
+var options = process.argv;
+var port = null;
+
+for( num in options){
+	if(options[num] == "--port" || options[num] == "-p"){
+		port = options[Number(num)+1];
+	}
+}
+
+app.listen(port || 8080);
+console.log((port||8080+"").cyan+"번 포트에서 서버 시작".green);
