@@ -15,7 +15,16 @@ require('colors');	// for fantastic debug
 app.use(cookieParser());
 app.use(session({ secret: "secret" }));
 
+
 var set = require('./setting.json');
+var options = process.argv;
+
+for( num in options){
+	if(options[num] == "--port" || options[num] == "-p"){
+		set.port = options[Number(num)+1];
+	}
+}
+
 app.set("view engine", "ejs");
 app.set("views", __dirname+"/app/views");
 app.use( express.static( __dirname + "/public" ));
@@ -164,14 +173,6 @@ app.route("user/:userNick")
 		// edit user information
 	});
 
-var options = process.argv;
-var port = null;
 
-for( num in options){
-	if(options[num] == "--port" || options[num] == "-p"){
-		port = options[Number(num)+1];
-	}
-}
-
-app.listen(port || 8080);
-console.log((port||8080+"").cyan+"번 포트에서 서버 시작".green);
+app.listen(set.port || 8080);
+console.log((set.host+":"+(set.port || 8080)).cyan+"에서 서버 시작".green);
