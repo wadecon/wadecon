@@ -15,6 +15,7 @@ require('colors');	// for fantastic debug
 app.use(cookieParser());
 app.use(session({ secret: "secret" }));
 
+var set = require('./setting.json');
 app.set("view engine", "ejs");
 app.set("views", __dirname+"/app/views");
 app.use( express.static( __dirname + "/public" ));
@@ -162,9 +163,6 @@ app.route("user/:userNick")
 	.post(function(req, res){
 		// edit user information
 	});
-
-
-
 
 var options = process.argv;
 var port = null;

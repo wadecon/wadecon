@@ -1,6 +1,6 @@
 module.exports = function(global) {
+    var Sqlize = require('sequelize');
     var set = require('./setting.json');
-    var Sqlize = require('Sequelize');
     
     var DOMAIN = {
         SHORT_CHAR  : Sqlize.STRING(64),
