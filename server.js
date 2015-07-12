@@ -84,7 +84,11 @@ app.route("/")
 				desc: req.body.desc
 			}
 		}).then(function(work, err) {
-			if(err) console.error(err);
+			if(err) {
+				console.error(err);
+				
+				res.redirect('/');
+			}
 	        else {
 				console.log("공작 생성 :".cyan, work.name);
 	            res.redirect('/');

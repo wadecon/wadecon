@@ -60,7 +60,8 @@ module.exports = function(global) {
     Works = sqlize.define('Works', {
         name: {
             type: DOMAIN.SHORT_CHAR,
-            allowNull: false
+            allowNull: false,
+            unique: true
         }, //공작 이름
         desc: {
             type: DOMAIN.MIDDLE_CHAR,
