@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <title>가입</title>
     <script src="/js/jquery-2.1.4.min.js"></script>
+    <script>
        function register() {
            $.post('/join', {nickname: $('#nameField').val()}, function(data, status) {
                console.log(data, status);
@@ -23,12 +24,15 @@
 </head>
 <body>
     <% include ./templates/header.ejs %>
-    <section>
-        <div><%=name%></div>
-        <img src="<%=picture%>" alt="" />
-        <input type="text" id="nameField" name="nickname" placeholder="닉네임">
-        <button id="register" onClick="register()">가입!</button><br>
-        <div id="status"></div>
+    <div class="maxWrapper contentBox">
+        <div class="content">
+            <div><%=name%></div>
+            <img src="<%=picture%>" alt="" />
+            <input type="text" id="nameField" name="nickname" placeholder="닉네임">
+            <button id="register" onClick="register()">가입!</button><br>
+            <div id="status"></div>
+        </div>
+    </div>
     <% include ./templates/footer.ejs %>
 </body>
 </html>

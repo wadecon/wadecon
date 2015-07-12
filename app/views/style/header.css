@@ -1,9 +1,11 @@
+header {
+    height: 90px;
+}
 .logotype {
     font-family: wadecon;
     letter-spacing: -0.09em;
     font-size: 1.8em;
 }
-
 #logoBar {
     margin: 0 auto;
     font-size: 2.5em;
