@@ -8,6 +8,7 @@ var session = require('express-session');
 var path = require('path');
 var async = require('async');
 var UAParser = require('ua-parser-js');
+var md = require("node-markdown").Markdown;
 
 require('colors');	// for fantastic debug
 
@@ -86,7 +87,8 @@ app.route("/")
 		}).then(function(work, err) {
 			if(err) {
 				console.error(err);
-				
+				console.log("이미있는 공작이다".cyan);
+				res.write("<script>alert('이미있는공작입니다')</script>");
 				res.redirect('/');
 			}
 	        else {
@@ -166,7 +168,13 @@ app.route("/work/:workId/:workName")
 		});
 	})
 	.post(function(req, res){
-		
+		var workId = req.params.workId;
+		if (req.body.reqType == "md") {
+			
+		}
+		else if ( req.body.reqType == "need" ) {
+			
+		}
 	});
 
 app.route("user/:userNick")

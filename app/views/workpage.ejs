@@ -9,15 +9,17 @@
 		<%= work.desc %>
 	</section>
 	<section>
-		<form action="/work" id="editFrontpage">
-			<textarea name="" id="" cols="30" rows="10"></textarea>	
+		<form action="/<%=work.id%>/<%=work.name%>" id="editFrontpage">
+			<input type="hidden" name="reqType" value="md">
+			<textarea name="md" id="" cols="30" rows="10"></textarea>	
 			<input type="submit">
 		</form>
 	</section>
 	<section>
 		<div>
-			<form action="" id="editNeeds">
-				<textarea name="" id="" cols="30" rows="10"></textarea>
+			<form action="/<%=work.id%>/<%=work.name%>" id="editNeeds">
+				<input type="hidden" name="reqType" value="need">
+				<textarea name="need" id="" cols="30" rows="10"></textarea>
 				<input type="submit">
 			</form>
 		</div>
