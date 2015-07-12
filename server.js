@@ -186,23 +186,22 @@ app.route("/work/:workId/:workName")
 					console.log(err);
 					if (req.body.reqType == "md") {
 						var html = md(req.body.md);
-						fs.writeFile("./WorkPage/"+work.name+"/front.md", html, function(err){
+						fs.writeFile("./WorkPage/"+work.name+"/front.html", html, function(err){
 							if(err) console.log(err);
 							work.updateAttributes({
-								frontboard: "./WorkPage" + work.name + "/front.md"
+								frontboard: "./WorkPage" + work.name + "/front.html"
 							}).then(function(work, err){
 								if(err) console.log(err);
-								res.redirect("/"+work.id+"/"+work.name);	
+								res.redirect("/work/"+work.id+"/"+work.name);	
 							});
-							
 						});
 					}
 					else if ( req.body.reqType == "need" ) {
 						var html = md(req.body.need)
-						fs.writeFile("./WorkPage/"+work.name+"/need.md", html, function(err){
+						fs.writeFile("./WorkPage/"+work.name+"/need.html", html, function(err){
 							if(err) console.log(err);
-							work.frontboard = "./WorkPage" + work.name + "/need.md";
-							res.redirect("/"+work.id+"/"+work.name);
+							work.frontboard = "./WorkPage" + work.name + "/need.html";
+							res.redirect("/work/"+work.id+"/"+work.name);
 						});
 					} 
 				});
