@@ -4,65 +4,6 @@
     <meta charset="UTF-8">
     <title>가입</title>
     <script src="/js/jquery-2.1.4.min.js"></script>
-    <script>
-    //   window.fbAsyncInit = function() {
-    //     FB.init({
-    //       appId      : '1610016475924040',
-    //       xfbml      : true,
-    //       version    : 'v2.4'
-    //     });
-    //   };
-      // 
-    //   (function(d, s, id){
-    //      var js, fjs = d.getElementsByTagName(s)[0];
-    //      if (d.getElementById(id)) {return;}
-    //      js = d.createElement(s); js.id = id;
-    //      js.src = "//connect.facebook.net/ko_KR/sdk.js";
-    //      fjs.parentNode.insertBefore(js, fjs);
-    //    }(document, 'script', 'facebook-jssdk'));
-    //    
-    //    function FBlogin() {
-    //        FB.getLoginStatus(function(response) {
-    //            if (response.status === 'connected') {
-    //                console.log('Logged in.');
-    //                console.log(response)
-    //                getInfo(response.authResponse.userID);
-    //                userData.accessToken = response.authResponse.accessToken;
-    //            }
-    //            else {
-    //                FB.login(function(response) {
-    //                   if (response.status === 'connected') {
-    //                       getInfo(response.authResponse.userID);
-    //                       userData.accessToken = response.authResponse.accessToken;
-    //                     console.log(response.authResponse.accessToken);
-    //                   } else if (response.status === 'not_authorized') {
-    //                     // The person is logged into Facebook, but not your app.
-    //                   } else {
-    //                     // The person is not logged into Facebook, so we're not sure if
-    //                     // they are logged into this app or not.
-    //                   }
-    //                 });
-    //            }
-    //        });
-    //    }
-    //    
-    //    function getInfo(userId) {
-    //        FB.api('/me', function(response) {
-    //            $('#loginStatus').text(response.name+"로 로그인 됨");
-    //            console.log(response)
-    //            userData.name = response.name;
-    //            userData.email = response.email;
-    //         });
-    //         FB.api("/"+userId+"/picture", function (response) {
-    //               if (response && !response.error) {
-    //                   console.log('https://graph.facebook.com/v2.4/'+userId+'/picture')
-    //                  $('img').attr('src', 'https://graph.facebook.com/v2.4/'+userId+'/picture')
-    //                  userData.picture = 'https://graph.facebook.com/v2.4/'+userId+'/picture';
-    //               }
-    //             }
-    //         );
-    //    }
-    //    
        function register() {
            $.post('/join', {nickname: $('#nameField').val()}, function(data, status) {
                console.log(data, status);
@@ -78,19 +19,16 @@
            });
        }
     </script>
+    <% include ./templates/head.ejs %>
 </head>
 <body>
-    <header>
-        <% include ./templates/header.ejs %>
-    </header>
+    <% include ./templates/header.ejs %>
     <section>
         <div><%=name%></div>
         <img src="<%=picture%>" alt="" />
         <input type="text" id="nameField" name="nickname" placeholder="닉네임">
         <button id="register" onClick="register()">가입!</button><br>
         <div id="status"></div>
-    <footer>
-        <% include ./templates/footer.ejs %>
-    </footer>
+    <% include ./templates/footer.ejs %>
 </body>
 </html>

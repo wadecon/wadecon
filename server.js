@@ -94,17 +94,23 @@ app.route("/")
 
 app.route("/join")
 	.get(auth.checkAuthState, function(req, res) {
+		console.log("REQ", req.user)
 		Users.findOne({
 			where: {
-				fbId: req.user.fbId
-		}}).then(function(user) {
-			if(!user.nickname) {
-				res.render('join.ejs', {
-					name: req.user.name,
-					picture: req.user.picture
-				});
+				"fbId": req.user.fbId
+			}
+		}).then(function(user, err) {
+			console.log(user);
+			if(err) console.error("ERROR".red, err);
+			else if(user) {
+				if(user.nickname == null)
+					res.render('join.ejs', {
+						name: req.user.name,
+						picture: req.user.picture
+					});
+				else res.redirect('/'); //닉네임 이미 등록됨.
 			} else {
-				res.redirect('/'); //닉네임 이미 등록됨.
+				res.redirect('/'); //잘못된 접근: 세션은 인증되어 있는데 해당하는 정보가 DB에 없음
 			}
 		})
 	})
