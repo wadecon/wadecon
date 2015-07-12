@@ -183,18 +183,26 @@ app.route("/work/:workId/:workName")
 			if(err) console.error(err);
 			else {
 				fs.mkdir("./WorkPage/"+work.name, function(err){
+					console.log(err);
 					if (req.body.reqType == "md") {
 						var html = md(req.body.md);
 						fs.writeFile("./WorkPage/"+work.name+"/front.md", html, function(err){
 							if(err) console.log(err);
-							work.md = "./WorkPage" + work.name + "/front.md";
+							work.updateAttributes({
+								frontboard: "./WorkPage" + work.name + "/front.md"
+							}).then(function(work, err){
+								if(err) console.log(err);
+								res.redirect("/"+work.id+"/"+work.name);	
+							});
+							
 						});
 					}
 					else if ( req.body.reqType == "need" ) {
 						var html = md(req.body.need)
 						fs.writeFile("./WorkPage/"+work.name+"/need.md", html, function(err){
 							if(err) console.log(err);
-							work.md = "./WorkPage" + work.name + "/need.md";
+							work.frontboard = "./WorkPage" + work.name + "/need.md";
+							res.redirect("/"+work.id+"/"+work.name);
 						});
 					} 
 				});
