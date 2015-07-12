@@ -9,6 +9,7 @@ var path = require('path');
 var async = require('async');
 var UAParser = require('ua-parser-js');
 var md = require("node-markdown").Markdown;
+var fs = require("fs");
 
 require('colors');	// for fantastic debug
 
@@ -156,11 +157,9 @@ app.route("/join")
 		})
 	});
 
-
 app.route("/work/:workId/:workName")
 	.get(function(req, res){
 		var workId = req.params.workId;
-		var workName = req.params.workName;
 		Works.findOne({
 			where: {
 				id: workId
@@ -175,12 +174,32 @@ app.route("/work/:workId/:workName")
 	})
 	.post(function(req, res){
 		var workId = req.params.workId;
-		if (req.body.reqType == "md") {
-			
-		}
-		else if ( req.body.reqType == "need" ) {
-			
-		}
+		
+		Works.findOne({
+			where: {
+				id: workId
+			}
+		}).then(function(work, err) {
+			if(err) console.error(err);
+			else {
+				fs.mkdir("./WorkPage/"+work.name, function(err){
+					if (req.body.reqType == "md") {
+						var html = md(req.body.md);
+						fs.writeFile("./WorkPage/"+work.name+"/front.md", html, function(err){
+							if(err) console.log(err);
+							work.md = "./WorkPage" + work.name + "/front.md";
+						});
+					}
+					else if ( req.body.reqType == "need" ) {
+						var html = md(req.body.need)
+						fs.writeFile("./WorkPage/"+work.name+"/need.md", html, function(err){
+							if(err) console.log(err);
+							work.md = "./WorkPage" + work.name + "/need.md";
+						});
+					} 
+				});
+			}
+		});
 	});
 
 app.route("user/:userNick")
