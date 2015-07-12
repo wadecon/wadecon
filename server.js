@@ -57,7 +57,7 @@ app.get('/logout', function(req, res){
 });
 
 app.route("/")
-	.get(function(req, res){
+	.get(auth.inspect, function(req, res){
 		var parser = new UAParser();
 		var ua = req.headers['user-agent'];
 		var browserName = parser.setUA(ua).getBrowser().name;
@@ -68,11 +68,11 @@ app.route("/")
 			res.write("<script>window.open('https://www.mozilla.org/ko/firefox/new/');</script>");
 			res.end("<script>location.href='https://www.google.com/chrome/browser/desktop/index.html';</script>");
 		}
-		
+
         Works.findAll().then(function(works, err) {
             if(err) console.error(err);
             else {
-                res.render("frontpage.ejs", {works: works});
+                res.render("frontpage.ejs", {works: works, login: req.authState});
             }
         });
 	})

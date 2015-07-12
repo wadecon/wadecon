@@ -69,8 +69,14 @@ function checkAuthState(req, res, next) {
 	}
 }
 
+function inspect(req, res, next) {
+    req.authState = req.isAuthenticated();
+    return next();
+}
+
 module.exports = {
-	init : init,
-	getPassport : getPassport,
-	checkAuthState : checkAuthState
+	init: init,
+	getPassport: getPassport,
+	checkAuthState: checkAuthState,
+    inspect: inspect
 }

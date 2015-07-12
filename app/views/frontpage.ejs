@@ -1,10 +1,10 @@
 <!DOCTYPE html>
 <% include ./templates/head.ejs %>
 <body>
-    <button onclick="location.href='/auth/fb'">페이스북으로 가입</button>
-    <header>
-        <% include ./templates/header.ejs %>
-    </header>
+    <% include ./templates/header.ejs %>
+    <% if(!login) { %>
+        <% include ./templates/intro.ejs %>
+    <% } else { %>
     <section id="createWork">
         <form action="/" method="post">
             <div>제목:</div>
@@ -28,8 +28,7 @@
     <section id="joinedWorks">
         <!--user specific work-->
     </section>
-    <footer>
-        <% include ./templates/footer.ejs %>
-    </footer>
+    <% } %>
+    <% include ./templates/footer.ejs %>
 </body>
 </html>
