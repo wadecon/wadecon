@@ -1,0 +1,30 @@
+@font-face {
+    font-family: 'NotoSansBlack';
+    src: url('/fonts/NotoSansBlack.woff') format('woff');
+}
+@font-face {
+    font-family: 'NotoSansThin';
+    src: url('/fonts/NotoSansThin.woff') format('woff');
+}
+@font-face {
+    font-family: 'wadecon';
+    src: url('/fonts/wadecon.eot') format('embedded-opentype'),
+    url('/fonts/wadecon.woff') format('woff');
+}
+.maxWrapper {
+    width: 100%;
+    max-width: 960px;
+    margin: 0 auto;
+}
+a {
+    color: skyblue;
+    padding: 0 0.2em;
+}
+a:hover {
+    color: lightblue;
+}
+
+html {
+    background-color: lightsalmon;
+    box-shadow: 0 0 20px #444;
+}
