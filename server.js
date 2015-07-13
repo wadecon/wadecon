@@ -358,11 +358,15 @@ io.on('connection', function (socket) {
 	});
 });
 
-//The 404 Route (ALWAYS Keep this as the last route)
-app.get('*', function(req, res){
+// handle 404
+app.use(function(req, res) {
 	res.status(404).sendFile( __dirname+"/public/status/404NF.html");
 });
 
+// handle 500
+app.use(function(error, req, res, next) {
+	res.send('500: Internal Server Error', 500);
+});
 
 server.listen(set.port || 8080);
 console.log((set.host+":"+(set.port || 8080)).cyan+"에서 서버 시작".green);
