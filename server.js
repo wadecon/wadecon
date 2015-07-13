@@ -236,8 +236,8 @@ io.sockets.on('connection',function(socket){
 			function(cb){
 				Dislike.findOne({
 					where: {
-						userId: data.workId,
-						workId: data.userId
+						userId: data.userId,
+						workId: data.workId
 					}
 				}).then(function(dislike, err) {
 					if(err) console.log(err);
@@ -253,25 +253,24 @@ io.sockets.on('connection',function(socket){
 				if(exist){
 					Dislike.destroy({
 						where: {
-							userId: dislike.userId,
-							workId: dislike.workId
+							userId: data.userId,
+							workId: data.workId
 						}
 					}).then(function(){
-						console.log("destroy dislike".red);
-						cb(null, null);
+						cb(null, "Destroy dislike");
 					});
 				} else {
 					Dislike.create({
 						userId: data.userId,
 						workId: data.workId
 					}).then(function(){
-						console.log("create dislike".red);
-						cb(null, null);
+						cb(null, "Create dislike");
 					});
 				}
 			}
 		],
 		function(err, result){
+			console.log("dislike state :".red +result);
 			socket.broadcast.emit('server_update',data);
 		   	// socket.emit('server_update',data);	
 		});
