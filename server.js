@@ -25,6 +25,9 @@ for( num in options){
 	if(options[num] == "--port" || options[num] == "-p"){
 		set.port = options[Number(num)+1];
 	}
+	if(options[num] == "--quiet" || options[num] == "-q"){
+		console.log = function(){};
+	}
 }
 
 app.set("view engine", "ejs");
@@ -355,6 +358,15 @@ io.on('connection', function (socket) {
 	});
 });
 
+// handle 404
+app.use(function(req, res) {
+	res.status(404).sendFile( __dirname+"/public/status/404NF.html");
+});
+
+// handle 500
+app.use(function(error, req, res, next) {
+	res.send('500: Internal Server Error', 500);
+});
 
 server.listen(set.port || 8080);
 console.log((set.host+":"+(set.port || 8080)).cyan+"에서 서버 시작".green);
