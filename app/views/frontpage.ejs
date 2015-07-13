@@ -2,6 +2,7 @@
 <% include ./templates/head.ejs %>
 <body>
     <% include ./templates/header.ejs %>
+<<<<<<< HEAD
     <div class="contentBox maxWrapper">
         <div class="content">
             <% if(!login) { %>
@@ -30,6 +31,25 @@
                 <section id="joinedWorks">
                     <!--user specific work-->
                 </section>
+                <script>
+                    var socket = io.connect('http://<%=host%><%=port%>');
+                    $('a.dislike').click(function(){
+                        console.log("dislike emitted");
+                        var id = $(this).attr('id');
+                        socket.emit('client_update_dislike',{
+                            workId: id,
+                            <% if(user) { %>
+                            userId: <%=user.id%>
+                            <% } else { %>
+                            user: null
+                            <% } %>
+                        });
+                    });
+                    
+                    socket.on('server_update',function(data){
+                        // update view
+                    });
+                </script>
             <% } %>
         </div>
     </div>
