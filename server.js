@@ -407,8 +407,6 @@ io.on('connection', function (socket) {
 					userId: data.userId
 				} 
 			}).then(function(result){
-				console.log("result of dislike table:".red+result[0].workId);
-				
 				socket.broadcast.emit('server_update',result);
 				socket.emit('server_update',result);
 			});

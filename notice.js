@@ -1,10 +1,10 @@
 function peekNotice( userId, cb ){
-	Notice.findAndCountAll({
+	Notices.findAndCountAll({
 		where:{
 			userId: userId
 		}
 	}).then(
-		cb(result)
+		cb
 	);
 }
 
