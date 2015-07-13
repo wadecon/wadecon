@@ -59,7 +59,7 @@ function getPassport(){
 }
 
 function checkAuthState(req, res, next) {
-	console.log("auth check");
+	console.log("auth check", req.user);
     // 로그인이 되어 있으면, 다음 파이프라인으로 진행
     if (req.isAuthenticated()) { return next(); }
     // 로그인이 안되어 있으면, login 페이지로 진행
@@ -80,7 +80,7 @@ function inspect(req, res, next) {
             else if(user) return next();
             else res.redirect('/join');
         });
-    } else res.redirect('/') //부정 접근;
+    } else return next();
 }
 
 module.exports = {

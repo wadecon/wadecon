@@ -120,20 +120,37 @@ app.route("/")
 			
 	//작업중
 app.post('/makework', auth.checkAuthState, function(req, res){
-		var workId = req.params.workId;
-		Works.create({
-				name: req.body.name,
-				desc: req.body.desc,
-				frontboard: req.body.readme,
-				needs: req.body.needs
-		}).then(function(work, err) {
-			if(err) console.error(err);
-			else {
-				console.log("공작 생성 :".cyan, work.name);
-	        	res.send(work.name);
-			}
-		});
+	var workId = req.params.workId;
+	Works.create({
+			name: req.body.name,
+			desc: req.body.desc
+	}).then(function(work, err) {
+		if(err) console.error(err);
+		else {
+			console.log("공작 생성 :".cyan, work.name);
+			fs.mkdir("./public/workpage/"+work.name, function(err){
+				if(err) console.error(err);
+	        	else async.parallel([
+					function(callback) {
+						fs.writeFile("./public/workpage/" + work.name + "/front.html", req.body.readme, function(err) {
+							if(err) callback(err, null);
+							else callback(null);
+						});
+					},
+					function(callback) {
+						fs.writeFile("./public/workpage/" + work.name + "/needs.html", req.body.needs, function(err) {
+							if(err) callback(err, null);
+							else callback(null);
+						});
+					}
+				], function(err, results) {
+					if(err) console.error(err);
+					else res.send({code: 201, url: '/work/'+work.name});
+				});
+			});
+		}
 	});
+});
 
 app.route("/join")
 	.get(auth.checkAuthState, function(req, res) {
@@ -208,13 +225,12 @@ app.route("/work/:workName")
 			if(err) console.error(err);
 			else {
 				console.log("공작 조회 :".cyan, work.name);
-				res.render("workpage.ejs", {work: work} );
+				res.render("workpage.ejs", {work: work});
 			}
 		});
 	})
 	.post(function(req, res){
 		var workId = req.params.workId;
-		
 		Works.findOne({
 			where: {
 				id: workId
