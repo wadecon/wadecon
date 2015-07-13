@@ -9,52 +9,17 @@
             <% if(!login) { %>
                 <% include ./templates/intro.ejs %>
             <% } else { %>
-                <!-- <section id="createWork">
-                    <form action="/" method="post">
-                        <div>제목:</div>
-                        <input type="text" name="name">
-                        <div>목적:</div>
-                        <input type="text" name="desc">
-                        <input type="submit">
-                    </form>
-                </section> -->
+                <style>
+                    <% include ./style/frontpage.css %>
+                </style>
                 <section id="openedWorks">
+                    <h2>공작 일람</h2>
                     <ul id="workul">
                         <% if ( works != null ) {
                             for( var i = 0; i < works.length; i++) { %>
-                            <li class='workli'>
-                                <a href="work/<%= encodeURIComponent(works[i].name) %>"><%= works[i].name %></a>
-                                <div><%= works[i].desc %></div>
-                                <a class="dislike" href="" id="<%=works[i].id%>">
-                                    <%
-                                    var b = false;
-                                    for( var a in dislike ) { 
-                                        if ( user.id == dislike[a].userId && i+1 == dislike[a].workId ) { 
-                                            b = true;
-                                            break;
-                                        }
-                                    } 
-                                    if( b == true ){ %>
-                                        너가 사실은 좋아하는 것
-                                    <% } else {%>
-                                        싫어요
-                                    <% } %>
-                                </a>
-                                <a class="joins" href="" id="<%=works[i].id%>">
-                                    <%
-                                    var b = false;
-                                    for( var a in joins ) { 
-                                        if ( user.id == joins[a].userId && i+1 == joins[a].workId ) { 
-                                            b = true;
-                                            break;
-                                        }
-                                    } 
-                                    if( b == true ){ %>
-                                        탈출
-                                    <% } else {%>
-                                        참여
-                                    <% } %>
-                                </a>
+                            <a href="work/<%= encodeURIComponent(works[i].name)%>"><li class='workli'>
+                                <div class='workname black'><%= works[i].name %></div>
+                                <div class='workdesc'><%= works[i].desc %></div></a>
                             </li>
                             <% }
                         } %>
@@ -63,37 +28,6 @@
                 <section id="joinedWorks">
                     <!--user specific work-->
                 </section>
-                <script>
-                    var socket = io.connect('http://<%=host%><%=port%>');
-                    $('a.dislike').click(function(){
-                        console.log("dislike emitted");
-                        var id = $(this).attr('id');
-                        socket.emit('client_update_dislike',{
-                            workId: id,
-                            <% if(user) { %>
-                            userId: <%=user.id%>
-                            <% } else { %>
-                            user: null
-                            <% } %>
-                        });
-                    });
-                    $('a.joins').click(function(){
-                        console.log("joins emitted");
-                        var id = $(this).attr('id');
-                        socket.emit('client_update_joins',{
-                            workId: id,
-                            <% if(user) { %>
-                            userId: <%=user.id%>
-                            <% } else { %>
-                            user: null
-                            <% } %>
-                        });
-                    });
-                    
-                    socket.on('server_update',function(data){
-                        // update client
-                    });
-                </script>
             <% } %>
         </div>
     </div>
