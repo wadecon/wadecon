@@ -232,7 +232,6 @@ app.route("/user/:userNick")
 		// edit user information
 	});
 
-
 // sockets
 io.on('connection', function (socket) {
   socket.emit('news', { hello: 'world' });
@@ -263,16 +262,16 @@ io.on('connection', function (socket) {
 		  function(cb){
 			  Dislike.findOne({
 				  where: {
-					  userId: data.workId,
-					  workId: data.userId
+					  userId: data.userId,
+					  workId: data.workId
 				  }
 			  }).then(function(dislike, err) {
 				  if(err) console.log(err);
 				  
 				  if(dislike != null){
-					  cb(true, dislike);	
+					  cb(null, true, dislike);	
 				  } else {
-					  cb(false, dislike);
+					  cb(null, false, dislike);
 				  }
 			  });
 		  },
