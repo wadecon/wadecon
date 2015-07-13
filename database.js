@@ -7,7 +7,8 @@ module.exports = function(global) {
         MIDDLE_CHAR : Sqlize.STRING(141),
         LONG_CHAR   : Sqlize.STRING(256),
         URL         : Sqlize.STRING(64),
-        INT32       : Sqlize.INTEGER(32)
+        INT32       : Sqlize.INTEGER(32),
+        BOOLEAN     : Sqlize.BOOLEAN()
     };  // domain macros
     
     console.log("DB 접속 정보 : ".cyan, set.db.database, set.db.user, set.db.password);
@@ -47,6 +48,10 @@ module.exports = function(global) {
             allowNull: false
         }, //실제 이름
         picture: DOMAIN.URL, //path
+        selfBoost: {
+            type: DOMAIN.MIDDLE_CHAR,
+            allowNull: true
+        },
         karma: { //업보
             type: DOMAIN.INT32,
             defaultValue: 1000000 },
@@ -71,7 +76,15 @@ module.exports = function(global) {
             type: DOMAIN.MIDDLE_CHAR,
             allowNull: true
         }, //path
-        frontboard: DOMAIN.URL //path
+        dislike:{
+            type: DOMAIN.INT32,
+            defaultValue: 0,
+            allowNull: false
+        },
+        frontboard: {
+            type: DOMAIN.URL, //path
+            allowNull: true
+        }
     });
     Badges = sqlize.define('Badges', {
         name: {
@@ -105,6 +118,23 @@ module.exports = function(global) {
     Users.belongsToMany(Works, {foreignKey: 'userId', through: 'Logs'});
     Works.belongsToMany(Users, {foreignKey: ['workId', 'name'], through: 'Logs'});
     
+    Dislike = sqlize.define('Dislike', {
+        userId: {
+            type: DOMAIN.INT32,
+            primaryKey: true
+        },
+        workId: {
+            type: DOMAIN.INT32,
+            primaryKey: true
+        },
+        belongsTo: {
+            type: DOMAIN.BOOLEAN,
+            allowNull: false
+        }
+    });
+    Users.belongsToMany(Works, {foreignKey: 'userId', through: 'Dislike'});
+    Works.belongsToMany(Users, {foreignKey: ['workId', 'name'], through: 'Dislike'});
+    
     Joins = sqlize.define('Joins', {
         userId: {
             type: DOMAIN.INT32,
@@ -137,6 +167,7 @@ module.exports = function(global) {
     Works.sync();
     Badges.sync();
     Logs.sync();
+    Dislike.sync();
     Joins.sync();
     BadgeMaps.sync();
     // Users.sync({force: true});

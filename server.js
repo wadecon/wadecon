@@ -200,8 +200,12 @@ app.route("/work/:workId/:workName")
 						var html = md(req.body.need)
 						fs.writeFile("./WorkPage/"+work.name+"/need.html", html, function(err){
 							if(err) console.log(err);
-							work.frontboard = "./WorkPage" + work.name + "/need.html";
-							res.redirect("/work/"+work.id+"/"+work.name);
+							work.updateAttributes({
+								needs: "./WorkPage" + work.name + "/need.html"
+							}).then(function(work, err){
+								if(err) console.log(err);
+								res.redirect("/work/"+work.id+"/"+work.name);	
+							});
 						});
 					} 
 				});
@@ -209,7 +213,7 @@ app.route("/work/:workId/:workName")
 		});
 	});
 
-app.route("user/:userNick")
+app.route("/user/:userNick")
 	.get(function(req, res){
 		var userNick = req.parmas.userNick;
 	})
@@ -217,6 +221,7 @@ app.route("user/:userNick")
 		// edit user information
 	});
 
+app.route("")
 
 app.listen(set.port || 8080);
 console.log((set.host+":"+(set.port || 8080)).cyan+"에서 서버 시작".green);
