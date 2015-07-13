@@ -25,6 +25,9 @@ for( num in options){
 	if(options[num] == "--port" || options[num] == "-p"){
 		set.port = options[Number(num)+1];
 	}
+	if(options[num] == "--quiet" || options[num] == "-q"){
+		console.log = function(){};
+	}
 }
 
 app.set("view engine", "ejs");
