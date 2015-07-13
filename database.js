@@ -74,6 +74,10 @@ module.exports = function(global) {
             type: DOMAIN.MIDDLE_CHAR,
             allowNull: false
         }, //plain text
+        frontboard: {
+            type: DOMAIN.URL, //path
+            allowNull: true
+        },
         needs: {
             type: DOMAIN.URL,
             allowNull: true
@@ -82,10 +86,6 @@ module.exports = function(global) {
             type: DOMAIN.INT32,
             defaultValue: 0,
             allowNull: false
-        },
-        frontboard: {
-            type: DOMAIN.URL, //path
-            allowNull: true
         },
         startTime: {
             type: DOMAIN.DATE,
@@ -136,10 +136,6 @@ module.exports = function(global) {
         workId: {
             type: DOMAIN.INT32,
             primaryKey: true
-        },
-        belongTo: {
-            type: DOMAIN.BOOLEAN,
-            allowNull: true
         }
     });
     Users.belongsToMany(Works, {foreignKey: 'userId', through: 'Dislike'});
