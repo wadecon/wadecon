@@ -26,7 +26,7 @@ function toggleTuple( dislikes, data, cb ){
 function getWorksDislikesNum(works, callback){
 	var arrWorksDislikes = [];
 	async.forEachOf(works, function(work, key, callback) {
-		searchWorksDislikes(work.id,function(result){	
+		searchWorksDislikes(work.id,function(result){
 			var numDislikes = result.length;
 			arrWorksDislikes[key] = numDislikes;
 			callback();
@@ -36,7 +36,7 @@ function getWorksDislikesNum(works, callback){
 	});
 }
 function getWorkDislikesNum( workId, cb ){
-	searchWorksDislike( workId, function(result){
+	searchWorksDislikes( workId, function(result){
 		var numDislike = result.length;
 		cb(numDislike);
 	});
