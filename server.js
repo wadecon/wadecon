@@ -19,10 +19,9 @@ require('colors');	// for fantastic debug
 app.use(cookieParser());
 app.use(session({ secret: "secret" }));
 
-
 var set = require('./setting.json');
-var options = process.argv;
 
+var options = process.argv;
 for( num in options){
 	if(options[num] == "--port" || options[num] == "-p"){
 		set.port = options[Number(num)+1];
@@ -35,7 +34,11 @@ app.use( express.static( __dirname + "/public" ));
 app.use(bodyParser.urlencoded({ extended: false }));
 
 // homemade modules
-var notice = require("./notice.js");
+var dbnotices = require("./dbmodules/dbnotices.js");
+var dbusers = require("./dbmodules/dbusers.js");
+var dbdislike = require("./dbmodules/dbdislike.js");
+var dbjoins = require("./dbmodules/dbjoins.js");
+
 var auth = require("./auth.js");
 auth.init(app);
 var passport = auth.getPassport();
@@ -105,15 +108,34 @@ app.route("/")
 			}
 		],
 		function(works, dislike, joins){
-			res.render("frontpage.ejs", {
-				works: works,
-				login: req.authState,
-				user: req.user,
-				dislike: dislike,
-				joins: joins,
-				host: set.host,
-				port: ((set.main)?'':':'+set.port),
-			});
+			var arrWorksDislike = [];
+			for( var i = 0; i < works.length; i++){
+				(function(i){
+					async.waterfall([
+						function(cb){
+							dbdislike.searchWorksDisklike(works[i].id,function(result){	
+								var numDislike = result.length;
+								arrWorksDislike[i] = numDislike ;
+								cb();
+							});
+						}
+					],
+					function(err, result){
+						if( i == works.length-1 ){
+							res.render("frontpage.ejs", {
+								works: works,
+								login: req.authState,
+								user: req.user,
+								dislike: dislike,
+								numDislike: arrWorksDislike,
+								joins: joins,
+								host: set.host,
+								port: ((set.main)?'':':'+set.port),
+							});
+						}
+					})
+				})(i);
+			}
 		});
         
 	});
@@ -227,8 +249,13 @@ app.route("/work/:workName")
 		}).then(function(work, err) {
 			if(err) console.error(err);
 			else {
-				console.log("공작 조회 :".cyan, work.name);
-				res.render("workpage.ejs", {work: work});
+				dbdislike.searchWorksDisklike(work.id, function(result){
+					var numDislike = result.length;
+					res.render("workpage.ejs", {
+						work: work,
+						numDislike: numDislike
+					});
+				});
 			}
 		});
 	})
@@ -282,15 +309,10 @@ app.route("/user/:userNick")
 
 // sockets
 io.on('connection', function (socket) {
-	socket.emit('news', { hello: 'world' });
-
 	socket.on('namecheck', function (data) {
 		console.log(data);
 		if(data) {
-			Users.findOne({ // 해당 닉네임 있는지 확인
-			where: {
-				nickname: data
-			}}).then(function(user, err) {
+			users.searchByNickname(data, function(user, err) {
 				if(err) console.error(err);
 				else if(!user) { // 가능한 닉네임
 					socket.emit('namechecked', true);
@@ -302,119 +324,50 @@ io.on('connection', function (socket) {
 	});
 	
 	socket.on('client_update_dislike',function(data){
-		console.log("get socket dislike request".red);
-		console.log("this is id of work".red, data.workId);
-		console.log("this is id of user".red, data.userId);
-		
 		async.waterfall([
 			function(cb){
-				Dislike.findOne({
-					where: {
-						userId: data.userId,
-						workId: data.workId
-					}
-				}).then(function(dislike, err) {
+				dbdislike.searchById(data.userId, data.workId, function(dislike, err) {
 					if(err) console.log(err);
-			
-					if(dislike != null){
-						cb(null, true, dislike);	
-					} else {
-						cb(null, false, dislike);
+					else{
+						cb(null, dislike);
 					}
 				});
 			},
-			function(exist, dislike, cb){
-				if(exist){
-					Dislike.destroy({
-						where: {
-							userId: dislike.userId,
-							workId: dislike.workId
-						}
-					}).then(function(){
-						console.log("destroy dislike".red);
-						cb();
-					});
-				} else {
-					Dislike.create({
-						userId: data.userId,
-						workId: data.workId
-					}).then(function(){
-						console.log("create dislike".red);
-						cb();
-					});
-				}
+			function( dislike, cb ){
+				dbdislike.toggleTuple(dislike, data, function(){
+					cb();
+				});
 			}
 		],
 		function(err, result){
-			Dislike.findAll({
-				where: {
-					userId: data.userId
-				} 
-			}).then(function(result){
-				if(result != null)	console.log("result of dislike table:".red+result[0].workId);
-				
-				notice.putNotice(data.userId, "fuck");
-				
+			dbdislike.searchUsersDislike(data.userId, function(result){
 				socket.broadcast.emit('server_update',result);
 				socket.emit('server_update',result);
 			});
 		});
 	});
 	socket.on('client_update_joins', function(data){
-		console.log("get socket joins request".red);
-		console.log("this is id of work".red, data.workId);
-		console.log("this is id of user".red, data.userId);
-		
 		async.waterfall([
 			function(cb){
-				Joins.findOne({
-					where: {
-						userId: data.userId,
-						workId: data.workId
-					}
-				}).then(function(joins, err) {
+				dbjoins.searchById(data.userId, data.workId, function(joins, err){
 					if(err) console.log(err);
-			
-					if(joins != null){
-						cb(null, true, joins);	
-					} else {
-						cb(null, false, joins);
+					else{
+						cb(null, joins);
 					}
-				});
+				})
 			},
-			function(exist, joins, cb){
-				if(exist){
-					Joins.destroy({
-						where: {
-							userId: joins.userId,
-							workId: joins.workId
-						}
-					}).then(function(){
-						console.log("destroy dislike".red);
-						cb();
-					});
-				} else {
-					Joins.create({
-						userId: data.userId,
-						workId: data.workId
-					}).then(function(){
-						console.log("create dislike".red);
-						cb();
-					});
-				}
+			function(joins, cb){
+				dbjoins.toggleTuple(joins, data, function(){
+					cb();
+				});
 			}
 		],
 		function(err, result){
-			Joins.findAll({
-				where: {
-					userId: data.userId
-				} 
-			}).then(function(result){
+			dbjoins.searchUsersJoin(data.userId, function(result){
 				socket.broadcast.emit('server_update',result);
 				socket.emit('server_update',result);
 			});
 		});
-		
 	});
 });
 
