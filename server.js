@@ -9,7 +9,6 @@ var cookieParser = require("cookie-parser");
 var session = require('express-session');
 var path = require('path');
 var async = require('async');
-var UAParser = require('ua-parser-js');
 var md = require("node-markdown").Markdown;
 var fs = require("fs");
 
@@ -38,6 +37,7 @@ var dbnotices = require("./dbmodules/dbnotices.js");
 var dbusers = require("./dbmodules/dbusers.js");
 var dbdislikes = require("./dbmodules/dbdislikes.js");
 var dbjoins = require("./dbmodules/dbjoins.js");
+var systemMod = require("./systemMod.js");
 
 var auth = require("./auth.js");
 auth.init(app);
@@ -70,16 +70,15 @@ app.get('/makework', function(req, res){
 })
 app.route("/")
 	.get(auth.inspect, function(req, res) {
-		var parser = new UAParser();
-		var ua = req.headers['user-agent'];
-		var browserName = parser.setUA(ua).getBrowser().name;
-		var browserVersion = parser.setUA(ua).getBrowser().version.split(".",1).toString();
-		// && browserVersion <= 9
-		if (browserName == 'IE') {
-			res.write("<script>window.open('http://www.opera.com/ko/computer');</script>");
-			res.write("<script>window.open('https://www.mozilla.org/ko/firefox/new/');</script>");
-			res.end("<script>location.href='https://www.google.com/chrome/browser/desktop/index.html';</script>");
-		}
+		systemMod.checkBrowser(req.headers['user-agent'],function(browserName){
+			// && browserVersion <= 9
+			if (browserName == 'IE') {
+				res.write("<script>window.open('http://www.opera.com/ko/computer');</script>");
+				res.write("<script>window.open('https://www.mozilla.org/ko/firefox/new/');</script>");
+				res.end("<script>location.href='https://www.google.com/chrome/browser/desktop/index.html';</script>");
+			}
+		});
+		
 		async.parallel([
 			function(callback) {
 				Works.findAll({
@@ -112,7 +111,7 @@ app.route("/")
 			}
 		], function(err, results) {
 			if(err) console.error(err);
-			var arrWorksDislikes = [];
+			
 			var works = results[0];
 			var dislikes = results[1];
 			var joins = results[2];
@@ -122,7 +121,7 @@ app.route("/")
 					login: req.authState,
 					user: req.user,
 					dislikes: dislikes,
-					numDislikes: arrWorksDislikes,
+					numDislikes: arrWorksDislikeNum,
 					joins: joins,
 					host: set.host,
 					port: ((set.main)?'':':'+set.port),
@@ -171,11 +170,7 @@ app.post('/makework', auth.checkAuthState, function(req, res){
 app.route("/join")
 	.get(auth.checkAuthState, function(req, res) {
 		console.log("REQ", req.user)
-		Users.findOne({
-			where: {
-				"fbId": req.user.fbId
-			}
-		}).then(function(user, err) {
+		dbusers.searchByFbid(req.user.fbId, function(user, err) {
 			console.log(user);
 			if(err) console.error("ERROR".red, err);
 			else if(user) {
@@ -194,17 +189,11 @@ app.route("/join")
 		})
 	})
 	.post(auth.checkAuthState, function(req, res) {
-		console.log(req.body);
 		if(req.body.nickname) {
-			Users.findOne({ // 해당 닉네임 있는지 확인
-				where: {
-					nickname: req.body.nickname
-			}}).then(function(user, err) {
+			dbusers.searchByNickname(req.body.nickname, function(user, err) {
 				if(err) console.error(err);
 				else if(!user) { // 가능한 닉네임
-					Users.findOne({
-						fbId: req.user.fbId, // 현재 세션의 페이스북 uid로 찾는다
-					}).then(function(user, err) {
+					dbusers.searchByFbid(req.user.fbId, function(user, err) {
 						if(err) console.error(err);
 						else if(!user){ // 그 세션의 uid에 해당하는 게 등록 안되어있음 (이상한 케이스)
 							res.redirect('/');
@@ -227,7 +216,7 @@ app.route("/join")
 					// 이미 존재하는 닉네임
 					res.send("409").end();
 				}
-			});
+			})
 		} else res.send("400").end();
 	});
 

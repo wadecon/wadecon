@@ -32,7 +32,7 @@ function getWorksDislikesNum(works, callback){
 			callback();
 		});
 	}, function(err) {
-		callback( arrWorksDislikes );
+		callback(arrWorksDislikes);
 	});
 }
 function getWorkDislikesNum( workId, cb ){
