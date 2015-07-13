@@ -8,7 +8,8 @@ module.exports = function(global) {
         LONG_CHAR   : Sqlize.STRING(256),
         URL         : Sqlize.STRING(64),
         INT32       : Sqlize.INTEGER(32),
-        BOOLEAN     : Sqlize.BOOLEAN()
+        BOOLEAN     : Sqlize.BOOLEAN,
+        DATE        : Sqlize.DATE
     };  // domain macros
     
     console.log("DB 접속 정보 : ".cyan, set.db.database, set.db.user, set.db.password);
@@ -83,6 +84,14 @@ module.exports = function(global) {
         },
         frontboard: {
             type: DOMAIN.URL, //path
+            allowNull: true
+        },
+        startTime: {
+            type: DOMAIN.DATE,
+            allowNull: true
+        },
+        endTime: {
+            type: DOMAIN.DATE,
             allowNull: true
         }
     });
