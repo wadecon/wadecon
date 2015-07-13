@@ -351,22 +351,22 @@ io.on('connection', function (socket) {
 						userId: data.userId,
 						workId: data.workId
 					}
-				}).then(function(dislike, err) {
+				}).then(function(joins, err) {
 					if(err) console.log(err);
 			
-					if(dislike != null){
-						cb(null, true, dislike);	
+					if(joins != null){
+						cb(null, true, joins);	
 					} else {
-						cb(null, false, dislike);
+						cb(null, false, joins);
 					}
 				});
 			},
-			function(exist, dislike, cb){
+			function(exist, joins, cb){
 				if(exist){
 					Joins.destroy({
 						where: {
-							userId: dislike.userId,
-							workId: dislike.workId
+							userId: joins.userId,
+							workId: joins.workId
 						}
 					}).then(function(){
 						console.log("destroy dislike".red);
