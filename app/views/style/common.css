@@ -70,6 +70,12 @@ h2 {
     font-size: 1.6em;
     line-height: 1.2em;
 }
+h3 {
+    font-family: 'NotoSansThick', sans-serif;
+    font-weight: 900;
+    font-size: 1em;
+    line-height: 1.2em;
+}
 .black {
     font-family: 'NotoSansBlack', sans-serif;
     font-weight: 900;

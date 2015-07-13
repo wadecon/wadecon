@@ -1,38 +1,52 @@
 <!DOCTYPE html>
-<% include ./templates/head.ejs %>
+<head>
+	<% include ./templates/head.ejs %>
+	<style>
+		<% include ./style/workpage.css %>
+	</style>
+</head>
 <body>
 	<%= numDislike %>
 	<header>
         <% include ./templates/header.ejs %>
     </header>
-	<section>
-		<%= work.name %>
-		<%= work.desc %>
-	</section>
-	<section>
-		<form action="/work/<%=work.id%>/<%=work.name%>" id="editFrontpage" method="post">
-			<input type="hidden" name="reqType" value="md">
-			<textarea name="md" id="" cols="30" rows="10"></textarea>	
-			<input type="submit">
-		</form>
-	</section>
-	<section>
-		<div>
-			<form action="/work/<%=work.id%>/<%=work.name%>" id="editNeeds" method="post">
-				<input type="hidden" name="reqType" value="need">
-				<textarea name="need" id="" cols="30" rows="10"></textarea>
-				<input type="submit">
-			</form>
+	<div class="contentBox maxWrapper">
+        <div class="content">
+			<section>
+				<div id="workhead">
+					<h1><%= work.name %></h1>
+					<span id="buttons">
+						<button class="dislike" id="<%=work.id%>">싫어요</button>
+						<button class="joins" id="<%=work.id%>">참여</button>
+					</span>
+					<h2><%= work.desc %></h2>
+				</div>
+				<div>
+					<h3>README.md</h3>
+					<%- include('../../public/workpage/'+work.name+'/front.html') %>
+				</div>
+				<div>
+					<!--group participants-->
+				</div>
+				<div>
+					<h3>README.md</h3>
+					<%- include('../../public/workpage/'+work.name+'/needs.html') %>
+				</div>
+			</section>
+			<section>
+				<!--print group Q&A-->
+			</section>
 		</div>
-		<div>
-			<!--group participants-->
-		</div>
-	</section>
-	<section>
-		<!--print group Q&A-->
-	</section>
+	</div>
 	<footer>
         <% include ./templates/footer.ejs %>
     </footer>
+	<script>
+		
+		
+		socket.on('server_update',function(data){
+			// update client
+		});
+	</script>
 </body>
 </html>

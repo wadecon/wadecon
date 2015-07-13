@@ -1,0 +1,21 @@
+section {
+	padding: 1.5em;
+}
+h1 {
+    font-size: 2em;
+    display: inline-block;
+}
+#buttons {
+    padding-left: 1em;
+    display: inline-block;
+    vertical-align: text-bottom;
+}
+button {
+    font-size: 1em;
+    margin: 3px;
+}
+#workhead {
+    margin-bottom: 1em;
+    padding-bottom: 1em;
+    border-bottom: 1px solid #dfdfdf;
+}
