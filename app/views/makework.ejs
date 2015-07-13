@@ -9,26 +9,33 @@
     <script src="/js/editor.js"></script>
     <script src="/js/marked.js"></script>
     <script>
-        function post() {
-            $.post('/makework', {
+        function makePost() {
+            $.ajax({
+                type: "POST",
+                url: '/makework',
+                xhrFields: {
+                       withCredentials: true
+                },
+                data: {
                     name: $('#nameField').val(),
                     desc: $('#descField').val(),
                     readme: readmeEditor.codemirror.getValue(),
                     needs: needsEditor.codemirror.getValue()
-                }, function(data, status) {
-                console.log(data, status);
-                switch(status) {
-                    // 작업중
-                    case "201": {
-                        location.href='/';
-                        break;
-                    }
-                    case "400": {
-                         $('#status').text("ㅡㅡ;").css('color', 'red');
-                         break;
-                    }
-                    case "409": {
-                         $('#status').text("선점됨!").css('color', 'red');
+                },
+                success: function(data, status) {
+                    console.log(data.code, data.url);
+                    switch(data.code) {
+                        case 201: {
+                            location.href=data.url;
+                            break;
+                        }
+                        case 400: {
+                            //미구현
+                             break;
+                        }
+                        case 500: {
+                            //미구현
+                        }
                     }
                 }
             });
@@ -60,7 +67,7 @@
                             var readmeEditor = new Editor({
                                 element: document.getElementById('readme')
                             });
-                            editor.render();
+                            readmeEditor.render();
                         </script>
                     </div>
                     <div class='field'>
@@ -72,10 +79,10 @@
                             var needsEditor = new Editor({
                                 element: document.getElementById('needs')
                             });
-                            editor.render();
+                            needsEditor.render();
                         </script>
                     </div>
-                    <button id="post" onClick="post()">등록!</button>
+                    <button id="post" onClick="makePost()">등록!</button>
                 </section>
             </div>
         </div>
