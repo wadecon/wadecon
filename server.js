@@ -74,7 +74,7 @@ app.route("/")
         Works.findAll().then(function(works, err) {
             if(err) console.error(err);
             else {
-                res.render("frontpage.ejs", {works: works, login: req.authState});
+                res.render("frontpage.ejs", {works: works, login: req.authState, user: req.user});
             }
         });
 	})
@@ -221,7 +221,62 @@ app.route("/user/:userNick")
 		// edit user information
 	});
 
-app.route("")
 
-app.listen(set.port || 8080);
+var server = app.listen(set.port || 8080);
+var io = require('socket.io').listen(server);
 console.log((set.host+":"+(set.port || 8080)).cyan+"에서 서버 시작".green);
+
+io.sockets.on('connection',function(socket){
+	socket.on('client_update_dislike',function(data){
+		console.log("get socket request".red);
+		console.log("this is id of work".red, data.workId);
+		console.log("this is id of user".red, data.userId);
+		
+		async.waterfall([
+			function(cb){
+				Dislike.findOne({
+					where: {
+						userId: data.workId,
+						workId: data.userId
+					}
+				}).then(function(dislike, err) {
+					if(err) console.log(err);
+			        
+					if(dislike != null){
+						cb(true, dislike);	
+					} else {
+						cb(false, dislike);
+					}
+				});
+			},
+			function(exist, dislike, cb){
+				if(exist){
+					Dislike.destroy({
+						where: {
+							userId: dislike.userId,
+							workId: dislike.workId
+						}
+					}).then(function(){
+						console.log("destroy dislike".red);
+						cb(null, null);
+					});
+				} else {
+					Dislike.create({
+						userId: data.userId,
+						workId: data.workId
+					}).then(function(){
+						console.log("create dislike".red);
+						cb(null, null);
+					});
+				}
+			}
+		],
+		function(err, result){
+			socket.broadcast.emit('server_update',data);
+		   	// socket.emit('server_update',data);	
+		});
+		
+	});
+});
+
+

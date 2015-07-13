@@ -21,6 +21,7 @@
             <li>
                 <a href="work/<%=works[i].id%>/<%= works[i].name %>"><%= works[i].name %></a>
                 <div><%= works[i].desc %></div>
+                <a class="dislike" href="" id=<%=works[i].id%>>싫어요</a>
             </li>
             <% } %>
         </ul>
@@ -29,6 +30,27 @@
         <!--user specific work-->
     </section>
     <% } %>
+    
+    <script>
+        var socket = io.connect('http://localhost:3000');
+        $('a.dislike').click(function(){
+            console.log("dislike emitted");
+            var id = $(this).attr('id');
+            socket.emit('client_update_dislike',{
+                workId: id,
+                <% if(user) { %>
+                userId: <%=user.id%>
+                <% } else { %>
+                user: null
+                <% } %>
+            });
+        });
+        
+        socket.on('server_update',function(data){
+            // update view
+        });
+    </script>
+    
     <% include ./templates/footer.ejs %>
 </body>
 </html>
