@@ -1,3 +1,5 @@
+var async = require("async");
+
 function searchById(userId, workId, cb){
 	Dislike.findOne({
 		where: {
@@ -37,9 +39,43 @@ function searchWorksDisklike( workId, cb){
 	}).then(cb);
 }
 
+function getWorksDislikeNum(works, callback){
+	var arrWorksDislike = [];
+	for( var i = 0; i < works.length; i++){
+		(function(i){
+			async.waterfall([
+				function(cb){
+					searchWorksDisklike(works[i].id,function(result){	
+						var numDislike = result.length;
+						arrWorksDislike[i] = numDislike ;
+						cb();
+					});
+				}
+			],
+			function(err, result){
+				if( i == works.length-1 ){
+					callback( arrWorksDislike );
+				}
+			})
+		})(i);
+	}
+}
+
+function getWorkDislikeNum( workId, cb ){
+	searchWorksDisklike( workId, function(result){
+		var numDislike = result.length;
+		cb(numDislike);
+	});
+}
+
+
+
+
 module.exports = {
 	searchById: searchById,
 	toggleTuple: toggleTuple,
 	searchUsersDislike: searchUsersDislike,
-	searchWorksDisklike: searchWorksDisklike
+	searchWorksDisklike: searchWorksDisklike,
+	getWorkDislikeNum: getWorkDislikeNum,
+	getWorksDislikeNum: getWorksDislikeNum
 }

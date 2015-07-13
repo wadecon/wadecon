@@ -108,34 +108,18 @@ app.route("/")
 			}
 		],
 		function(works, dislike, joins){
-			var arrWorksDislike = [];
-			for( var i = 0; i < works.length; i++){
-				(function(i){
-					async.waterfall([
-						function(cb){
-							dbdislike.searchWorksDisklike(works[i].id,function(result){	
-								var numDislike = result.length;
-								arrWorksDislike[i] = numDislike ;
-								cb();
-							});
-						}
-					],
-					function(err, result){
-						if( i == works.length-1 ){
-							res.render("frontpage.ejs", {
-								works: works,
-								login: req.authState,
-								user: req.user,
-								dislike: dislike,
-								numDislike: arrWorksDislike,
-								joins: joins,
-								host: set.host,
-								port: ((set.main)?'':':'+set.port),
-							});
-						}
-					})
-				})(i);
-			}
+			dbdislike.getWorksDislikeNum(works, function( arrWorksDislikeNum ){
+				res.render("frontpage.ejs", {
+					works: works,
+					login: req.authState,
+					user: req.user,
+					dislike: dislike,
+					numDislike: arrWorksDislikeNum,
+					joins: joins,
+					host: set.host,
+					port: ((set.main)?'':':'+set.port),
+				});
+			});
 		});
         
 	});
@@ -249,8 +233,7 @@ app.route("/work/:workName")
 		}).then(function(work, err) {
 			if(err) console.error(err);
 			else {
-				dbdislike.searchWorksDisklike(work.id, function(result){
-					var numDislike = result.length;
+				dbdislike.getWorkDislikeNum(work.id, function(numDislike){
 					res.render("workpage.ejs", {
 						work: work,
 						numDislike: numDislike
