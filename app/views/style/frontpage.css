@@ -27,7 +27,7 @@ h2 {
 }
 .workname{
 	/*group name*/
-	display: block;
+	display: inline-block;
 }
 .workli a {
 	color: black;
@@ -38,9 +38,9 @@ h2 {
 	/*dislike*/
 	display: block;
 }
-.workli > a:nth-of-type(3){
-	/*participate*/
-	display: block;
-	float: right;
-	background-color: #444444;
+.workdislike {
+	font-weight: 900;
+	display: inline-block;
+	margin-left: 0.5em;
+	color: salmon;
 }

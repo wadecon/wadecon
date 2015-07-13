@@ -116,13 +116,13 @@ app.route("/")
 			var works = results[0];
 			var dislikes = results[1];
 			var joins = results[2];
-			dbdislikes.getWorksDislikesNum(works, function(arrWorksDislikeNum) {
+			dbdislikes.getWorksDislikesNum(works, function(arrWorksDislikesNum) {
 				res.render("frontpage.ejs", {
 					works: works,
 					login: req.authState,
 					user: req.user,
 					dislikes: dislikes,
-					numDislikes: arrWorksDislikes,
+					numDislikes: arrWorksDislikesNum,
 					joins: joins,
 					host: set.host,
 					port: ((set.main)?'':':'+set.port),
@@ -232,7 +232,7 @@ app.route("/join")
 	});
 
 app.route("/work/:workName")
-	.get(function(req, res){
+	.get(auth.inspect, function(req, res){
 		Works.findOne({
 			where: {
 				name: req.params.workName 
@@ -244,7 +244,10 @@ app.route("/work/:workName")
 					var numDislikes = result.length;
 					res.render("workpage.ejs", {
 						work: work,
-						numDislikes: numDislikes
+						numDislikes: numDislikes,
+						host: set.host,
+						port: ((set.main)?'':':'+set.port),
+						user: (req.authState)?req.user:null
 					});
 				});
 			}
@@ -314,7 +317,7 @@ io.on('connection', function (socket) {
 		} else socket.emit('namechecked', false);
 	});
 	
-	socket.on('client_update_dislikes',function(data){
+	socket.on('clientUpdateDislike',function(data){
 		async.waterfall([
 			function(cb){
 				dbdislikes.searchById(data.userId, data.workId, function(dislikes, err) {
@@ -332,12 +335,12 @@ io.on('connection', function (socket) {
 		],
 		function(err, result){
 			dbdislikes.searchUsersDislikes(data.userId, function(result){
-				socket.broadcast.emit('server_update',result);
-				socket.emit('server_update',result);
+				socket.broadcast.emit('serverUpdate',result);
+				socket.emit('serverUpdate',result);
 			});
 		});
 	});
-	socket.on('client_update_joins', function(data){
+	socket.on('clientUpdateJoin', function(data){
 		async.waterfall([
 			function(cb){
 				dbjoins.searchById(data.userId, data.workId, function(joins, err){
@@ -355,8 +358,8 @@ io.on('connection', function (socket) {
 		],
 		function(err, result){
 			dbjoins.searchUsersJoin(data.userId, function(result){
-				socket.broadcast.emit('server_update',result);
-				socket.emit('server_update',result);
+				socket.broadcast.emit('serverUpdate',result);
+				socket.emit('serverUpdate',result);
 			});
 		});
 	});
