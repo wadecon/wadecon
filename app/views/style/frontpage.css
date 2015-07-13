@@ -2,11 +2,16 @@ section {
 	padding: 3em;
 }
 h2 {
+	display: inline-block;
+}
+.sectionTitle {
 	padding: 0.2em;
 	border-bottom: 1px solid #dfdfdf;
 }
 #makeWork {
 	float: right;
+	font-size: 1.2em;
+	vertical-align: sub;
 }
 #workul{
 	padding: 5px;
@@ -23,8 +28,8 @@ h2 {
 	
 }
 .workli:hover {
-	transition: all 0.1s ease-out;
-	background-color: lightsalmon;
+	transition: all 0.15s ease-out;
+	background-color: #ffeade;
 	color: white;
 	
 }
@@ -42,7 +47,6 @@ h2 {
 	display: block;
 }
 .workdislike {
-	font-weight: 900;
 	display: inline-block;
 	margin-left: 0.5em;
 	color: salmon;

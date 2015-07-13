@@ -11,30 +11,28 @@
     </header>
 	<div class="contentBox maxWrapper">
         <div class="content">
-			<section>
+			<article>
 				<div id="workhead">
 					<h1><%= work.name %></h1>
 					<span id="buttons">
-						<button class="dislike" id="<%=work.id%>" dislikes=<%=numDislikes%>>싫어요 <%= numDislikes %></button>
+						<button class="dislike" id="<%=work.id%>" dislikes=<%=numDislikes%>>싫어요 <span class='hh'><%= numDislikes %></span></button>
 						<button class="joins" id="<%=work.id%>">참여</button>
 					</span>
 					<h2><%= work.desc %></h2>
 				</div>
-				<div>
+				<section id='readme' class='md'>
 					<h3>README.md</h3>
 					<%- include('../../public/workpage/'+work.name+'/front.html') %>
-				</div>
+				</section>
 				<div>
 					<!--group participants-->
 				</div>
-				<div>
+				<section id='needs' class='md'>
 					<h3>이런 사람 와라</h3>
 					<%- include('../../public/workpage/'+work.name+'/needs.html') %>
-				</div>
-			</section>
-			<section>
+				</section>
 				<!--print group Q&A-->
-			</section>
+			</article>
 		</div>
 	</div>
 	<footer>

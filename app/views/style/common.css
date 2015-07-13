@@ -14,6 +14,11 @@
     url('/fonts/wadecon.woff') format('woff');
     font-weight: 900;
 }
+@font-face {
+    font-family: 'HemiHead';
+    src: url('/fonts/HemiHead.woff') format('woff');
+    font-weight: 600;
+}
 a {
     color: skyblue;
     padding: 0 0.2em;
@@ -83,6 +88,10 @@ h3 {
 .thin {
     font-family: 'NotoSansThin', sans-serif;
     font-weight: 100;
+}
+.hh {
+    font-family: 'HemiHead', sans-serif;
+    font-weight: 600;
 }
 p {
     display: block;

@@ -13,13 +13,15 @@
                     <% include ./style/frontpage.css %>
                 </style>
                 <section id="openedWorks">
-                    <h2>공작 일람</h2>
-                    <button id="makeWork">공작 모의</button>
+                    <div class='sectionTitle'>
+                        <h2>공작 일람</h2>
+                        <a href='/makework'><button id="makeWork">공작 모의</button></a>
+                    </div>
                     <ul id="workul">
                         <% if ( works != null ) {
                             for( var i = 0; i < works.length; i++) { %>
                             <a href="work/<%= encodeURIComponent(works[i].name)%>"><li class='workli'>
-                                <div class='workname black'><%= works[i].name %></div><div class='workdislike'><%= numDislikes[i] %></div>
+                                <div class='workname black'><%= works[i].name %></div><div class='workdislike hh'><%= numDislikes[i] %></div>
                                 <div class='workdesc'><%= works[i].desc %></div></a>
                             </li>
                             <% }
