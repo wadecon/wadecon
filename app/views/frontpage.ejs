@@ -2,33 +2,37 @@
 <% include ./templates/head.ejs %>
 <body>
     <% include ./templates/header.ejs %>
-    <% if(!login) { %>
-        <% include ./templates/intro.ejs %>
-    <% } else { %>
-    <section id="createWork">
-        <form action="/" method="post">
-            <div>제목:</div>
-            <input type="text" name="name">
-            <div>목적:</div>
-            <input type="text" name="desc">
-            <input type="submit">
-        </form>
-    </section>
-    <section id="openedWorks">
-        <!--works go here-->
-        <ul>
-            <% for( var i = 0; i < works.length; i++) { %>
-            <li>
-                <a href="work/<%=works[i].id%>/<%= works[i].name %>"><%= works[i].name %></a>
-                <div><%= works[i].desc %></div>
-            </li>
+    <div class="contentBox maxWrapper">
+        <div class="content">
+            <% if(!login) { %>
+                <% include ./templates/intro.ejs %>
+            <% } else { %>
+                <section id="createWork">
+                    <form action="/" method="post">
+                        <div>제목:</div>
+                        <input type="text" name="name">
+                        <div>목적:</div>
+                        <input type="text" name="desc">
+                        <input type="submit">
+                    </form>
+                </section>
+                <section id="openedWorks">
+                    <!--works go here-->
+                    <ul>
+                        <% for( var i = 0; i < works.length; i++) { %>
+                            <li>
+                                <a href="work/<%=works[i].id%>/<%= works[i].name %>"><%= works[i].name %></a>
+                                <div><%= works[i].desc %></div>
+                            </li>
+                        <% } %>
+                    </ul>
+                </section>
+                <section id="joinedWorks">
+                    <!--user specific work-->
+                </section>
             <% } %>
-        </ul>
-    </section>
-    <section id="joinedWorks">
-        <!--user specific work-->
-    </section>
-    <% } %>
+        </div>
+    </div>
     <% include ./templates/footer.ejs %>
 </body>
 </html>

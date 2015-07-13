@@ -14,24 +14,35 @@
     url('/fonts/wadecon.woff') format('woff');
     font-weight: 900;
 }
-.maxWrapper {
-    width: 100%;
-    max-width: 960px;
-    margin: 0 auto;
-}
-.contentBox {
-    height: 100%;
-    margin: -90px auto -100px;
-}
-.content {
-    padding: 90px 0 100px;
-}
 a {
     color: skyblue;
     padding: 0 0.2em;
 }
 a:hover {
     color: lightblue;
+}
+::selection {
+  background:#000;
+  color: #FFF;
+  text-shadow: none;
+}
+input, button {
+    outline: none;
+}
+.maxWrapper {
+    width: 100%;
+    max-width: 960px;
+    margin: 0 auto;
+}
+.contentBox {
+    min-height: 100%;
+    margin: -90px auto -100px;
+}
+.content {
+    padding: 90px 0 100px;
+}
+.maincon {
+    padding: 5em 0;
 }
 
 html {
@@ -43,4 +54,35 @@ html {
 body {
     background-color: #f5f5f5;
     height: 100%;
+}
+h1 {
+    font-family: 'NotoSansBlack', sans-serif;
+    font-weight: 900;
+    font-size: 2.6em;
+}
+p {
+    display: block;
+    word-break: keep-all;
+    word-wrap: break-word;
+    margin: 1em 0;
+    font-family: 'NotoSansThin', sans-serif;
+    font-weight: 100;
+    font-size: 1.6em;
+    line-height: 1.5em;
+}
+button {
+    font-family: 'NotoSansBlack', sans-serif;
+    font-weight: 900;
+    border-radius: 2px;
+    display: inline-block;
+    background-color: salmon;
+    color: white;
+    cursor: pointer;
+    border: none;
+}
+button:hover {
+    background-color: lightsalmon;
+}
+button:active {
+    background-color: darksalmon;
 }

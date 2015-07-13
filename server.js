@@ -116,40 +116,57 @@ app.route("/join")
 	})
 	.post(function(req, res) {
 		console.log(req.body);
-		Users.findOne({ // 해당 닉네임 있는지 확인
-			where: {
-				nickname: req.body.nickname
-		}}).then(function(user, err) {
-			if(err) console.error(err);
-			if(!user) { // 가능한 닉네임
-				Users.findOne({
-					fbId: req.user.fbId, // 현재 세션의 페이스북 uid로 찾는다
-				}).then(function(user, err) {
-					if(err) console.error(err);
-					else if(!user){ // 그 세션의 uid에 해당하는 게 등록 안되어있음 (이상한 케이스)
-						res.redirect('/');
-					} else {
-						user.updateAttributes({ // 찾은 유저정보에서 닉네임을 받은 닉네임으로 바꿔준다
-							nickname: req.body.nickname
-						}).then(function(user, err) {
-							if(err) {
-								console.error(err);
-								res.status(500).end();
-							}
-							else {
-								console.log("유저 생성 :".cyan, user.name);
-								res.status(201).end();
-							}
-						});
-					}
-				});
-			} else {
-				// 이미 존재하는 닉네임
-				res.status(409).end();
-			}
-		})
+		if(req.body.nickname) {
+			Users.findOne({ // 해당 닉네임 있는지 확인
+				where: {
+					nickname: req.body.nickname
+			}}).then(function(user, err) {
+				if(err) console.error(err);
+				else if(!user) { // 가능한 닉네임
+					Users.findOne({
+						fbId: req.user.fbId, // 현재 세션의 페이스북 uid로 찾는다
+					}).then(function(user, err) {
+						if(err) console.error(err);
+						else if(!user){ // 그 세션의 uid에 해당하는 게 등록 안되어있음 (이상한 케이스)
+							res.redirect('/');
+						} else {
+							user.updateAttributes({ // 찾은 유저정보에서 닉네임을 받은 닉네임으로 바꿔준다
+								nickname: req.body.nickname
+							}).then(function(user, err) {
+								if(err) {
+									console.error(err);
+									res.send("500").end();
+								}
+								else {
+									console.log("유저 생성 :".cyan, user.name);
+									res.send("201").end();
+								}
+							});
+						}
+					});
+				} else {
+					// 이미 존재하는 닉네임
+					res.send("409").end();
+				}
+			});
+		} else res.send("400").end();
 	});
 
+// app.head("/user/:nickname", function(req, res) {
+// 	if(req.params.nickname) {
+// 		Users.findOne({ // 해당 닉네임 있는지 확인
+// 			where: {
+// 				nickname: req.body.params
+// 		}}).then(function(user, err) {
+// 			if(err) console.error(err);
+// 			else if(!user) { // 가능한 닉네임
+// 				res.status(200).end();
+// 			} else { // 이미 존재하는 닉네임
+// 				res.status(404).end();
+// 			}
+// 		});
+// 	} else res.send("400").end(); //부정 접근. 페이지 띄워주기
+// });
 
 app.route("/work/:workId/:workName")
 	.get(function(req, res){

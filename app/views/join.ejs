@@ -5,32 +5,65 @@
     <title>가입</title>
     <script src="/js/jquery-2.1.4.min.js"></script>
     <script>
+        // $('#nameField').change(function() {
+        //     var nick = $('#nameField').val();
+        //     if(nick.trim() === "") {
+        //         $('#status').text("1~256자").css('color', 'gray');
+        //     } else {
+        //         $.ajax({
+        //             type: "HEAD",
+        //             async: true,
+        //             url: '/user/'+nick,
+        //             statusCode: {
+        //                 200: function() {
+        //                     $('#status').text("○").css('color', 'green');
+        //                 },
+        //                 404: function() {
+        //                      $('#status').text("선점됨!").css('color', 'red');
+        //                 }
+        //             }
+        //         }).done(function(msg, text) {
+        //             console.log(msg, text);
+        //         });
+        //     }
+        // });
        function register() {
-           $.post('/join', {nickname: $('#nameField').val()}, function(data, status) {
-               console.log(data, status);
-               switch(status) {
+           $.post('/join', {nickname: $('#nameField').val()}, function(data) {
+               console.log(data);
+               switch(data) {
                    case 201: {
                        location.href='/';
                        break;
                    }
+                   case 400: {
+                        $('#status').text("ㅡㅡ;").css('color', 'red');
+                        break;
+                   }
                    case 409: {
-                        $('#status').text("이미 존재하는 닉네임!");
+                        $('#status').text("선점됨!").css('color', 'red');
                    }
                }
            });
        }
     </script>
     <% include ./templates/head.ejs %>
+    <style>
+        <% include ./style/join.css %>
+    </style>
 </head>
 <body>
     <% include ./templates/header.ejs %>
     <div class="maxWrapper contentBox">
         <div class="content">
-            <div><%=name%></div>
-            <img src="<%=picture%>" alt="" />
-            <input type="text" id="nameField" name="nickname" placeholder="닉네임">
-            <button id="register" onClick="register()">가입!</button><br>
-            <div id="status"></div>
+            <div class="maincon">
+                <section>
+                    <h1>안녕, <%=name%></h1>
+                    <img src="<%=picture%>" id="profilePic" alt="" />
+                    <input type="text" id="nameField" name="nickname" placeholder="닉네임">
+                    <div id="status"></div>
+                    <button id="register" onClick="register()">가입!</button><br>
+                </section>
+            </div>
         </div>
     </div>
     <% include ./templates/footer.ejs %>
