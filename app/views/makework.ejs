@@ -8,6 +8,32 @@
     <link rel="stylesheet" href="//cdn.jsdelivr.net/editor/0.1.0/editor.css">
     <script src="/js/editor.js"></script>
     <script src="/js/marked.js"></script>
+    <script>
+        function post() {
+            $.post('/makework', {
+                    name: $('#nameField').val(),
+                    desc: $('#descField').val(),
+                    readme: readmeEditor.codemirror.getValue(),
+                    needs: needsEditor.codemirror.getValue()
+                }, function(data, status) {
+                console.log(data, status);
+                switch(status) {
+                    // 작업중
+                    case "201": {
+                        location.href='/';
+                        break;
+                    }
+                    case "400": {
+                         $('#status').text("ㅡㅡ;").css('color', 'red');
+                         break;
+                    }
+                    case "409": {
+                         $('#status').text("선점됨!").css('color', 'red');
+                    }
+                }
+            });
+        }
+    </script>
 </head>
 <body>
     <% include ./templates/header.ejs %>
@@ -31,7 +57,7 @@
                             <textarea id="readme" class="editor" name="readme" rows="8" cols="40"></textarea>
                         </div>
                         <script>
-                            var editor = new Editor({
+                            var readmeEditor = new Editor({
                                 element: document.getElementById('readme')
                             });
                             editor.render();
@@ -43,7 +69,7 @@
                             <textarea id="needs" class="editor" name="readme" rows="8" cols="40"></textarea>
                         </div>
                         <script>
-                            var editor = new Editor({
+                            var needsEditor = new Editor({
                                 element: document.getElementById('needs')
                             });
                             editor.render();

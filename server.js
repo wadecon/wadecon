@@ -92,25 +92,22 @@ app.route("/")
 				})
             }
         });
-	})
-	.post(function(req, res){
+	});
+	
+	//작업중
+app.post('/makework', auth.checkAuthState, function(req, res){
 		var workId = req.params.workId;
-		Works.findOrCreate({
-			where: {
+		Works.create({
 				name: req.body.name,
-				desc: req.body.desc
-			}
+				desc: req.body.desc,
+				frontboard: req.body.readme,
+				needs: req.body.needs
 		}).then(function(work, err) {
-			if(err) {
-				console.error(err);
-				console.log("이미있는 공작이다".cyan);
-				res.write("<script>alert('이미있는공작입니다')</script>");
-				res.redirect('/');
-			}
-	        else {
+			if(err) console.error(err);
+			else {
 				console.log("공작 생성 :".cyan, work.name);
-	            res.redirect('/');
-	        }
+	        	res.send(work.name);
+			}
 		});
 	});
 
@@ -177,12 +174,11 @@ app.route("/join")
 		} else res.send("400").end();
 	});
 
-app.route("/work/:workId/:workName")
+app.route("/work/:workName")
 	.get(function(req, res){
-		var workId = req.params.workId;
 		Works.findOne({
 			where: {
-				id: workId
+				name: req.params.workName 
 			}
 		}).then(function(work, err) {
 			if(err) console.error(err);
