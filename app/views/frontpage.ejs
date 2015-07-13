@@ -2,55 +2,57 @@
 <% include ./templates/head.ejs %>
 <body>
     <% include ./templates/header.ejs %>
-    <% if(!login) { %>
-        <% include ./templates/intro.ejs %>
-    <% } else { %>
-    <section id="createWork">
-        <form action="/" method="post">
-            <div>제목:</div>
-            <input type="text" name="name">
-            <div>목적:</div>
-            <input type="text" name="desc">
-            <input type="submit">
-        </form>
-    </section>
-    <section id="openedWorks">
-        <!--works go here-->
-        <ul>
-            <% for( var i = 0; i < works.length; i++) { %>
-            <li>
-                <a href="work/<%=works[i].id%>/<%= works[i].name %>"><%= works[i].name %></a>
-                <div><%= works[i].desc %></div>
-                <a class="dislike" href="" id=<%=works[i].id%>>싫어요</a>
-            </li>
+    <div class="contentBox maxWrapper">
+        <div class="content">
+            <% if(!login) { %>
+                <% include ./templates/intro.ejs %>
+            <% } else { %>
+                <section id="createWork">
+                    <form action="/" method="post">
+                        <div>제목:</div>
+                        <input type="text" name="name">
+                        <div>목적:</div>
+                        <input type="text" name="desc">
+                        <input type="submit">
+                    </form>
+                </section>
+                <section id="openedWorks">
+                    <!--works go here-->
+                    <ul>
+                        <% for( var i = 0; i < works.length; i++) { %>
+                            <li>
+                                <a href="work/<%=works[i].id%>/<%= works[i].name %>"><%= works[i].name %></a>
+                                <div><%= works[i].desc %></div>
+                                <a class="dislike" href="" id="<%=works[i].id%>">싫어요</a>
+                            </li>
+                        <% } %>
+                    </ul>
+                </section>
+                <section id="joinedWorks">
+                    <!--user specific work-->
+                </section>
+                <script>
+                    var socket = io.connect('http://<%=host%><%=port%>');
+                    $('a.dislike').click(function(){
+                        console.log("dislike emitted");
+                        var id = $(this).attr('id');
+                        socket.emit('client_update_dislike',{
+                            workId: id,
+                            <% if(user) { %>
+                            userId: <%=user.id%>
+                            <% } else { %>
+                            user: null
+                            <% } %>
+                        });
+                    });
+                    
+                    socket.on('server_update',function(data){
+                        // update view
+                    });
+                </script>
             <% } %>
-        </ul>
-    </section>
-    <section id="joinedWorks">
-        <!--user specific work-->
-    </section>
-    <% } %>
-    
-    <script>
-        var socket = io.connect('http://localhost:3000');
-        $('a.dislike').click(function(){
-            console.log("dislike emitted");
-            var id = $(this).attr('id');
-            socket.emit('client_update_dislike',{
-                workId: id,
-                <% if(user) { %>
-                userId: <%=user.id%>
-                <% } else { %>
-                user: null
-                <% } %>
-            });
-        });
-        
-        socket.on('server_update',function(data){
-            // update view
-        });
-    </script>
-    
+        </div>
+    </div>
     <% include ./templates/footer.ejs %>
 </body>
 </html>

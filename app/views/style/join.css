@@ -1,0 +1,39 @@
+#profilePic {
+    width: 60px;
+    height: 60px;
+    border-radius: 30px;
+    float: left;
+    margin: 20px;
+    margin-left: 0;
+}
+#register {
+    float: right;
+    padding: 0 2em;
+    margin-top: 3em;
+    height: 2.8em;
+    line-height: 2em;
+    font-size: 1em;
+}
+#status {
+    display: inline-block;
+    font-family: 'NotoSansBlack';
+    font-weight: 900;
+    font-size: 1.2em;
+}
+.maincon {
+    padding: 5em;
+}
+input[type=text] {
+    font-family: 'NotoSansBlack';
+    background-color: #fff;
+    border-radius: 3px;
+    color: #bbb;
+    border: 1px solid #eee;
+    font-size: 1.4em;
+    text-indent: 0.5em;
+    margin-top: 30px;
+}
+input[type=text]:focus {
+    color: #555;
+    border: 1px solid coral;
+}

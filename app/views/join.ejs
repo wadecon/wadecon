@@ -4,33 +4,85 @@
     <meta charset="UTF-8">
     <title>가입</title>
     <script src="/js/jquery-2.1.4.min.js"></script>
+    <script src="/js/socket.io-1.3.5.js"></script>
     <script>
+        var socket = io.connect('http://<%=host%><%=port%>');
+        var loadmsg = "으후루꾸꾸루";
+        var loading = false;
+        function load() {
+            if(loading) {
+                console.log("loading")
+                loadmsg = loadmsg.substr(1)+loadmsg[0];
+                $('#status').text(loadmsg);
+                setTimeout(load, 50);
+            }
+        }
+        function check() {
+            loading = false;
+            var nick = $('#nameField').val();
+            if(nick.trim() == '' || nick.trim().length > 256) $('#status').text('1~256자').css('color', 'gray');
+            else socket.emit('namecheck', nick);
+        }
+        var timeout;
+        socket.on('news', function (data) {
+            console.log(data);
+            $('#nameField').on('keyup keypress paste focus', function() {
+                console.log("ASD")
+                if(!loading) {
+                    loading = true;
+                    load();
+                }
+                $('#status').css('color', 'gray');
+                clearTimeout(timeout);
+                timeout = setTimeout(check, 400);
+            })
+            socket.on('namechecked', function (data) {
+                console.log(data);
+                loading = false;
+                if(data) {
+                    $('#status').text("사용가능").css('color', 'green');
+                } else {
+                    $('#status').text("선점됨!").css('color', 'red');
+                }
+            });
+        });
        function register() {
-           $.post('/join', {nickname: $('#nameField').val()}, function(data, status) {
-               console.log(data, status);
-               switch(status) {
-                   case 201: {
+           $.post('/join', {nickname: $('#nameField').val()}, function(data) {
+               console.log(data);
+               switch(data) {
+                   case "201": {
                        location.href='/';
                        break;
                    }
-                   case 409: {
-                        $('#status').text("이미 존재하는 닉네임!");
+                   case "400": {
+                        $('#status').text("ㅡㅡ;").css('color', 'red');
+                        break;
+                   }
+                   case "409": {
+                        $('#status').text("선점됨!").css('color', 'red');
                    }
                }
            });
        }
     </script>
     <% include ./templates/head.ejs %>
+    <style>
+        <% include ./style/join.css %>
+    </style>
 </head>
 <body>
     <% include ./templates/header.ejs %>
     <div class="maxWrapper contentBox">
         <div class="content">
-            <div><%=name%></div>
-            <img src="<%=picture%>" alt="" />
-            <input type="text" id="nameField" name="nickname" placeholder="닉네임">
-            <button id="register" onClick="register()">가입!</button><br>
-            <div id="status"></div>
+            <div class="maincon">
+                <section>
+                    <h1>안녕, <%=name%></h1>
+                    <img src="<%=picture%>" id="profilePic" alt="" />
+                    <input type="text" id="nameField" name="nickname" placeholder="닉네임" maxLength=256>
+                    <div id="status"></div>
+                    <button id="register" onClick="register()">가입!</button><br>
+                </section>
+            </div>
         </div>
     </div>
     <% include ./templates/footer.ejs %>
