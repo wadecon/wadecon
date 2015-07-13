@@ -126,6 +126,10 @@ module.exports = function(global) {
         workId: {
             type: DOMAIN.INT32,
             primaryKey: true
+        },
+        belongTo: {
+            type: DOMAIN.BOOLEAN,
+            allowNull: true
         }
     });
     Users.belongsToMany(Works, {foreignKey: 'userId', through: 'Dislike'});

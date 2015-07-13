@@ -76,12 +76,16 @@ app.route("/")
         Works.findAll().then(function(works, err) {
             if(err) console.error(err);
             else {
-                res.render("frontpage.ejs", {
-					works: works,
-					login: req.authState,
-					user: req.user,
-					host: set.host,
-					port: ((set.main)?'':':'+set.port)});
+				Dislike.findAll().then(function(dislike, err){
+						res.render("frontpage.ejs", {
+						works: works,
+						login: req.authState,
+						user: req.user,
+						dislike: dislike,
+						host: set.host,
+						port: ((set.main)?'':':'+set.port)
+					});
+				})
             }
         });
 	})
@@ -234,75 +238,82 @@ app.route("/user/:userNick")
 
 // sockets
 io.on('connection', function (socket) {
-  socket.emit('news', { hello: 'world' });
-  
-  socket.on('namecheck', function (data) {
-    console.log(data);
-	if(data) {
-		Users.findOne({ // 해당 닉네임 있는지 확인
+	socket.emit('news', { hello: 'world' });
+
+	socket.on('namecheck', function (data) {
+		console.log(data);
+		if(data) {
+			Users.findOne({ // 해당 닉네임 있는지 확인
 			where: {
 				nickname: data
-		}}).then(function(user, err) {
-			if(err) console.error(err);
-			else if(!user) { // 가능한 닉네임
-				socket.emit('namechecked', true);
-			} else { // 이미 존재하는 닉네임
-				socket.emit('namechecked', false);
+			}}).then(function(user, err) {
+				if(err) console.error(err);
+				else if(!user) { // 가능한 닉네임
+					socket.emit('namechecked', true);
+				} else { // 이미 존재하는 닉네임
+					socket.emit('namechecked', false);
+				}
+			});
+		} else socket.emit('namechecked', false);
+	});
+	
+	socket.on('client_update_dislike',function(data){
+		console.log("get socket request".red);
+		console.log("this is id of work".red, data.workId);
+		console.log("this is id of user".red, data.userId);
+		
+		async.waterfall([
+			function(cb){
+				Dislike.findOne({
+					where: {
+						userId: data.userId,
+						workId: data.workId
+					}
+				}).then(function(dislike, err) {
+					if(err) console.log(err);
+			
+					if(dislike != null){
+						cb(null, true, dislike);	
+					} else {
+						cb(null, false, dislike);
+					}
+				});
+			},
+			function(exist, dislike, cb){
+				if(exist){
+					Dislike.destroy({
+						where: {
+							userId: dislike.userId,
+							workId: dislike.workId
+						}
+					}).then(function(){
+						console.log("destroy dislike".red);
+						cb();
+					});
+				} else {
+					Dislike.create({
+						userId: data.userId,
+						workId: data.workId
+					}).then(function(){
+						console.log("create dislike".red);
+						cb();
+					});
+				}
 			}
+		],
+		function(err, result){
+			Dislike.findAll({
+				where: {
+					userId: data.userId
+				} 
+			}).then(function(result){
+				console.log("result of dislike table:".red+result[0].workId);
+				
+				socket.broadcast.emit('server_update',result);
+				socket.emit('server_update',result);
+			});
 		});
-	} else socket.emit('namechecked', false);
-  });
-  
-  socket.on('client_update_dislike',function(data){
-	  console.log("get socket request".red);
-	  console.log("this is id of work".red, data.workId);
-	  console.log("this is id of user".red, data.userId);
-	  
-	  async.waterfall([
-		  function(cb){
-			  Dislike.findOne({
-				  where: {
-					  userId: data.userId,
-					  workId: data.workId
-				  }
-			  }).then(function(dislike, err) {
-				  if(err) console.log(err);
-				  
-				  if(dislike != null){
-					  cb(null, true, dislike);	
-				  } else {
-					  cb(null, false, dislike);
-				  }
-			  });
-		  },
-		  function(exist, dislike, cb){
-			  if(exist){
-				  Dislike.destroy({
-					  where: {
-						  userId: dislike.userId,
-						  workId: dislike.workId
-					  }
-				  }).then(function(){
-					  console.log("destroy dislike".red);
-					  cb(null, null);
-				  });
-			  } else {
-				  Dislike.create({
-					  userId: data.userId,
-					  workId: data.workId
-				  }).then(function(){
-					  console.log("create dislike".red);
-					  cb(null, null);
-				  });
-			  }
-		  }
-	  ],
-	  function(err, result){
-		  socket.broadcast.emit('server_update',data);
-		  // socket.emit('server_update',data);	
-	  });
-	  
-  });
+	});
 });
 
 
