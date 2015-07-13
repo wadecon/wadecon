@@ -15,7 +15,10 @@
     font-size: 1em;
 }
 #status {
-    font-family: 'NotoSansThin';
+    display: inline-block;
+    font-family: 'NotoSansBlack';
+    font-weight: 900;
+    font-size: 1.2em;
 }
 .maincon {
     padding: 5em;

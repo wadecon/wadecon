@@ -2,6 +2,8 @@ var express = require("express");
 var app = express();
 
 // fucking dependencies
+var server = require('http').Server(app)
+var io = require('socket.io')(server);
 var bodyParser = require("body-parser");
 var cookieParser = require("cookie-parser");
 var session = require('express-session');
@@ -113,7 +115,9 @@ app.route("/join")
 				if(user.nickname == null)
 					res.render('join.ejs', {
 						name: req.user.name,
-						picture: req.user.picture
+						picture: req.user.picture,
+						host: set.host,
+						port: ((set.main)?'':':'+set.port)
 					});
 				else res.redirect('/'); //닉네임 이미 등록됨.
 			} else {
@@ -225,5 +229,29 @@ app.route("/user/:userNick")
 
 app.route("")
 
-app.listen(set.port || 8080);
+
+// sockets
+io.on('connection', function (socket) {
+  socket.emit('news', { hello: 'world' });
+  
+  socket.on('namecheck', function (data) {
+    console.log(data);
+	if(data) {
+		Users.findOne({ // 해당 닉네임 있는지 확인
+			where: {
+				nickname: data
+		}}).then(function(user, err) {
+			if(err) console.error(err);
+			else if(!user) { // 가능한 닉네임
+				socket.emit('namechecked', true);
+			} else { // 이미 존재하는 닉네임
+				socket.emit('namechecked', false);
+			}
+		});
+	} else socket.emit('namechecked', false);
+  });
+});
+
+
+server.listen(set.port || 8080);
 console.log((set.host+":"+(set.port || 8080)).cyan+"에서 서버 시작".green);

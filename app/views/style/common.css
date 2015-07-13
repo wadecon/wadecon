@@ -22,7 +22,7 @@ a:hover {
     color: lightblue;
 }
 ::selection {
-  background:#000;
+  background:#coral;
   color: #FFF;
   text-shadow: none;
 }
