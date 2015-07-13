@@ -360,7 +360,7 @@ io.on('connection', function (socket) {
 
 //The 404 Route (ALWAYS Keep this as the last route)
 app.get('*', function(req, res){
-	res.send('404 not found', 404);
+	res.status(404).sendFile( __dirname+"/public/status/404NF.html");
 });
 
 
