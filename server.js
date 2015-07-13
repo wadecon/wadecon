@@ -8,6 +8,8 @@ var session = require('express-session');
 var path = require('path');
 var async = require('async');
 var UAParser = require('ua-parser-js');
+var md = require("node-markdown").Markdown;
+var fs = require("fs");
 
 require('colors');	// for fantastic debug
 
@@ -84,7 +86,12 @@ app.route("/")
 				desc: req.body.desc
 			}
 		}).then(function(work, err) {
-			if(err) console.error(err);
+			if(err) {
+				console.error(err);
+				console.log("이미있는 공작이다".cyan);
+				res.write("<script>alert('이미있는공작입니다')</script>");
+				res.redirect('/');
+			}
 	        else {
 				console.log("공작 생성 :".cyan, work.name);
 	            res.redirect('/');
@@ -152,26 +159,9 @@ app.route("/join")
 		} else res.send("400").end();
 	});
 
-// app.head("/user/:nickname", function(req, res) {
-// 	if(req.params.nickname) {
-// 		Users.findOne({ // 해당 닉네임 있는지 확인
-// 			where: {
-// 				nickname: req.body.params
-// 		}}).then(function(user, err) {
-// 			if(err) console.error(err);
-// 			else if(!user) { // 가능한 닉네임
-// 				res.status(200).end();
-// 			} else { // 이미 존재하는 닉네임
-// 				res.status(404).end();
-// 			}
-// 		});
-// 	} else res.send("400").end(); //부정 접근. 페이지 띄워주기
-// });
-
 app.route("/work/:workId/:workName")
 	.get(function(req, res){
 		var workId = req.params.workId;
-		var workName = req.params.workName;
 		Works.findOne({
 			where: {
 				id: workId
@@ -185,10 +175,47 @@ app.route("/work/:workId/:workName")
 		});
 	})
 	.post(function(req, res){
+		var workId = req.params.workId;
 		
+		Works.findOne({
+			where: {
+				id: workId
+			}
+		}).then(function(work, err) {
+			if(err) console.error(err);
+			else {
+				fs.mkdir("./WorkPage/"+work.name, function(err){
+					console.log(err);
+					if (req.body.reqType == "md") {
+						var html = md(req.body.md);
+						fs.writeFile("./WorkPage/"+work.name+"/front.html", html, function(err){
+							if(err) console.log(err);
+							work.updateAttributes({
+								frontboard: "./WorkPage" + work.name + "/front.html"
+							}).then(function(work, err){
+								if(err) console.log(err);
+								res.redirect("/work/"+work.id+"/"+work.name);	
+							});
+						});
+					}
+					else if ( req.body.reqType == "need" ) {
+						var html = md(req.body.need)
+						fs.writeFile("./WorkPage/"+work.name+"/need.html", html, function(err){
+							if(err) console.log(err);
+							work.updateAttributes({
+								needs: "./WorkPage" + work.name + "/need.html"
+							}).then(function(work, err){
+								if(err) console.log(err);
+								res.redirect("/work/"+work.id+"/"+work.name);	
+							});
+						});
+					} 
+				});
+			}
+		});
 	});
 
-app.route("user/:userNick")
+app.route("/user/:userNick")
 	.get(function(req, res){
 		var userNick = req.parmas.userNick;
 	})
@@ -196,6 +223,7 @@ app.route("user/:userNick")
 		// edit user information
 	});
 
+app.route("")
 
 app.listen(set.port || 8080);
 console.log((set.host+":"+(set.port || 8080)).cyan+"에서 서버 시작".green);
