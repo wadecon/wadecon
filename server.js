@@ -35,6 +35,7 @@ app.use( express.static( __dirname + "/public" ));
 app.use(bodyParser.urlencoded({ extended: false }));
 
 // homemade modules
+var notice = require("./notice.js");
 var auth = require("./auth.js");
 auth.init(app);
 var passport = auth.getPassport();
@@ -335,7 +336,9 @@ io.on('connection', function (socket) {
 					userId: data.userId
 				} 
 			}).then(function(result){
-				console.log("result of dislike table:".red+result[0].workId);
+				if(result != null)	console.log("result of dislike table:".red+result[0].workId);
+				
+				notice.putNotice(data.userId, "fuck");
 				
 				socket.broadcast.emit('server_update',result);
 				socket.emit('server_update',result);
@@ -398,6 +401,7 @@ io.on('connection', function (socket) {
 				socket.emit('server_update',result);
 			});
 		});
+		
 	});
 });
 
