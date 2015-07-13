@@ -69,7 +69,7 @@ app.get('/makework', function(req, res){
 	})
 })
 app.route("/")
-	.get(auth.inspect, function(req, res){
+	.get(auth.inspect, function(req, res) {
 		var parser = new UAParser();
 		var ua = req.headers['user-agent'];
 		var browserName = parser.setUA(ua).getBrowser().name;
@@ -116,13 +116,7 @@ app.route("/")
 			var works = results[0];
 			var dislikes = results[1];
 			var joins = results[2];
-			async.forEachOf(works, function(work, key, callback) {
-				dbdislikes.searchWorksDislike(work.id,function(result){	
-					var numDislikes = result.length;
-					arrWorksDislikes[key] = numDislikes;
-					callback();
-				});
-			}, function(err) {
+			dbdislikes.getWorksDislikesNum(works, function(arrWorksDislikeNum) {
 				res.render("frontpage.ejs", {
 					works: works,
 					login: req.authState,
@@ -136,8 +130,6 @@ app.route("/")
 			});
 		});
 	});
-    
-});
 			
 	//작업중
 app.post('/makework', auth.checkAuthState, function(req, res){
@@ -248,7 +240,7 @@ app.route("/work/:workName")
 		}).then(function(work, err) {
 			if(err) console.error(err);
 			else {
-				dbdislikes.searchWorksDislike(work.id, function(result){
+				dbdislikes.searchWorksDislikes(work.id, function(result){
 					var numDislikes = result.length;
 					res.render("workpage.ejs", {
 						work: work,

@@ -1,3 +1,4 @@
+var async = require("async");
 function searchById(userId, workId, cb){
 	Dislikes.findOne({
 		where: {
@@ -22,6 +23,25 @@ function toggleTuple( dislikes, data, cb ){
 		}).then(cb);
 	}
 }
+function getWorksDislikesNum(works, callback){
+	var arrWorksDislike = [];
+	async.forEachOf(works, function(work, key, callback) {
+		dbdislikes.searchWorksDislike(work.id,function(result){	
+			var numDislikes = result.length;
+			arrWorksDislikes[key] = numDislikes;
+			callback();
+		});
+	}, function(err) {
+		callback( arrWorksDislike );
+	});
+}
+function getWorkDislikesNum( workId, cb ){
+	searchWorksDislike( workId, function(result){
+		var numDislike = result.length;
+		cb(numDislike);
+	});
+}
+
 function searchUsersDislikes( userId, cb ){
 	Dislikes.findAll({
 		where: {
@@ -41,5 +61,7 @@ module.exports = {
 	searchById: searchById,
 	toggleTuple: toggleTuple,
 	searchUsersDislikes: searchUsersDislikes,
-	searchWorksDislikes: searchWorksDislikes
+	searchWorksDislikes: searchWorksDislikes,
+	getWorkDislikesNum: getWorkDislikesNum,
+	getWorksDislikesNum: getWorksDislikesNum
 }
