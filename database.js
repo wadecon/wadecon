@@ -74,7 +74,7 @@ module.exports = function(global) {
             allowNull: false
         }, //plain text
         needs: {
-            type: DOMAIN.MIDDLE_CHAR,
+            type: DOMAIN.URL,
             allowNull: true
         }, //path
         dislike:{

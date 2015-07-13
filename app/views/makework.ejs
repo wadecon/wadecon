@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <title>공작 모의</title>
+    <script src="/js/jquery-2.1.4.min.js"></script>
+    <% include ./templates/head.ejs %>
+    <style>
+        <% include ./style/makework.css %>
+    </style>
+    <link rel="stylesheet" href="//cdn.jsdelivr.net/editor/0.1.0/editor.css">
+    <script src="/js/editor.js"></script>
+    <script src="/js/marked.js"></script>
+</head>
+<body>
+    <% include ./templates/header.ejs %>
+    <div class="maxWrapper contentBox">
+        <div class="content">
+            <div class="maincon">
+                <section>
+                    <h1>공작을 모의하자</h1>
+                    <h2>모든 분야의 프로젝트, 이벤트, 공작, 파괴, 난동</h2>
+                    <div class='field'>
+                        <span class='tag'>제목</span>
+                        <input type="text" id="nameField" name="name" placeholder="1-64자의 제목" maxLength=64>
+                    </div>
+                    <div class='field'>
+                        <span class='tag'>한 줄 설명</span>
+                        <input type="text" id="descField" name="desc" placeholder="1-141자" maxLength=141>
+                    </div>
+                    <div class='field'>
+                        <span class='tag'>README.md</span>
+                        <div class="editor-wrapper">
+                            <textarea id="readme" class="editor" name="readme" rows="8" cols="40"></textarea>
+                        </div>
+                        <script>
+                            var editor = new Editor({
+                                element: document.getElementById('readme')
+                            });
+                            editor.render();
+                        </script>
+                    </div>
+                    <div class='field'>
+                        <span class='tag'>이런 사람 와라</span>
+                        <div class="editor-wrapper">
+                            <textarea id="needs" class="editor" name="readme" rows="8" cols="40"></textarea>
+                        </div>
+                        <script>
+                            var editor = new Editor({
+                                element: document.getElementById('needs')
+                            });
+                            editor.render();
+                        </script>
+                    </div>
+                    <button id="post" onClick="post()">등록!</button>
+                </section>
+            </div>
+        </div>
+    </div>
+    <% include ./templates/footer.ejs %>
+</body>
+</html>

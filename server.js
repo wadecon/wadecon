@@ -59,7 +59,9 @@ app.get('/logout', function(req, res){
     req.logout();
     res.redirect('/');
 });
-
+app.get('/makework', function(req, res){
+	res.render('makework.ejs')
+})
 app.route("/")
 	.get(auth.inspect, function(req, res){
 		var parser = new UAParser();
