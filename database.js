@@ -8,6 +8,7 @@ module.exports = function(global) {
         LONG_CHAR   : Sqlize.STRING(256),
         URL         : Sqlize.STRING(64),
         INT32       : Sqlize.INTEGER(32),
+        INT         : Sqlize.INTEGER,
         BOOLEAN     : Sqlize.BOOLEAN,
         DATE        : Sqlize.DATE
     };  // domain macros
@@ -170,6 +171,21 @@ module.exports = function(global) {
     Users.belongsToMany(Badges, {foreignKey: 'userId', through: 'BadgeMaps'});
     Badges.belongsToMany(Users, {foreignKey: 'badgeId', through: 'BadgeMaps'});
 
+    Notices = sqlize.define('Notices', {
+        userId: {
+            type: DOMAIN.INT32
+        },
+        msgId:{
+            type: DOMAIN.INT,
+            primaryKey: true,
+            autoIncrement: true
+        },
+        msg: {
+            type: DOMAIN.MIDDLE_CHAR,
+            allowNull: false
+        }
+    });
+    Notices.hasMany(Users, {foreignKey: 'userId'});
     
     //DB 싱크 : 테이블 없으면 생성 그리고 동기화
     Users.sync();
@@ -179,6 +195,7 @@ module.exports = function(global) {
     Dislike.sync();
     Joins.sync();
     BadgeMaps.sync();
+    Notices.sync();
     // Users.sync({force: true});
     // Works.sync({force: true});
     // Badges.sync({force: true});
