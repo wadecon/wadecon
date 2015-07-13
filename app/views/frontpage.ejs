@@ -18,7 +18,7 @@
                         <% if ( works != null ) {
                             for( var i = 0; i < works.length; i++) { %>
                             <a href="work/<%= encodeURIComponent(works[i].name)%>"><li class='workli'>
-                                <div class='workname black'><%= works[i].name %></div>
+                                <div class='workname black'><%= works[i].name %></div><div class='workdislike'><%= numDislikes[i] %></div>
                                 <div class='workdesc'><%= works[i].desc %></div></a>
                             </li>
                             <% }

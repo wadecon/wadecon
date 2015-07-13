@@ -15,7 +15,7 @@
 				<div id="workhead">
 					<h1><%= work.name %></h1>
 					<span id="buttons">
-						<button class="dislike" id="<%=work.id%>">싫어요 <%= numDislikes %></button>
+						<button class="dislike" id="<%=work.id%>" dislikes=<%=numDislikes%>>싫어요 <%= numDislikes %></button>
 						<button class="joins" id="<%=work.id%>">참여</button>
 					</span>
 					<h2><%= work.desc %></h2>
@@ -28,7 +28,7 @@
 					<!--group participants-->
 				</div>
 				<div>
-					<h3>README.md</h3>
+					<h3>이런 사람 와라</h3>
 					<%- include('../../public/workpage/'+work.name+'/needs.html') %>
 				</div>
 			</section>
@@ -41,10 +41,35 @@
         <% include ./templates/footer.ejs %>
     </footer>
 	<script>
+		var socket = io.connect('http://<%=host%><%=port%>');
+		var disliked = false;
+		$('.dislike').click(function(){
+			console.log("dislike emitted");
+			var id = $(this).attr('id');
+			socket.emit('clientUpdateDislike', {
+				workId: <%=work.id%>,
+				<% if(user) { %>
+				userId: <%=user.id%>
+				<% } else { %>
+				user: null
+				<% } %>
+			});
+		});
+		$('.joins').click(function(){
+			console.log("joins emitted");
+			var id = $(this).attr('id');
+			socket.emit('clientUpdateJoin',{
+				workId: <%=work.id%>,
+				<% if(user) { %>
+				userId: <%=user.id%>
+				<% } else { %>
+				user: null
+				<% } %>
+			});
+		});
 		
-		
-		socket.on('server_update',function(data){
-			// update client
+		socket.on('serverUpdate',function(data){
+			
 		});
 	</script>
 </body>
