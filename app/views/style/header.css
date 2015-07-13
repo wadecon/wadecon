@@ -1,5 +1,6 @@
 header {
     height: 90px;
+    min-width: 960px;
 }
 .logotype {
     font-family: wadecon;
