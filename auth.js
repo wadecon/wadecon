@@ -71,16 +71,16 @@ function checkAuthState(req, res, next) {
 
 function inspect(req, res, next) {
     req.authState = req.isAuthenticated();
-    if(req.authState) {
-        Users.findOne({
-            where: {
-                nickname: req.user.nickname
-        }}).then(function(user, err) {
-            if(err) console.log(err);
-            else if(user) return next();
-            else res.redirect('/join');
-        });
-    } else return next();
+    // if(req.authState) {
+    //     Users.findOne({
+    //         where: {
+    //             nickname: req.user.nickname
+    //     }}).then(function(user, err) {
+    //         if(err) console.log(err);
+    /*         else if(user)*/ return next();
+    //         else res.redirect('/join');
+    //     });
+    // } else return res.redirect('/');
 }
 
 module.exports = {

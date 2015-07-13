@@ -22,8 +22,8 @@
                     <ul id="workul">
                         <% if ( works != null ) {
                             for( var i = 0; i < works.length; i++) { %>
-                            <li class="workli">
-                                <a href="work/<%=works[i].id%>/<%= works[i].name %>"><%= works[i].name %></a>
+                            <li class='workli'>
+                                <a href="work/<%= encodeURIComponent(works[i].name) %>"><%= works[i].name %></a>
                                 <div><%= works[i].desc %></div>
                                 <a class="dislike" href="" id="<%=works[i].id%>">
                                     <%

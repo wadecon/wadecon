@@ -113,7 +113,7 @@ app.route("/")
 				dislike: dislike,
 				joins: joins,
 				host: set.host,
-				port: ((set.main)?'':':'+set.port)
+				port: ((set.main)?'':':'+set.port),
 			});
 		});
         
@@ -146,7 +146,10 @@ app.post('/makework', auth.checkAuthState, function(req, res){
 					}
 				], function(err, results) {
 					if(err) console.error(err);
-					else res.send({code: 201, url: '/work/'+work.name});
+					else {
+						console.log("공작 생성 리스폰스");
+						res.send({code: 201, url: '/work/'+encodeURIComponent(work.name)});
+					}
 				});
 			});
 		}
@@ -178,7 +181,7 @@ app.route("/join")
 			}
 		})
 	})
-	.post(function(req, res) {
+	.post(auth.checkAuthState, function(req, res) {
 		console.log(req.body);
 		if(req.body.nickname) {
 			Users.findOne({ // 해당 닉네임 있는지 확인
