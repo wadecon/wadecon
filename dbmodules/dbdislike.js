@@ -29,9 +29,17 @@ function searchUsersDislike( userId, cb ){
 		} 
 	}).then(cb);
 }
+function searchWorksDisklike( workId, cb){
+	Dislike.findAll({
+		where:{
+			workId: workId
+		}
+	}).then(cb);
+}
 
 module.exports = {
 	searchById: searchById,
 	toggleTuple: toggleTuple,
-	searchUsersDislike: searchUsersDislike
+	searchUsersDislike: searchUsersDislike,
+	searchWorksDisklike: searchWorksDisklike
 }

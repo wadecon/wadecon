@@ -19,10 +19,9 @@ require('colors');	// for fantastic debug
 app.use(cookieParser());
 app.use(session({ secret: "secret" }));
 
-
 var set = require('./setting.json');
-var options = process.argv;
 
+var options = process.argv;
 for( num in options){
 	if(options[num] == "--port" || options[num] == "-p"){
 		set.port = options[Number(num)+1];
@@ -109,15 +108,34 @@ app.route("/")
 			}
 		],
 		function(works, dislike, joins){
-			res.render("frontpage.ejs", {
-				works: works,
-				login: req.authState,
-				user: req.user,
-				dislike: dislike,
-				joins: joins,
-				host: set.host,
-				port: ((set.main)?'':':'+set.port),
-			});
+			var arrWorksDislike = [];
+			for( var i = 0; i < works.length; i++){
+				(function(i){
+					async.waterfall([
+						function(cb){
+							dbdislike.searchWorksDisklike(works[i].id,function(result){	
+								var numDislike = result.length;
+								arrWorksDislike[i] = numDislike ;
+								cb();
+							});
+						}
+					],
+					function(err, result){
+						if( i == works.length-1 ){
+							res.render("frontpage.ejs", {
+								works: works,
+								login: req.authState,
+								user: req.user,
+								dislike: dislike,
+								numDislike: arrWorksDislike,
+								joins: joins,
+								host: set.host,
+								port: ((set.main)?'':':'+set.port),
+							});
+						}
+					})
+				})(i);
+			}
 		});
         
 	});
@@ -231,8 +249,13 @@ app.route("/work/:workName")
 		}).then(function(work, err) {
 			if(err) console.error(err);
 			else {
-				console.log("공작 조회 :".cyan, work.name);
-				res.render("workpage.ejs", {work: work});
+				dbdislike.searchWorksDisklike(work.id, function(result){
+					var numDislike = result.length;
+					res.render("workpage.ejs", {
+						work: work,
+						numDislike: numDislike
+					});
+				});
 			}
 		});
 	})

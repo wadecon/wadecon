@@ -29,9 +29,17 @@ function searchUsersJoin( userId, cb ){
 		} 
 	}).then(cb);
 }
+function searchWorksJoin( workId, cb){
+	Joins.findAll({
+		where:{
+			workId: workId
+		}
+	}).then(cb);
+}
 
 module.exports = {
 	searchById: searchById,
 	toggleTuple: toggleTuple,
-	searchUsersJoin: searchUsersJoin
+	searchUsersJoin: searchUsersJoin,
+	searchWorksJoin: searchWorksJoin
 }
