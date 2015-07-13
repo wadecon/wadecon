@@ -358,6 +358,11 @@ io.on('connection', function (socket) {
 	});
 });
 
+//The 404 Route (ALWAYS Keep this as the last route)
+app.get('*', function(req, res){
+	res.send('404 not found', 404);
+});
+
 
 server.listen(set.port || 8080);
 console.log((set.host+":"+(set.port || 8080)).cyan+"에서 서버 시작".green);
