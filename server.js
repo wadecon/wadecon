@@ -35,7 +35,8 @@ app.use( express.static( __dirname + "/public" ));
 app.use(bodyParser.urlencoded({ extended: false }));
 
 // homemade modules
-var notice = require("./notice.js");
+var notice = require("./dbmodules/notice.js");
+var users = require("./dbmodules/users.js");
 var auth = require("./auth.js");
 auth.init(app);
 var passport = auth.getPassport();
@@ -284,10 +285,7 @@ io.on('connection', function (socket) {
 	socket.on('namecheck', function (data) {
 		console.log(data);
 		if(data) {
-			Users.findOne({ // 해당 닉네임 있는지 확인
-			where: {
-				nickname: data
-			}}).then(function(user, err) {
+			users.searchByNickname(data, function(user, err) {
 				if(err) console.error(err);
 				else if(!user) { // 가능한 닉네임
 					socket.emit('namechecked', true);
@@ -295,6 +293,17 @@ io.on('connection', function (socket) {
 					socket.emit('namechecked', false);
 				}
 			});
+			// Users.findOne({ // 해당 닉네임 있는지 확인
+			// where: {
+			// 	nickname: data
+			// }}).then(function(user, err) {
+			// 	if(err) console.error(err);
+			// 	else if(!user) { // 가능한 닉네임
+			// 		socket.emit('namechecked', true);
+			// 	} else { // 이미 존재하는 닉네임
+			// 		socket.emit('namechecked', false);
+			// 	}
+			// });
 		} else socket.emit('namechecked', false);
 	});
 	
@@ -350,7 +359,6 @@ io.on('connection', function (socket) {
 			}).then(function(result){
 				if(result != null)	console.log("result of dislike table:".red+result[0].workId);
 				
-				notice.putNotice(data.userId, "fuck");
 				
 				socket.broadcast.emit('server_update',result);
 				socket.emit('server_update',result);
