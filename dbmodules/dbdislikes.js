@@ -24,15 +24,15 @@ function toggleTuple( dislikes, data, cb ){
 	}
 }
 function getWorksDislikesNum(works, callback){
-	var arrWorksDislike = [];
+	var arrWorksDislikes = [];
 	async.forEachOf(works, function(work, key, callback) {
-		searchWorksDislike(work.id,function(result){	
+		searchWorksDislikes(work.id,function(result){	
 			var numDislikes = result.length;
 			arrWorksDislikes[key] = numDislikes;
 			callback();
 		});
 	}, function(err) {
-		callback( arrWorksDislike );
+		callback(arrWorksDislikes);
 	});
 }
 function getWorkDislikesNum( workId, cb ){
