@@ -26,7 +26,7 @@ function toggleTuple( dislikes, data, cb ){
 function getWorksDislikesNum(works, callback){
 	var arrWorksDislike = [];
 	async.forEachOf(works, function(work, key, callback) {
-		dbdislikes.searchWorksDislike(work.id,function(result){	
+		searchWorksDislike(work.id,function(result){	
 			var numDislikes = result.length;
 			arrWorksDislikes[key] = numDislikes;
 			callback();
