@@ -2,6 +2,13 @@ header {
     height: 90px;
     min-width: 960px;
 }
+a {
+    text-decoration: none;
+    color: black;
+}
+a:hover {
+    color: #444;
+}
 .logotype {
     font-family: wadecon;
     letter-spacing: -0.09em;

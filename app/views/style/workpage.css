@@ -1,9 +1,21 @@
-section {
+article {
+	margin: 1em;
 	padding: 1.5em;
+	background-color: #fff;
+	border-radius: 5px;
+	border-bottom: 3px solid #ddd;
 }
 h1 {
     font-size: 2em;
     display: inline-block;
+}
+h3 {
+	font-size: 1.9em;
+	border-bottom: 1px solid #dfdfdf;
+	margin-bottom: 0.2em;
+}
+.md {
+	font-size: 0.8em;
 }
 #buttons {
     padding-left: 1em;
