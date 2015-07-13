@@ -50,8 +50,8 @@ module.exports = function(global) {
             allowNull: false
         }, //실제 이름
         picture: DOMAIN.URL, //path
-        selfBoost: {
-            type: DOMAIN.MIDDLE_CHAR,
+        bio: {
+            type: DOMAIN.URL,
             allowNull: true
         },
         karma: { //업보
