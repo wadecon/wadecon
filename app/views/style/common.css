@@ -48,7 +48,7 @@ input, button {
 html {
     background-color: lightsalmon;
     box-shadow: 0 0 20px #444;
-    height: 100%;
+    min-height: 100%;
     min-height: 500px;
 }
 body {
