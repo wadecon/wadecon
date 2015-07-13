@@ -10,6 +10,7 @@ a:hover {
     color: #444;
 }
 .logotype {
+    display: inline-block;
     font-family: wadecon;
     letter-spacing: -0.09em;
     font-size: 1.8em;

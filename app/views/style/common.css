@@ -119,3 +119,15 @@ button:hover {
 button:active {
     background-color: darksalmon;
 }
+
+#notice{
+    position: sticky;
+    right: 10px;
+    display: inline-block;
+}
+#user{
+    position: sticky;
+    right: 20px;
+    display: inline-block;
+    margin: 0;
+}
