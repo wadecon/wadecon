@@ -23,9 +23,9 @@
             if(nick.trim() == '' || nick.trim().length > 256) $('#status').text('1~256자').css('color', 'gray');
             else socket.emit('namecheck', nick);
         }
+        
         var timeout;
-        socket.on('news', function (data) {
-            console.log(data);
+        socket.on('news', function () {
             $('#nameField').on('keyup keypress paste focus', function() {
                 console.log("ASD")
                 if(!loading) {

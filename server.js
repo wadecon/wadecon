@@ -303,6 +303,7 @@ app.route("/user/:userNick")
 
 // sockets
 io.on('connection', function (socket) {
+	socket.emit('news', {});
 	socket.on('namecheck', function (data) {
 		console.log(data);
 		if(data) {
