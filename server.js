@@ -75,21 +75,44 @@ app.route("/")
 			res.end("<script>location.href='https://www.google.com/chrome/browser/desktop/index.html';</script>");
 		}
 
-        Works.findAll().then(function(works, err) {
-            if(err) console.error(err);
-            else {
+		async.waterfall([
+			function(cb){
+				Works.findAll().then(function(works, err) {
+		            if(err) console.error(err);
+		            else {
+						cb(null, works);
+		            }
+		        });
+			},
+			function(works, cb){
 				Dislike.findAll().then(function(dislike, err){
-						res.render("frontpage.ejs", {
-						works: works,
-						login: req.authState,
-						user: req.user,
-						dislike: dislike,
-						host: set.host,
-						port: ((set.main)?'':':'+set.port)
-					});
-				})
-            }
-        });
+					if(err)	console.error(err);
+					else{
+						cb(null, works, dislike);
+					}
+				});
+			},
+			function(works, dislike, cb){
+				Joins.findAll().then(function(joins, err){
+					if(err) console.error(err);
+					else{
+						cb(works, dislike, joins);
+					}
+				});
+			}
+		],
+		function(works, dislike, joins){
+			res.render("frontpage.ejs", {
+				works: works,
+				login: req.authState,
+				user: req.user,
+				dislike: dislike,
+				joins: joins,
+				host: set.host,
+				port: ((set.main)?'':':'+set.port)
+			});
+		});
+        
 	})
 	.post(function(req, res){
 		var workId = req.params.workId;
@@ -260,7 +283,7 @@ io.on('connection', function (socket) {
 	});
 	
 	socket.on('client_update_dislike',function(data){
-		console.log("get socket request".red);
+		console.log("get socket dislike request".red);
 		console.log("this is id of work".red, data.workId);
 		console.log("this is id of user".red, data.userId);
 		
@@ -305,6 +328,63 @@ io.on('connection', function (socket) {
 		],
 		function(err, result){
 			Dislike.findAll({
+				where: {
+					userId: data.userId
+				} 
+			}).then(function(result){
+				console.log("result of dislike table:".red+result[0].workId);
+				
+				socket.broadcast.emit('server_update',result);
+				socket.emit('server_update',result);
+			});
+		});
+	});
+	socket.on('client_update_joins', function(data){
+		console.log("get socket joins request".red);
+		console.log("this is id of work".red, data.workId);
+		console.log("this is id of user".red, data.userId);
+		
+		async.waterfall([
+			function(cb){
+				Joins.findOne({
+					where: {
+						userId: data.userId,
+						workId: data.workId
+					}
+				}).then(function(dislike, err) {
+					if(err) console.log(err);
+			
+					if(dislike != null){
+						cb(null, true, dislike);	
+					} else {
+						cb(null, false, dislike);
+					}
+				});
+			},
+			function(exist, dislike, cb){
+				if(exist){
+					Joins.destroy({
+						where: {
+							userId: dislike.userId,
+							workId: dislike.workId
+						}
+					}).then(function(){
+						console.log("destroy dislike".red);
+						cb();
+					});
+				} else {
+					Joins.create({
+						userId: data.userId,
+						workId: data.workId
+					}).then(function(){
+						console.log("create dislike".red);
+						cb();
+					});
+				}
+			}
+		],
+		function(err, result){
+			Joins.findAll({
 				where: {
 					userId: data.userId
 				} 

@@ -18,7 +18,8 @@
                 </section>
                 <section id="openedWorks">
                     <ul>
-                        <% for( var i = 0; i < works.length; i++) { %>
+                        <% if ( works != null ) {
+                            for( var i = 0; i < works.length; i++) { %>
                             <li>
                                 <a href="work/<%=works[i].id%>/<%= works[i].name %>"><%= works[i].name %></a>
                                 <div><%= works[i].desc %></div>
@@ -37,8 +38,24 @@
                                         싫어요
                                     <% } %>
                                 </a>
+                                <a class="joins" href="" id="<%=works[i].id%>">
+                                    <%
+                                    var b = false;
+                                    for( var a in joins ) { 
+                                        if ( user.id == joins[a].userId && i+1 == joins[a].workId ) { 
+                                            b = true;
+                                            break;
+                                        }
+                                    } 
+                                    if( b == true ){ %>
+                                        참여
+                                    <% } else {%>
+                                        탈출
+                                    <% } %>
+                                </a>
                             </li>
-                        <% } %>
+                            <% }
+                        } %>
                     </ul>
                 </section>
                 <section id="joinedWorks">
@@ -58,19 +75,21 @@
                             <% } %>
                         });
                     });
+                    $('a.joins').click(function(){
+                        console.log("joins emitted");
+                        var id = $(this).attr('id');
+                        socket.emit('client_update_joins',{
+                            workId: id,
+                            <% if(user) { %>
+                            userId: <%=user.id%>
+                            <% } else { %>
+                            user: null
+                            <% } %>
+                        });
+                    });
                     
                     socket.on('server_update',function(data){
-                        
-                        // $('a.dislike').each(function(index){
-                        //     var id = $(this).attr('id');
-                            
-                        //     for( var a in data ){
-                                
-                        //         if( data[a].workId == id ){
-                        //             $(this).text("너가싫어하는것");
-                        //         }
-                        //     }
-                        // });
+                        // update client
                     });
                 </script>
             <% } %>
