@@ -295,7 +295,7 @@ io.on('connection', function (socket) {
 	socket.on('namecheck', function (data) {
 		console.log(data);
 		if(data) {
-			users.searchByNickname(data, function(user, err) {
+			dbusers.searchByNickname(data, function(user, err) {
 				if(err) console.error(err);
 				else if(!user) { // 가능한 닉네임
 					socket.emit('namechecked', true);
