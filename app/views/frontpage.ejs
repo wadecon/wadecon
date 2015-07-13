@@ -19,10 +19,10 @@
                     </form>
                 </section> -->
                 <section id="openedWorks">
-                    <ul>
+                    <ul id="workul">
                         <% if ( works != null ) {
                             for( var i = 0; i < works.length; i++) { %>
-                            <li>
+                            <li class='workli'>
                                 <a href="work/<%= encodeURIComponent(works[i].name) %>"><%= works[i].name %></a>
                                 <div><%= works[i].desc %></div>
                                 <a class="dislike" href="" id="<%=works[i].id%>">
