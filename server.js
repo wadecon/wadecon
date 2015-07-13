@@ -60,7 +60,9 @@ app.get('/logout', function(req, res){
     res.redirect('/');
 });
 app.get('/makework', function(req, res){
-	res.render('makework.ejs')
+	res.render('makework.ejs', {
+		pageTitle: '공작 모의'
+	})
 })
 app.route("/")
 	.get(auth.inspect, function(req, res){
@@ -125,6 +127,7 @@ app.route("/join")
 			else if(user) {
 				if(user.nickname == null)
 					res.render('join.ejs', {
+						pageTitle: '가입',
 						name: req.user.name,
 						picture: req.user.picture,
 						host: set.host,
