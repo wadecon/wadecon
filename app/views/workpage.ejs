@@ -6,7 +6,6 @@
 	</style>
 </head>
 <body>
-	<%= numDislike %>
 	<header>
         <% include ./templates/header.ejs %>
     </header>
@@ -16,7 +15,7 @@
 				<div id="workhead">
 					<h1><%= work.name %></h1>
 					<span id="buttons">
-						<button class="dislike" id="<%=work.id%>">싫어요</button>
+						<button class="dislike" id="<%=work.id%>">싫어요 <%= numDislikes %></button>
 						<button class="joins" id="<%=work.id%>">참여</button>
 					</span>
 					<h2><%= work.desc %></h2>

@@ -82,7 +82,7 @@ module.exports = function(global) {
             type: DOMAIN.URL,
             allowNull: true
         }, //path
-        dislike:{
+        dislikes:{
             type: DOMAIN.INT32,
             defaultValue: 0,
             allowNull: false
@@ -128,7 +128,7 @@ module.exports = function(global) {
     Users.belongsToMany(Works, {foreignKey: 'userId', through: 'Logs'});
     Works.belongsToMany(Users, {foreignKey: ['workId', 'name'], through: 'Logs'});
     
-    Dislike = sqlize.define('Dislike', {
+    Dislikes = sqlize.define('Dislikes', {
         userId: {
             type: DOMAIN.INT32,
             primaryKey: true
@@ -188,7 +188,7 @@ module.exports = function(global) {
     Works.sync();
     Badges.sync();
     Logs.sync();
-    Dislike.sync();
+    Dislikes.sync();
     Joins.sync();
     BadgeMaps.sync();
     Notices.sync();

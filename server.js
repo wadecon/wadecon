@@ -36,7 +36,7 @@ app.use(bodyParser.urlencoded({ extended: false }));
 // homemade modules
 var dbnotices = require("./dbmodules/dbnotices.js");
 var dbusers = require("./dbmodules/dbusers.js");
-var dbdislike = require("./dbmodules/dbdislike.js");
+var dbdislikes = require("./dbmodules/dbdislikes.js");
 var dbjoins = require("./dbmodules/dbjoins.js");
 
 var auth = require("./auth.js");
@@ -80,65 +80,64 @@ app.route("/")
 			res.write("<script>window.open('https://www.mozilla.org/ko/firefox/new/');</script>");
 			res.end("<script>location.href='https://www.google.com/chrome/browser/desktop/index.html';</script>");
 		}
-
-		async.waterfall([
-			function(cb){
-				Works.findAll().then(function(works, err) {
-		            if(err) console.error(err);
+		async.parallel([
+			function(callback) {
+				Works.findAll({
+					order: ['dislikes', 'DESC']
+				}).then(function(works, err) {
+		            if(err) callback(err, null);
 		            else {
-						cb(null, works);
+						console.log(works);
+						callback(null, works);
 		            }
 		        });
 			},
-			function(works, cb){
-				Dislike.findAll().then(function(dislike, err){
-					if(err)	console.error(err);
+			function(callback) {
+				Dislikes.findAll().then(function(dislikes, err){
+					if(err)	callback(err, null);
 					else{
-						cb(null, works, dislike);
+						console.log(dislikes);
+						callback(null, dislikes);
 					}
 				});
 			},
-			function(works, dislike, cb){
+			function(callback) {
 				Joins.findAll().then(function(joins, err){
-					if(err) console.error(err);
+					if(err) callback(err, null);
 					else{
-						cb(works, dislike, joins);
+						console.log(joins);
+						callback(null, joins);
 					}
 				});
 			}
-		],
-		function(works, dislike, joins){
-			var arrWorksDislike = [];
-			for( var i = 0; i < works.length; i++){
-				(function(i){
-					async.waterfall([
-						function(cb){
-							dbdislike.searchWorksDisklike(works[i].id,function(result){	
-								var numDislike = result.length;
-								arrWorksDislike[i] = numDislike ;
-								cb();
-							});
-						}
-					],
-					function(err, result){
-						if( i == works.length-1 ){
-							res.render("frontpage.ejs", {
-								works: works,
-								login: req.authState,
-								user: req.user,
-								dislike: dislike,
-								numDislike: arrWorksDislike,
-								joins: joins,
-								host: set.host,
-								port: ((set.main)?'':':'+set.port),
-							});
-						}
-					})
-				})(i);
-			}
+		], function(err, results) {
+			if(err) console.error(err);
+			var arrWorksDislikes = [];
+			var works = results[0];
+			var dislikes = results[1];
+			var joins = results[2];
+			async.forEachOf(works, function(work, key, callback) {
+				dbdislikes.searchWorksDislike(work.id,function(result){	
+					var numDislikes = result.length;
+					arrWorksDislikes[key] = numDislikes;
+					callback();
+				});
+			}, function(err) {
+				res.render("frontpage.ejs", {
+					works: works,
+					login: req.authState,
+					user: req.user,
+					dislikes: dislikes,
+					numDislikes: arrWorksDislikes,
+					joins: joins,
+					host: set.host,
+					port: ((set.main)?'':':'+set.port),
+				});
+			});
 		});
-        
 	});
+    
+});
 			
 	//작업중
 app.post('/makework', auth.checkAuthState, function(req, res){
@@ -154,13 +153,13 @@ app.post('/makework', auth.checkAuthState, function(req, res){
 				if(err) console.error(err);
 	        	else async.parallel([
 					function(callback) {
-						fs.writeFile("./public/workpage/" + work.name + "/front.html", req.body.readme, function(err) {
+						fs.writeFile("./public/workpage/" + work.name + "/front.html", md(req.body.readme), function(err) {
 							if(err) callback(err, null);
 							else callback(null);
 						});
 					},
 					function(callback) {
-						fs.writeFile("./public/workpage/" + work.name + "/needs.html", req.body.needs, function(err) {
+						fs.writeFile("./public/workpage/" + work.name + "/needs.html", md(req.body.needs), function(err) {
 							if(err) callback(err, null);
 							else callback(null);
 						});
@@ -249,11 +248,11 @@ app.route("/work/:workName")
 		}).then(function(work, err) {
 			if(err) console.error(err);
 			else {
-				dbdislike.searchWorksDisklike(work.id, function(result){
-					var numDislike = result.length;
+				dbdislikes.searchWorksDislike(work.id, function(result){
+					var numDislikes = result.length;
 					res.render("workpage.ejs", {
 						work: work,
-						numDislike: numDislike
+						numDislikes: numDislikes
 					});
 				});
 			}
@@ -323,24 +322,24 @@ io.on('connection', function (socket) {
 		} else socket.emit('namechecked', false);
 	});
 	
-	socket.on('client_update_dislike',function(data){
+	socket.on('client_update_dislikes',function(data){
 		async.waterfall([
 			function(cb){
-				dbdislike.searchById(data.userId, data.workId, function(dislike, err) {
+				dbdislikes.searchById(data.userId, data.workId, function(dislikes, err) {
 					if(err) console.log(err);
 					else{
-						cb(null, dislike);
+						cb(null, dislikes);
 					}
 				});
 			},
-			function( dislike, cb ){
-				dbdislike.toggleTuple(dislike, data, function(){
+			function( dislikes, cb ){
+				dbdislikes.toggleTuple(dislikes, data, function(){
 					cb();
 				});
 			}
 		],
 		function(err, result){
-			dbdislike.searchUsersDislike(data.userId, function(result){
+			dbdislikes.searchUsersDislikes(data.userId, function(result){
 				socket.broadcast.emit('server_update',result);
 				socket.emit('server_update',result);
 			});
