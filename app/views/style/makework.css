@@ -36,8 +36,6 @@ section {
     width: inherit;
 }
 .tag {
-    font-family: 'NotoSansBlack';
-    font-weight: 100;
     display: inline-block;
     line-height: 2em;
     width: 100px;
