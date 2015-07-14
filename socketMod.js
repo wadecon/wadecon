@@ -1,7 +1,7 @@
-var dbnotices, dbusers, dbdislikes, dbjoins, dbworks, dbowns, dbbadges;
+var dbnotices, dbusers, dbdislikes, dbjoins, dbworks, dbowns, dbbadges, dbbadgemaps;
 var socket, async;
 
-function setDBs(_dbnotices, _dbusers, _dbdislikes, _dbjoins, _dbworks, _dbowns, _dbbadges) {
+function setDBs(_dbnotices, _dbusers, _dbdislikes, _dbjoins, _dbworks, _dbowns, _dbbadges, _dbbadgemaps) {
 	dbnotices = _dbnotices;
 	dbusers = _dbusers;
 	dbdislikes = _dbdislikes;
@@ -9,6 +9,7 @@ function setDBs(_dbnotices, _dbusers, _dbdislikes, _dbjoins, _dbworks, _dbowns, 
 	dbworks = _dbworks;
 	dbowns = _dbowns;
 	dbbadges = _dbbadges;
+	dbbadgemaps = _dbbadgemaps;
 }
 
 function setSocketAndAsync(_socket, _async) {
@@ -66,8 +67,8 @@ function updateDislike(data) {
 			],
 			function(err, result) {
 				if(result[1] != null) {
-					dbnotices.putNotice(data.userId, "이런반동노무자식");
-					// dbbadges.
+					dbnotices.putNotice(data.userId, "이런반동노무자식!!!");
+					dbbadgemaps.
 				}
 				callback(null, result[0]);
 			});

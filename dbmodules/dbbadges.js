@@ -1,17 +1,15 @@
 var async = require("async");
-function searchById(userId, workId, cb){
-	Dislikes.findOne({
-		where: {
-			userId: userId,
-			workId: workId
-		}
+
+function createBadge( name, desc, karma, cb ){
+	Badges.create({
+		name: name,
+		desc: desc,
+		karma: karma
 	}).then(cb);
 }
 
-function giveBadge( userId, badgeName ){
-	
-}
-
 module.exports = {
-	searchById: searchById
+	searchById: searchById,
+	createBadge: createBadge,
+	searchBadgeExist: searchBadgeExist
 }
