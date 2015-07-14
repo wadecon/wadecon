@@ -43,6 +43,7 @@ var dbdislikes = require("./dbmodules/dbdislikes.js");
 var dbjoins = require("./dbmodules/dbjoins.js");
 var dbworks = require("./dbmodules/dbworks.js");
 var dbowns = require("./dbmodules/dbowns.js");
+var dbbadges = require("./dbmodules/dbbadges.js");
 
 var socketMod = require("./socketMod.js");
 var systemMod = require("./systemMod.js");
@@ -352,7 +353,7 @@ app.route("/user/:userNick")
 // sockets
 io.on('connection', function (socket) {
 	socketMod.setSocketAndAsync(socket, async);
-	socketMod.setDBs(dbnotices, dbusers, dbdislikes, dbjoins, dbworks, dbowns);
+	socketMod.setDBs(dbnotices, dbusers, dbdislikes, dbjoins, dbworks, dbowns, dbbadges);
 	socket.emit('news', {});
 	socket.on('namecheck', socketMod.nameCheck);
 	socket.on('titlecheck', socketMod.titleCheck);
