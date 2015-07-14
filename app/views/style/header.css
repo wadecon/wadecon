@@ -8,7 +8,7 @@ a {
     text-decoration: none;
     color: black;
 }
-button {
+button#login {
     margin: 1.2em;
 }
 .logotype a:hover {

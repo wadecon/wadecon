@@ -127,7 +127,8 @@ app.route("/")
 						numDislikes: arrWorksDislikesNum,
 						joins: joins,
 						host: set.host,
-						port: ((set.main)?'':':'+set.port)
+						port: ((set.main)?'':':'+set.port),
+						isIntro: true //메인페이지에서 헤더에 로그인버튼을 보여주지 않는데 사용
 					});
 				});
 			}
@@ -347,25 +348,28 @@ app.route("/user/:userNick")
 		});
 	})
 	.post(auth.checkAuthState, function(req, res){
-		fs.writeFile('./public/userbios/' + req.user.nickname + '.html', md(req.body.bio), function(err) {
-			if(err) {
-				console.error(err);
-				res.send("500");
-			}
-			else {
-				dbusers.editInfoByNickname(req.user.nickname, {
-					bio: '.public/userbios/' + req.user.nickname + '.md'
-				}, function(user, err) {
-					if(err) {
-						console.error(err);
-						res.send("500");
-					} else {
-						res.send("200");
-					}
-				});
-				fs.writeFileSync('./public/userbios/' + req.user.nickname + '.md', req.body.bio);
-			}
-		})
+		try {
+			fs.mkdir('./public/userbios/' + req.user.nickname, function(err) {
+				if(err) throw err;
+				else {
+					fs.writeFile('./public/userbios/' + req.user.nickname + '/bio.html', md(req.body.bio), function(err) {
+						if(err) throw err;
+						else {
+							dbusers.editInfoByNickname(req.user.nickname, {
+								bio: '.public/userbios/' + req.user.nickname + '/bio.html'
+							}, function(user, err) {
+								if(err) throw err;
+								else res.send("200");
+							});
+							fs.writeFileSync('./public/userbios/' + req.user.nickname + 'bio.md', req.body.bio);
+						}
+					});
+				}
+			});
+		} catch(err) {
+			console.error(err);
+			res.send("500");
+		}
 	});
 
 // sockets
