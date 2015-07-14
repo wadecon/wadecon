@@ -21,7 +21,7 @@
         function check() {
             loading = false;
             var nick = $('#nameField').val();
-            if(nick.trim().length > 256) $('#status').text('1~256자').css('color', 'gray');
+            if(nick.trim().length > 64) $('#status').text('1~64자').css('color', 'gray');
             else if(nick.trim() == '') $('#status').text('')
             else socket.emit('namecheck', nick);
         }
@@ -33,15 +33,17 @@
                 if(!loading) {
                     loading = true;
                     load();
-                    lastchecked = $('#nameField').val();
+                    $('#status').css('color', 'gray');
                 }
-                $('#status').css('color', 'gray');
                 clearTimeout(timeout);
                 timeout = setTimeout(check, 400);
             })
             socket.on('namechecked', function (data) {
                 console.log(data);
-                loading = false;
+                if(loading) {
+                    loading = false;
+                    lastchecked = $('#nameField').val();
+                }
                 if(data) {
                     $('#status').text("쓰거라").css('color', 'green');
                 } else {
@@ -77,7 +79,7 @@
                 <section>
                     <h1>안녕, <%=name%></h1>
                     <img src="<%=picture%>" id="profilePic" alt="" />
-                    <input type="text" id="nameField" name="nickname" placeholder="닉네임" maxLength=256>
+                    <input type="text" id="nameField" name="nickname" placeholder="닉네임" maxLength=64 autocomplete="off">
                     <div id="status"></div>
                     <button id="register" onClick="register()">가입!</button><br>
                 </section>
