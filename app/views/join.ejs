@@ -37,7 +37,7 @@
                 }
                 clearTimeout(timeout);
                 timeout = setTimeout(check, 400);
-            })
+            });
             socket.on('namechecked', function (data) {
                 console.log(data);
                 if(loading) {
