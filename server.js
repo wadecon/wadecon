@@ -155,19 +155,35 @@ app.route("/makework")
 					}
 				});
 			},
-			function( work, cb ){
-				dbowns.createOwn(req.user.id, work.id, function(own, err){
-					if(err) console.error(err);
-					else{
-						console.log("공작 생성 :".cyan, work.name);
-						fs.mkdir("./public/workpage/"+work.name, function(err){
+			function(work, cb){
+				async.parallel([
+					function(callback){
+						dbowns.createOwn(req.user.id, work.id, function(own, err){
 							if(err) console.error(err);
-				        	else{
-								cb( null, work );
-							} 
+							else{
+								console.log("공작 생성 :".cyan, work.name);
+								fs.mkdir("./public/workpage/"+work.name, function(err){
+									if(err) console.error(err);
+						        	else{
+										callback(null, {});
+									}
+								});
+							}
+						});
+					},
+					function(callback){
+						var data = {
+							workId: work.id,
+							userId: req.user.id
+						};
+						dbjoins.toggleTuple( null, data, function(){
+							callback(null, {});
 						});
 					}
-				})
+				],
+				function(err, result){
+					cb( null, work );
+				});
 			},
 			function( work, cb){
 				async.parallel([
