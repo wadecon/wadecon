@@ -218,7 +218,7 @@ app.route("/makework")
 	});
 
 app.route("/join")
-	.get(auth.inspect, function(req, res) {
+	.get(auth.checkAuthState, function(req, res) {
 		console.log("REQ", req.user)
 		dbusers.searchByFbid(req.user.fbId, function(user, err) {
 			console.log(user);
@@ -228,6 +228,7 @@ app.route("/join")
 					res.render('join.ejs', {
 						pageTitle: '가입',
 						name: req.user.name,
+						login: false,
 						picture: req.user.picture,
 						host: set.host,
 						port: ((set.main)?'':':'+set.port)
