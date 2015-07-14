@@ -294,18 +294,14 @@ app.route("/work/:workName")
 		});
 	})
 	.post(function(req, res){
-		dbworks.searchByName(req.params.workName, function(work, err){
+		console.log("이거 널이면 안되는데 : ".cyan + req.user.id);
+		dblogs.createLog( req.user.id, req.params.workName, "아아아아아아", dbworks, function(log, err){
 			if(err) console.error(err);
 			else{
-				dblogs.createLog(req.user.id, work.id, "aa"/*여기에는 유저가쓴 텍스트*/, function(log, err){
-					if(err) console.error(err);
-					else{
-						console.log("로그가 성공적으로 올라갔습니다.".cyan);
-						res.redirect("/work/"+req.parmas.workName);
-					}
-				});
+				console.log("로그가 성공적으로 올라갔습니다.".cyan);
+				res.redirect("/work/"+req.params.workName);
 			}
-		})
+		});
 	});
 
 app.route("/user/:userNick")

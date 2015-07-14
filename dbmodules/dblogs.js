@@ -6,12 +6,17 @@ function getWorksAllLog(workId, cb){
 	}).then(cb);
 }
 
-function createLog( userId, workId, text, cb ){
-	Logs.create({
-		userId: userId,
-		workId: workId,
-		text: text
-	}).then(cb);
+function createLog( userId, workName, text, dbworks, cb ){
+	dbworks.searchByName( workName, function(work, err ){
+		if(err) console.error(err);
+		else{
+			Logs.create({
+				userId: userId,
+				workId: work.id,
+				text: text
+			}).then(cb);
+		}
+	})
 }
 
 module.exports = {

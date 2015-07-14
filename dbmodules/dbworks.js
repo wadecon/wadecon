@@ -1,12 +1,21 @@
 var async = require("async");
 
 function searchByName(name, cb){
-	Works.findOne({ // 해당 닉네임 있는지 확인
+	Works.findOne({
 		where: {
 			name: name
 		}
 	}).then(cb);
 }
+
+function searchById(workId, cb){
+	Works.findOne({
+		where: {
+			id: workId
+		}
+	}).then(cb);
+}
+
 function createWork(name, desc, cb){
 	Works.create({
 		name: name,
@@ -15,11 +24,7 @@ function createWork(name, desc, cb){
 }
 function getDislikeJoinedUserByName(workName, dbjoins, dbdislikes, cb){
 	try {
-		Works.findOne({
-			where: {
-				name: workName 
-			}
-		}).then(function(work, err) {
+		searchByName(workName, function(work, err) {
 			if(err) throw err;
 			else {
 				async.parallel([
