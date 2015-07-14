@@ -11,11 +11,11 @@
 			<a href="/user/<%=user.nickname%>">
 				<div id='dashboard'>
 					<img id='userpic' src='<%= user.picture %>'>
-					<div id='usernick' class='black'><%= user.nickname %></div>
+					<div id='usernick' class='thin'><%= user.nickname %></div>
 					<div id='userkarma' class='hh' value=<%=user.karma%> > <%= user.karma %> </div>
 					<script>
 					    (function numberWithCommas() {
-					        $('#userkarma').text($('#userkarma').attr(value).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ","));
+					        $('#userkarma').text($('#userkarma').attr('value').toString().replace(/\B(?=(\d{3})+(?!\d))/g, ","));
 					    })() // thanks to Elias Zamaria
 					</script>
 				</div>

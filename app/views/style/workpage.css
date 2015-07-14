@@ -20,11 +20,12 @@ h3 {
 #buttons {
     padding-left: 1em;
     display: inline-block;
-    vertical-align: text-bottom;
+    vertical-align: bottom;
 }
 button {
-    font-size: 1em;
+    font-size: 1.1em;
     margin: 3px;
+	padding: 0.15em 0.5em;
 }
 #workhead {
     margin-bottom: 1em;
