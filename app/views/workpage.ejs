@@ -4,6 +4,58 @@
 	<style>
 		<% include ./style/workpage.css %>
 	</style>
+	<% if(login && user.nickname == object.nickname) { %>
+		<link rel="stylesheet" href="//cdn.jsdelivr.net/editor/0.1.0/editor.css">
+	    <script src="/js/editor.js"></script>
+	    <script src="/js/marked.js"></script>
+	    <script>
+			function editBio() {
+				$('#editBio').attr({
+						id: 'saveBio',
+						onClick: 'saveBio()'
+				}).text('저장하자');
+				$('#bio').html('<div class="editor-wrapper"><textarea id="bioTextarea" class="editor" name="bio" rows="8" cols="40"></textarea></div>');
+				bioEditor = new Editor({
+					element: document.getElementById('bioTextarea')
+				});
+				bioEditor.render();
+				bioEditor.codemirror.setValue($('#originMD').text().trim());
+				$("html, body").animate({scrollTop: $(document).height()});
+			}
+	        function saveBio() {
+	            $.ajax({
+	                type: "POST",
+	                url: '/user/<%=user.name%>',
+	                xhrFields: {
+	                       withCredentials: true
+	                },
+	                data: {
+	                    bio: bioEditor.codemirror.getValue()
+	                },
+	                success: function(data, status) {
+	                    console.log(data);
+	                    switch(data) {
+	                        case '200': {
+	                            location.reload();
+	                            break;
+	                        }
+	                        case '400': {
+	                            //미구현
+	                             break;
+	                        }
+	                        case '500': {
+								alert('서버에 문제가 있다. 담당자를 때려죽이고 고쳐서 커밋하자.');
+	                            //임시구현
+	                        }
+	                    }
+	                }
+	            });
+	        }
+	    </script>
+		<div id='originMD'>
+			<%- include('../../public/userbios/'+object.nickname+'/bio.md') %>
+		</div>
+	<% } %>
 </head>
 <body>
 	<header>

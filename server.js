@@ -199,7 +199,19 @@ app.route("/makework")
 							if(err) callback(err, null);
 							else callback(null);
 						});
-					}
+					},
+					function(callback) {
+						fs.writeFile("./public/workpage/" + work.name + "/front.md", req.body.readme, function(err) {
+							if(err) callback(err, null);
+							else callback(null);
+						});
+					},
+					function(callback) {
+						fs.writeFile("./public/workpage/" + work.name + "/needs.md", req.body.needs, function(err) {
+							if(err) callback(err, null);
+							else callback(null);
+						});
+					},
 				], function(err, results) {
 					if(err) console.error(err);
 					else {
@@ -267,26 +279,43 @@ app.route("/join")
 
 app.route("/work/:workName")
 	.get(auth.inspect, function(req, res){
-		Works.findOne({
-			where: {
-				name: req.params.workName 
-			}
-		}).then(function(work, err) {
-			if(err) console.error(err);
-			else {
-				dbdislikes.searchWorksDislikes(work.id, function(result){
-					var numDislikes = result.length;
-					res.render("workpage.ejs", {
-						work: work,
-						numDislikes: numDislikes,
-						login: req.authState,
-						host: set.host,
-						port: ((set.main)?'':':'+set.port),
-						user: (req.authState)?req.user:null
+		try {
+			Works.findOne({
+				where: {
+					name: req.params.workName 
+				}
+			}).then(function(work, err) {
+				if(err) throw err;
+				else {
+					async.parallel([
+						function() {
+							dbjoins.getUsersBelongToWork(work.id, function(users, err) {
+								if(err) throw err;
+								else callback(null, users);
+							});
+						},
+						function() {
+							dbdislikes.searchWorksDislikes(work.id, function(dislikes, err) {
+								if(err) throw err;
+								else callback(null, dislikes);
+							});
+						}
+					], function(err, results) {
+						res.render("workpage.ejs", {
+							work: work,
+							numDislikes: results[1].length,
+							users: results[0],
+							login: req.authState,
+							host: set.host,
+							port: ((set.main)?'':':'+set.port),
+							user: (req.authState)?req.user:null
+						});
 					});
-				});
-			}
-		});
+				}
+			});
+		} catch(err) {
+			console.error(err);
+		}
 	})
 	.post(function(req, res){
 		var workId = req.params.workId;
