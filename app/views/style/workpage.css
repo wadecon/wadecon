@@ -5,6 +5,9 @@ article {
 	border-radius: 5px;
 	border-bottom: 3px solid #ddd;
 }
+section {
+	margin-bottom: 2.5em;
+}
 h1 {
     font-size: 2em;
     display: inline-block;
@@ -16,6 +19,41 @@ h3 {
 }
 .md {
 	font-size: 0.8em;
+}
+.half {
+	display: inline-block;
+	width: 48%;
+	vertical-align: top;
+}
+#members {
+	margin-right: 2em;
+}
+.memField {
+	display: inline-block;
+	padding: 0.2em 0.5em;
+	text-decoration: none;
+	width: 48%;
+	line-height: 50px;
+}
+.memField:hover {
+	transition: all 0.15s ease-out;
+	background-color: #ffeade;
+	color: black;
+}
+.memPic {
+	display: inline-block;
+    background-color: white;
+    width: 44px;
+    height: 44px;
+    border-radius: 22px;
+    margin-left: 0;
+    vertical-align: middle;
+}
+.memNick {
+	display: inline-block;
+	font-size: 1.5em;
+	text-indent: 0.2em;
+	vertical-align: middle;
 }
 #buttons {
     padding-left: 1em;
