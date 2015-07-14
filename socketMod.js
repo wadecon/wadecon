@@ -127,7 +127,6 @@ function getNotice(data){
 	});
 }
 
-// 아직 안쓰인 함수
 function postLog( data ){
 	dblogs.createLog( data.userId, data.workName, data.text, dbworks, function(log, err){
 		if(err) console.error(err);
@@ -139,11 +138,12 @@ function postLog( data ){
 }
 
 // 아직 안쓰인 함수
-function getLogs( workId, text ){
-	dblogs.getWorksAllLog(workId, function(result, err){
+function getLogs( data ){
+	dblogs.getWorksAllLog( data.workId, function(result, err){
 		if(err)	console.error(err);
 		else{
 			console.log("로그를 성공적으로 반환".cyan);
+			socket.emit("serverGetLogs", result)
 		}
 	});
 }

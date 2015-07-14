@@ -324,13 +324,6 @@ app.route("/work/:workName")
 		}
 	})
 	.post(function(req, res){
-		// dblogs.createLog( req.user.id, req.params.workName, "아아아아아아", dbworks, function(log, err){
-		// 	if(err) console.error(err);
-		// 	else{
-		// 		console.log("로그가 성공적으로 올라갔습니다.".cyan);
-		// 		res.redirect("/work/"+req.params.workName);
-		// 	}
-		// });
 	});
 
 app.route("/user/:userNick")
@@ -382,11 +375,11 @@ io.on('connection', function (socket) {
 	socketMod.setSocketAndAsync(socket, async);
 	socketMod.setDBs(dbnotices, dbusers, dbdislikes, dbjoins, dbworks, dbowns, dbbadges, dbbadgemaps, dblogs);
 	socket.emit('news', {});
+	
 	socket.on('namecheck', socketMod.nameCheck);
 	socket.on('titlecheck', socketMod.titleCheck);
 	socket.on('clientUpdateDislike', socketMod.updateDislike);
 	socket.on('clientUpdateJoin', socketMod.updateJoin);
-	
 	socket.on('clientGetNotice', socketMod.getNotice);
 	socket.on('clientGetLogs', socketMod.getLogs);
 	socket.on('clientPostLog', socketMod.postLog);
