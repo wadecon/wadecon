@@ -334,6 +334,9 @@ app.route("/user/:userNick")
 	.get(auth.inspect, function(req, res){
 		dbusers.searchByNickname(req.params.userNick, function(user, err){
 			if(err) console.error(err);
+			else if(!user) {
+				res.status(404).end();
+			} 
 			else{
 				res.render('userpage.ejs', {
 					host: set.host,
@@ -346,8 +349,26 @@ app.route("/user/:userNick")
 			}
 		});
 	})
-	.post(function(req, res){
-		// edit user information
+	.post(auth.checkAuthState, function(req, res){
+		fs.writeFile('./public/userbios/' + req.user.nickname + '.html', md(req.body.bio), function(err) {
+			if(err) {
+				console.error(err);
+				res.send("500");
+			}
+			else {
+				dbusers.editInfoByNickname(req.user.nickname, {
+					bio: '.public/userbios/' + req.user.nickname + '.md'
+				}, function(user, err) {
+					if(err) {
+						console.error(err);
+						res.send("500");
+					} else {
+						res.send("200");
+					}
+				});
+				fs.writeFileSync('./public/userbios/' + req.user.nickname + '.md', req.body.bio);
+			}
+		})
 	});
 
 // sockets
