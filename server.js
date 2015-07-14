@@ -311,7 +311,7 @@ app.route("/work/:workName")
 						numDislikes: results[1][1].length,
 						members: results[1][0],
 						login: req.authState,
-						isEditable: results[0],
+						isJoined: results[0],
 						host: set.host,
 						port: ((set.main)?'':':'+set.port),
 						user: (req.authState)?req.user:null

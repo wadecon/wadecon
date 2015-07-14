@@ -4,12 +4,12 @@
 	<style>
 		<% include ./style/workpage.css %>
 	</style>
-	<% if(login && isEditable) { %>
+	<% if(login && isJoined) { %>
 		<link rel="stylesheet" href="//cdn.jsdelivr.net/editor/0.1.0/editor.css">
 	    <script src="/js/editor.js"></script>
 	    <script src="/js/marked.js"></script>
 	    <script>
-			function editBio() {
+			function editMD(id) {
 				$('#editBio').attr({
 						id: 'saveBio',
 						onClick: 'saveBio()'
@@ -79,22 +79,46 @@
 					</span>
 					<h2><%= work.desc %></h2>
 				</div>
-				<section id='readme' class='md'>
-					<h3>README.md</h3>
-					<%- include('../../public/workpage/'+work.name+'/front.html') %>
+				<section id='readmeSec' class='md'>
+					<div class='sectionTitle'>
+						<h3>README.md</h3>
+						<% if(login && isJoined) { %>
+							<% if(!object.bio) { %>
+								<button id='editMD' onClick='editBio("#readme")'>쓰자</button>
+							<% } else { %>
+								<button id='editMD' onClick='editBio("#readme")'>고치자</button>
+							<% } %>
+						<% } %>
+					</div>
+					<div id='readme'>
+						<%- include('../../public/workpage/'+work.name+'/front.html') %>
+					</div>
 				</section>
-				<section id='members' class='half md'>
+				<section id='membersSec' class='half md'>
 					<h3>참여하는 무리</h3>
-					<% for(var i = 0; i < members.length; i++) { %>
-						<a href="/user/<%=members[i].nickname%>" class='memField'>
-							<img class='memPic' src="<%=members[i].picture%>">
-							<div class='memNick'><%=members[i].nickname%></div>
-						</a>
-					<% } %>
+					<div id='members'>
+						<% for(var i = 0; i < members.length; i++) { %>
+							<a href="/user/<%=members[i].nickname%>" class='memField'>
+								<img class='memPic' src="<%=members[i].picture%>">
+								<div class='memNick'><%=members[i].nickname%></div>
+							</a>
+						<% } %>
+					</div>
 				</section>
-				<section id='needs' class='half md'>
-					<h3>이런 사람 와라</h3>
-					<%- include('../../public/workpage/'+work.name+'/needs.html') %>
+				<section id='needsSec' class='half md'>
+					<div class='sectionTitle'>
+						<h3>이런 사람 와라</h3>
+						<% if(login && isJoined) { %>
+							<% if(!object.bio) { %>
+								<button id='editMD' onClick='editBio("#needs")'>쓰자</button>
+							<% } else { %>
+								<button id='editMD' onClick='editBio("#needs")'>고치자</button>
+							<% } %>
+						<% } %>
+					</div>
+					<div id='needs'>
+						<%- include('../../public/workpage/'+work.name+'/needs.html') %>
+					</div>
 				</section>
 				<section>
 					<h3>로그</h3>
