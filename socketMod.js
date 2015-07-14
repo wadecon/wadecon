@@ -4,6 +4,7 @@ var socket, async;
 function setDBs(_dbnotices, _dbusers, _dbdislikes, _dbjoins, _dbworks, _dbowns){
 	dbnotices = _dbnotices;
 	dbusers = _dbusers;
+	dbdislikes = _dbdislikes;
 	dbjoins = _dbjoins;
 	dbworks = _dbworks;
 	dbowns = _dbowns; 
@@ -44,9 +45,10 @@ function titleCheck(data) {
 function updateDislike(data){
 	async.waterfall([
 		function(callback){
-			async.parralel([
+			async.parallel([
 				function(cb){
 					dbdislikes.searchById(data.userId, data.workId, function(dislikes, err) {
+						console.log("범인은 dislikes ################################################3".cyan);
 						if(err) console.log(err);
 						else{
 							cb(null, dislikes);
@@ -54,7 +56,8 @@ function updateDislike(data){
 					});
 				},
 				function(cb){
-					dbjoins.searchById( function( result, err ){
+					dbjoins.searchById( data.userId, data.workId, function( result, err ){
+						console.log("범인은 joins ################################################3".cyan);
 						if(err) console.error(err);
 						else{
 							cb(null, result);
@@ -64,6 +67,7 @@ function updateDislike(data){
 			],
 			function( err, result ){
 				if( result[1] != null ){
+					console.log("범인은 마지막에서 두번째 ################################################3".cyan);
 					dbnotices.putNotice(data.userId, "이런반동노무자식");
 				}
 				callback(null, result[0]);
@@ -74,7 +78,6 @@ function updateDislike(data){
 				callback();
 			});
 		}
-		
 	]);
 	
 	// async.waterfall([

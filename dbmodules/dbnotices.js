@@ -8,7 +8,7 @@ function peekNotice( userId, cb ){
 	);
 }
 
-function putNotice( userId, msg ){
+function putNotice( userId, msg, cb ){
 	Notices.create({
 		userId: userId,
 		msg: msg

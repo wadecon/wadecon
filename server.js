@@ -328,7 +328,7 @@ io.on('connection', function (socket) {
 	socket.on('titlecheck', socketMod.titleCheck);
 	socket.on('clientUpdateDislike', socketMod.updateDislike);
 	socket.on('clientUpdateJoin', socketMod.updateJoin);
-	socket.on('');
+	// socket.on('');
 });
 
 // handle 404
