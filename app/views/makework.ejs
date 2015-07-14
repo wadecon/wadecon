@@ -9,6 +9,46 @@
     <script src="/js/editor.js"></script>
     <script src="/js/marked.js"></script>
     <script>
+        var socket = io.connect('http://<%=host%><%=port%>');
+        var loadmsg = "으후루꾸꾸루";
+        var loading = false;
+        function load() {
+            if(loading) {
+                console.log("loading")
+                loadmsg = loadmsg.substr(1)+loadmsg[0];
+                $('#status').text(loadmsg);
+                setTimeout(load, 50);
+            }
+        }
+        function check() {
+            loading = false;
+            var title = $('#nameField').val();
+            if(title.trim() == '' || title.trim().length > 256) $('#status').text('1~256자').css('color', 'gray');
+            else socket.emit('titlecheck', title);
+        }
+        
+        var timeout;
+        socket.on('news', function () {
+            $('#nameField').on('keyup keypress paste focus', function() {
+                console.log("ASD");
+                if(!loading) {
+                    loading = true;
+                    load();
+                }
+                $('#status').css('color', 'gray');
+                clearTimeout(timeout);
+                timeout = setTimeout(check, 400);
+            });
+            socket.on('titlechecked', function (data) {
+                console.log(data);
+                loading = false;
+                if(data) {
+                    $('#status').text("쓰거라").css('color', 'green');
+                } else {
+                    $('#status').text("선점됨!").css('color', 'red');
+                }
+            });
+        });
         function makePost() {
             $.ajax({
                 type: "POST",
@@ -89,47 +129,5 @@
         </div>
     </div>
     <% include ./templates/footer.ejs %>
-    <script>
-        var socket = io.connect('http://<%=host%><%=port%>');
-        var loadmsg = "으후루꾸꾸루";
-        var loading = false;
-        function load() {
-            if(loading) {
-                console.log("loading")
-                loadmsg = loadmsg.substr(1)+loadmsg[0];
-                $('#status').text(loadmsg);
-                setTimeout(load, 50);
-            }
-        }
-        function check() {
-            loading = false;
-            var title = $('#nameField').val();
-            if(title.trim() == '' || title.trim().length > 256) $('#status').text('1~256자').css('color', 'gray');
-            else socket.emit('titlecheck', title);
-        }
-        
-        var timeout;
-        socket.on('news', function () {
-            $('#nameField').on('keyup keypress paste focus', function() {
-                console.log("ASD");
-                if(!loading) {
-                    loading = true;
-                    load();
-                }
-                $('#status').css('color', 'gray');
-                clearTimeout(timeout);
-                timeout = setTimeout(check, 400);
-            });
-            socket.on('titlechecked', function (data) {
-                console.log(data);
-                loading = false;
-                if(data) {
-                    $('#status').text("쓰거라").css('color', 'green');
-                } else {
-                    $('#status').text("선점됨!").css('color', 'red');
-                }
-            });
-        });
-    </script>
 </body>
 </html>
