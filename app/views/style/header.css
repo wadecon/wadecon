@@ -41,3 +41,9 @@ a:hover {
     text-indent: 0.2em;
     vertical-align: middle;
 }
+#userkarma {
+    display: inline-block;
+    font-size: 1.5em;
+    color: white;
+    vertical-align: middle;
+}

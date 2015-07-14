@@ -148,7 +148,7 @@ app.route("/makework")
 				pageTitle: '공작 모의'
 			});
 		} else {
-			res.redirect('/')
+			res.redirect('/');
 		}
 	})
 	.post(auth.checkAuthState, function(req, res){
