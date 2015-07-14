@@ -22,7 +22,7 @@ app.use(session({ secret: "secret" }));
 var set = require('./setting.json');
 
 var options = process.argv;
-for( num in options){
+for( var num in options){
 	if(options[num] == "--port" || options[num] == "-p"){
 		set.port = options[Number(num)+1];
 	}
@@ -43,7 +43,10 @@ var dbdislikes = require("./dbmodules/dbdislikes.js");
 var dbjoins = require("./dbmodules/dbjoins.js");
 var dbworks = require("./dbmodules/dbworks.js");
 var dbowns = require("./dbmodules/dbowns.js");
+
+var socketMod = require("./socketMod.js");
 var systemMod = require("./systemMod.js");
+
 
 var auth = require("./auth.js");
 auth.init(app);
@@ -113,22 +116,23 @@ app.route("/")
 			}
 		], function(err, results) {
 			if(err) console.error(err);
-			
-			var works = results[0];
-			var dislikes = results[1];
-			var joins = results[2];
-			dbdislikes.getWorksDislikesNum(works, function(arrWorksDislikesNum) {
-				res.render("frontpage.ejs", {
-					works: works,
-					login: req.authState,
-					user: req.user,
-					dislikes: dislikes,
-					numDislikes: arrWorksDislikesNum,
-					joins: joins,
-					host: set.host,
-					port: ((set.main)?'':':'+set.port)
+			else{
+				var works = results[0];
+				var dislikes = results[1];
+				var joins = results[2];
+				dbdislikes.getWorksDislikesNum(works, function(arrWorksDislikesNum) {
+					res.render("frontpage.ejs", {
+						works: works,
+						login: req.authState,
+						user: req.user,
+						dislikes: dislikes,
+						numDislikes: arrWorksDislikesNum,
+						joins: joins,
+						host: set.host,
+						port: ((set.main)?'':':'+set.port)
+					});
 				});
-			});
+			}
 		});
 	});
 
@@ -301,7 +305,7 @@ app.route("/work/:workName")
 								res.redirect("/work/"+work.id+"/"+work.name);	
 							});
 						});
-					} 
+					}
 				});
 			}
 		});
@@ -317,80 +321,13 @@ app.route("/user/:userNick")
 
 // sockets
 io.on('connection', function (socket) {
+	socketMod.setSocketAndAsync(socket, async);
+	socketMod.setDBs(dbnotices, dbusers, dbdislikes, dbjoins, dbworks, dbowns);
 	socket.emit('news', {});
-	socket.on('namecheck', function (data) {
-		console.log(data);
-		if(data) {
-			dbusers.searchByNickname(data, function(user, err) {
-				if(err) console.error(err);
-				else if(!user) { // 가능한 닉네임
-					socket.emit('namechecked', true);
-				} else { // 이미 존재하는 닉네임
-					socket.emit('namechecked', false);
-				}
-			});
-		} else socket.emit('namechecked', false);
-	});
-	socket.on('titlecheck', function (data) {
-		console.log(data);
-		if(data) {
-			dbworks.searchByName(data, function(work, err) {
-				if(err) console.error(err);
-				else if(!work) { // 가능한 공작이름
-					socket.emit('titlechecked', true);
-				} else { // 이미 존재하는 공작이름
-					socket.emit('titlechecked', false);
-				}
-			});
-		} else socket.emit('titlechecked', false);
-	});
-	
-	socket.on('clientUpdateDislike',function(data){
-		async.waterfall([
-			function(cb){
-				dbdislikes.searchById(data.userId, data.workId, function(dislikes, err) {
-					if(err) console.log(err);
-					else{
-						cb(null, dislikes);
-					}
-				});
-			},
-			function( dislikes, cb ){
-				dbdislikes.toggleTuple(dislikes, data, function(){
-					cb();
-				});
-			}
-		],
-		function(err, result){
-			dbdislikes.searchUsersDislikes(data.userId, function(result){
-				socket.broadcast.emit('serverUpdate',result);
-				socket.emit('serverUpdate',result);
-			});
-		});
-	});
-	socket.on('clientUpdateJoin', function(data){
-		async.waterfall([
-			function(cb){
-				dbjoins.searchById(data.userId, data.workId, function(joins, err){
-					if(err) console.log(err);
-					else{
-						cb(null, joins);
-					}
-				});
-			},
-			function(joins, cb){
-				dbjoins.toggleTuple(joins, data, function(){
-					cb();
-				});
-			}
-		],
-		function(err, result){
-			dbjoins.searchUsersJoin(data.userId, function(result){
-				socket.broadcast.emit('serverUpdate',result);
-				socket.emit('serverUpdate',result);
-			});
-		});
-	});
+	socket.on('namecheck', socketMod.nameCheck);
+	socket.on('titlecheck', socketMod.titleCheck);
+	socket.on('clientUpdateDislike', socketMod.updateDislike);
+	socket.on('clientUpdateJoin', socketMod.updateJoin);
 });
 
 // handle 404
