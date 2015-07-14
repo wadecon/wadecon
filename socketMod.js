@@ -50,20 +50,16 @@ function updateDislike(data) {
 			async.parallel([
 				function(cb) {
 					dbdislikes.searchById( data.userId, data.workId, function(dislikes, err) {
-						console.log("0-1".cyan);
 						if(err) console.log(err);
 						else{
-							console.log("0-1-success".cyan);
 							cb(null, dislikes);
 						}
 					});
 				},
 				function(cb) {
 					dbjoins.searchById( data.userId, data.workId, function( result, err ){
-						console.log("0-2".cyan);
 						if(err) console.error(err);
 						else{
-							console.log("0-2-success".cyan);
 							cb(null, result);
 						}
 					});
@@ -72,13 +68,9 @@ function updateDislike(data) {
 			function(err, result) {
 				console.log("0-intro".cyan);
 				if(result[1] != null) {
-					console.log("0".cyan);
 					dbnotices.putNotice( data.userId, "이런반동놈의자식!!!", function(){
-						console.log("1".cyan);
 						dbbadgemaps.searchBadgeExist( data.userId, "반동놈의자식", function(exist, err){
-							console.log("2".cyan);
 							if( exist == null){
-								console.log("3".cyan);
 								dbbadgemaps.giveBadge( data.userId, "반동놈의자식", function(){
 									callback(null, result[0]);
 								});
@@ -88,7 +80,6 @@ function updateDislike(data) {
 						});
 					});
 				}else{
-					console.log("0-else".cyan);
 					callback(null, result[0]);
 				}
 			});
