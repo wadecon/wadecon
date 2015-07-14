@@ -59,10 +59,25 @@ h2 {
     display: inline-block;
     line-height: 30px;
 }
-#writeBio {
+#originMD {
+	display: none;
+}
+button {
     float: right;
     margin: 8px;
     padding: 5px 12px;
 	font-size: 1.2em;
     vertical-align: bottom;
+}
+.editor-wrapper {
+    background-color: #fff;
+    border: 1px solid #dfdfdf;
+    border-radius: 3px;
+	margin: 2em 0.5em 0.5em;
+    padding: 10px;
+    width: 840px;
+    height: 450px;
+}
+.editor-wrapper:hover {
+    border: 1px solid coral;
 }

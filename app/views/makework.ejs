@@ -33,17 +33,17 @@
         socket.on('news', function () {
             $('#nameField').on('keyup keypress paste focus', function() {
                 console.log("ASD");
-                if(!loading && $('#nameField').val().trim() == '' && $('#nameField').val() != lastchecked) {
+                if(!loading && $('#nameField').val().trim() !== '' && $('#nameField').val() != lastchecked) {
                     loading = true;
                     load();
+                    $('#status').css('color', 'gray');
                 }
-                $('#status').css('color', 'gray');
                 clearTimeout(timeout);
                 timeout = setTimeout(check, 400);
             });
             socket.on('titlechecked', function (data) {
                 console.log(data);
-                if(!loading) {
+                if(loading) {
                     loading = false;
                     lastchecked = $('#nameField').val();
                 }
@@ -97,12 +97,12 @@
                     <h2>모든 분야의 프로젝트, 이벤트, 공작, 파괴, 난동</h2>
                     <div class='field'>
                         <span class='black tag'>제목</span>
-                        <input type="text" id="nameField" name="name" placeholder="1-64자의 제목" maxLength=64>
+                        <input type="text" id="nameField" name="name" placeholder="1-64자의 제목" maxLength=64 autocomplete="off">
                         <div id="status" class='black'></div>
                     </div>
                     <div class='field'>
                         <span class='black tag'>한 줄 설명</span>
-                        <input type="text" id="descField" name="desc" placeholder="1-141자" maxLength=141>
+                        <input type="text" id="descField" name="desc" placeholder="1-141자" maxLength=141 autocomplete="off">
                     </div>
                     <div class='field'>
                         <span class='black tag'>README.md</span>

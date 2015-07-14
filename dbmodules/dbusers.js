@@ -22,15 +22,24 @@ function searchByFbid(fbId, cb){
 	}).then(cb);
 }
 
-function changeNickname(user, nickname,cb){
+function changeNickname(user, nickname, cb){
 	user.updateAttributes({ // 찾은 유저정보에서 닉네임을 받은 닉네임으로 바꿔준다
 		nickname: nickname
 	}).then(cb);
+}
+
+function editInfoByNickname(nick, data, callback){
+	searchByNickname(nick, function(user, err) {
+		if(err) callback(null, err);
+		else user.updateAttributes(data).then(callback);
+	})
+	
 }
 
 module.exports = {
 	searchByNickname: searchByNickname,
 	searchByFbid: searchByFbid,
 	searchById: searchById,
-	changeNickname: changeNickname
-}
+	changeNickname: changeNickname,
+	editInfoByNickname: editInfoByNickname
+};

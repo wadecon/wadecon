@@ -28,8 +28,9 @@ input[type=text]:hover {
     border: 1px solid coral;
 }
 #status {
-    text-indent: 1em;
-    
+    text-align: right;
+    margin: 0.5em 0.5em 0;
+    font-size: 1.5em;
 }
 .field {
     margin-top: 20px;
