@@ -142,6 +142,7 @@ app.route("/makework")
 			host: set.host,
 			port: ((set.main)?'':':'+set.port),
 			userId: req.user.id,
+			user: req.user,
 			pageTitle: '공작 모의'
 		});
 	})
