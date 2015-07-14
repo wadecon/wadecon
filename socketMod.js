@@ -122,7 +122,7 @@ function getNotice(data){
 	dbnotices.peekNotice(data.userId, function(result, err){
 		if(err) console.error(err);
 		else{
-			
+			socket.emit('getNotice', result);
 		}
 	});
 }
