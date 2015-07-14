@@ -332,24 +332,29 @@ app.route("/work/:workName")
 	});
 
 app.route("/user/:userNick")
-	.get(auth.checkAuthState, function(req, res){
+	.get(auth.inspect, function(req, res){
 		dbusers.searchByNickname(req.params.userNick, function(user, err){
 			if(err) console.error(err);
 			else{
-				if( req.params.userNick == req.user.nickname ){
-					res.render('userpage.ejs', {
-						host: set.host,
-						port: ((set.main)?'':':'+set.port),
-						pageTitle: '너의 정보',
-						user: user
-					});
+				if(req.authState) {
+					if( req.params.userNick == req.user.nickname ){
+						res.render('userpage.ejs', {
+							host: set.host,
+							port: ((set.main)?'':':'+set.port),
+							pageTitle: '너의 정보',
+							login: req.authState,
+							user: user
+						});
+					}else{
+						res.render('userpage.ejs', {
+							host: set.host,
+							port: ((set.main)?'':':'+set.port),
+							pageTitle: '얘의 정보',
+							user: user
+						});
+					}
 				}else{
-					res.render('userpage.ejs', {
-						host: set.host,
-						port: ((set.main)?'':':'+set.port),
-						pageTitle: '얘의 정보',
-						user: user
-					});
+					res.redirect('/');
 				}
 				
 			}
