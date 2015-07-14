@@ -14,7 +14,14 @@ function searchByFbid(fbId, cb){
 	}).then(cb);
 }
 
+function changeNickname(user, nickname,cb){
+	user.updateAttributes({ // 찾은 유저정보에서 닉네임을 받은 닉네임으로 바꿔준다
+		nickname: nickname
+	}).then(cb);
+}
+
 module.exports = {
 	searchByNickname: searchByNickname,
-	searchByFbid: searchByFbid
+	searchByFbid: searchByFbid,
+	changeNickname: changeNickname
 }

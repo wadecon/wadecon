@@ -227,9 +227,7 @@ app.route("/join")
 						else if(!user){ // 그 세션의 uid에 해당하는 게 등록 안되어있음 (이상한 케이스)
 							res.redirect('/');
 						} else {
-							user.updateAttributes({ // 찾은 유저정보에서 닉네임을 받은 닉네임으로 바꿔준다
-								nickname: req.body.nickname
-							}).then(function(user, err) {
+							dbusers.changeNickname(user, req.body.nickname, function(user, err) {
 								if(err) {
 									console.error(err);
 									res.send("500").end();

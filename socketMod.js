@@ -79,28 +79,6 @@ function updateDislike(data){
 			});
 		}
 	]);
-	
-	// async.waterfall([
-	// 	function(cb){
-	// 		dbdislikes.searchById(data.userId, data.workId, function(dislikes, err) {
-	// 			if(err) console.log(err);
-	// 			else{
-	// 				cb(null, dislikes);
-	// 			}
-	// 		});
-	// 	},
-	// 	function( dislikes, cb ){
-	// 		dbdislikes.toggleTuple(dislikes, data, function(){
-	// 			cb();
-	// 		});
-	// 	}
-	// ],
-	// function(err, result){
-	// 	dbdislikes.searchUsersDislikes(data.userId, function(result){
-	// 		socket.broadcast.emit('serverUpdate',result);
-	// 		socket.emit('serverUpdate',result);
-	// 	});
-	// });
 }
 function updateJoin(data){
 	async.waterfall([
@@ -126,8 +104,8 @@ function updateJoin(data){
 	});
 }
 
-function notifyNotice(data){
-	
+function getNotice(data){
+	// 이거 하자
 }
 
 module.exports = {
