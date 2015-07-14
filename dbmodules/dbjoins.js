@@ -53,6 +53,7 @@ function getUsersBelongToWork(workId, callback) {
 					if(err) cb(err);
 					else {
 						users.push(user);
+						cb();
 					}
 				});
 			}, function(err) {
