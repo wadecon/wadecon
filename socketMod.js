@@ -1,7 +1,7 @@
 var dbnotices, dbusers, dbdislikes, dbjoins, dbworks, dbowns;
 var socket, async;
 
-function setDBs(_dbnotices, _dbusers, _dbdislikes, _dbjoins, _dbworks, _dbowns){
+function setDBs(_dbnotices, _dbusers, _dbdislikes, _dbjoins, _dbworks, _dbowns) {
 	dbnotices = _dbnotices;
 	dbusers = _dbusers;
 	dbdislikes = _dbdislikes;
@@ -10,7 +10,7 @@ function setDBs(_dbnotices, _dbusers, _dbdislikes, _dbjoins, _dbworks, _dbowns){
 	dbowns = _dbowns; 
 }
 
-function setSocketAndAsync(_socket, _async){
+function setSocketAndAsync(_socket, _async) {
 	socket = _socket;
 	async = _async;
 }
@@ -42,38 +42,38 @@ function titleCheck(data) {
 	} else socket.emit('titlechecked', false);
 }
 
-function updateDislike(data){
+function updateDislike(data) {
 	async.waterfall([
-		function(callback){
+		function(callback) {
 			async.parallel([
-				function(cb){
+				function(callback) {
 					dbdislikes.searchById(data.userId, data.workId, function(dislikes, err) {
 						console.log("범인은 dislikes ################################################3".cyan);
 						if(err) console.log(err);
 						else{
-							cb(null, dislikes);
+							callback(null, dislikes);
 						}
 					});
 				},
-				function(cb){
+				function(callback) {
 					dbjoins.searchById( data.userId, data.workId, function( result, err ){
 						console.log("범인은 joins ################################################3".cyan);
 						if(err) console.error(err);
 						else{
-							cb(null, result);
+							callback(null, result);
 						}
 					});
 				}
 			],
-			function( err, result ){
-				if( result[1] != null ){
+			function(err, result) {
+				if(result[1] != null) {
 					console.log("범인은 마지막에서 두번째 ################################################3".cyan);
 					dbnotices.putNotice(data.userId, "이런반동노무자식");
 				}
 				callback(null, result[0]);
 			});
 		},
-		function( dislikes, callback ){
+		function(dislikes, callback) {
 			dbdislikes.toggleTuple(dislikes, data, function(){
 				callback();
 			});
@@ -81,17 +81,17 @@ function updateDislike(data){
 	]);
 	
 	// async.waterfall([
-	// 	function(cb){
+	// 	function(callback){
 	// 		dbdislikes.searchById(data.userId, data.workId, function(dislikes, err) {
 	// 			if(err) console.log(err);
 	// 			else{
-	// 				cb(null, dislikes);
+	// 				callback(null, dislikes);
 	// 			}
 	// 		});
 	// 	},
-	// 	function( dislikes, cb ){
+	// 	function( dislikes, callback ){
 	// 		dbdislikes.toggleTuple(dislikes, data, function(){
-	// 			cb();
+	// 			callback();
 	// 		});
 	// 	}
 	// ],
@@ -104,21 +104,21 @@ function updateDislike(data){
 }
 function updateJoin(data){
 	async.waterfall([
-		function(cb){
+		function(callback) {
 			dbjoins.searchById(data.userId, data.workId, function(joins, err){
 				if(err) console.log(err);
 				else{
-					cb(null, joins);
+					callback(null, joins);
 				}
 			});
 		},
-		function(joins, cb){
+		function(joins, callback) {
 			dbjoins.toggleTuple(joins, data, function(){
-				cb();
+				callback();
 			});
 		}
 	],
-	function(err, result){
+	function(err, result) {
 		dbjoins.searchUsersJoin(data.userId, function(result){
 			socket.broadcast.emit('serverUpdate',result);
 			socket.emit('serverUpdate',result);
@@ -126,7 +126,7 @@ function updateJoin(data){
 	});
 }
 
-function notifyNotice(data){
+function notifyNotice(data) {
 	
 }
 
