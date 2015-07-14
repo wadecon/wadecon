@@ -6,7 +6,7 @@ function getWorksAllLog(workId, cb){
 	}).then(cb);
 }
 
-function createLog( userId, workId, text, cb){
+function createLog( userId, workId, text, cb ){
 	Logs.create({
 		userId: userId,
 		workId: workId,
@@ -15,5 +15,6 @@ function createLog( userId, workId, text, cb){
 }
 
 module.exports = {
-	getWorksAllLog: getWorksAllLog
+	getWorksAllLog: getWorksAllLog,
+	createLog: createLog
 }

@@ -31,7 +31,13 @@
 					<h3>이런 사람 와라</h3>
 					<%- include('../../public/workpage/'+work.name+'/needs.html') %>
 				</section>
-				<!--print group Q&A-->
+				<section>
+					<h3>로그오브공작</h3>
+					<!--여기에 소켓으로 로그 긁어와서 보여주기-->
+					<form action="/work/<%=work.name%>" method="post">
+						<input type="submit" value="똥싸기">
+					</form>
+				</section>
 			</article>
 		</div>
 	</div>

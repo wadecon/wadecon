@@ -82,7 +82,7 @@ app.route("/")
 				res.end("<script>location.href='https://www.google.com/chrome/browser/desktop/index.html';</script>");
 			}
 		});
-		
+
 		async.parallel([
 			function(callback) {
 				Works.findAll({
@@ -269,7 +269,7 @@ app.route("/work/:workName")
 	.get(auth.inspect, function(req, res){
 		Works.findOne({
 			where: {
-				name: req.params.workName 
+				name: req.params.workName
 			}
 		}).then(function(work, err) {
 			if(err) console.error(err);
@@ -289,43 +289,18 @@ app.route("/work/:workName")
 		});
 	})
 	.post(function(req, res){
-		var workId = req.params.workId;
-		Works.findOne({
-			where: {
-				id: workId
-			}
-		}).then(function(work, err) {
+		dbworks.searchByName(req.params.workName, function(work, err){
 			if(err) console.error(err);
-			else {
-				fs.mkdir("./WorkPage/"+work.name, function(err){
-					console.log(err);
-					if (req.body.reqType == "md") {
-						var html = md(req.body.md);
-						fs.writeFile("./WorkPage/"+work.name+"/front.html", html, function(err){
-							if(err) console.log(err);
-							work.updateAttributes({
-								frontboard: "./WorkPage" + work.name + "/front.html"
-							}).then(function(work, err){
-								if(err) console.log(err);
-								res.redirect("/work/"+work.id+"/"+work.name);	
-							});
-						});
-					}
-					else if ( req.body.reqType == "need" ) {
-						var html = md(req.body.need)
-						fs.writeFile("./WorkPage/"+work.name+"/need.html", html, function(err){
-							if(err) console.log(err);
-							work.updateAttributes({
-								needs: "./WorkPage" + work.name + "/need.html"
-							}).then(function(work, err){
-								if(err) console.log(err);
-								res.redirect("/work/"+work.id+"/"+work.name);	
-							});
-						});
+			else{
+				dblogs.createLog(req.user.id, work.id, "aa"/*여기에는 유저가쓴 텍스트*/, function(log, err){
+					if(err) console.error(err);
+					else{
+						console.log("로그가 성공적으로 올라갔습니다.".cyan);
+						res.redirect("/work/"+req.parmas.workName);
 					}
 				});
 			}
-		});
+		})
 	});
 
 app.route("/user/:userNick")
@@ -334,7 +309,7 @@ app.route("/user/:userNick")
 			if(err) console.error(err);
 			else if(!user) {
 				res.status(404).end();
-			} 
+			}
 			else{
 				res.render('userpage.ejs', {
 					host: set.host,
@@ -394,6 +369,6 @@ app.use(function(req, res) {
 server.listen(set.port || 8080);
 console.log((set.host+":"+(set.port || 8080)).cyan+"에서 서버 시작".green);
 
-dbbadges.createBadge("반동놈의자식", "이놈은빨갱입니다", 10, function(a, err){
-	console.log("됬을까".cyan);
-})
+// dbbadges.createBadge("반동놈의자식", "이놈은빨갱입니다", 10, function(a, err){
+// 	console.log("됬을까".cyan);
+// })
