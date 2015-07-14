@@ -128,7 +128,8 @@ app.route("/")
 						numDislikes: arrWorksDislikesNum,
 						joins: joins,
 						host: set.host,
-						port: ((set.main)?'':':'+set.port)
+						port: ((set.main)?'':':'+set.port),
+						isIntro: true //메인페이지에서 헤더에 로그인버튼을 보여주지 않는데 사용
 					});
 				});
 			}
@@ -199,7 +200,19 @@ app.route("/makework")
 							if(err) callback(err, null);
 							else callback(null);
 						});
-					}
+					},
+					function(callback) {
+						fs.writeFile("./public/workpage/" + work.name + "/front.md", req.body.readme, function(err) {
+							if(err) callback(err, null);
+							else callback(null);
+						});
+					},
+					function(callback) {
+						fs.writeFile("./public/workpage/" + work.name + "/needs.md", req.body.needs, function(err) {
+							if(err) callback(err, null);
+							else callback(null);
+						});
+					},
 				], function(err, results) {
 					if(err) console.error(err);
 					else {
@@ -267,26 +280,43 @@ app.route("/join")
 
 app.route("/work/:workName")
 	.get(auth.inspect, function(req, res){
-		Works.findOne({
-			where: {
-				name: req.params.workName
-			}
-		}).then(function(work, err) {
-			if(err) console.error(err);
-			else {
-				dbdislikes.searchWorksDislikes(work.id, function(result){
-					var numDislikes = result.length;
-					res.render("workpage.ejs", {
-						work: work,
-						numDislikes: numDislikes,
-						login: req.authState,
-						host: set.host,
-						port: ((set.main)?'':':'+set.port),
-						user: (req.authState)?req.user:null
+		try {
+			Works.findOne({
+				where: {
+					name: req.params.workName 
+				}
+			}).then(function(work, err) {
+				if(err) throw err;
+				else {
+					async.parallel([
+						function() {
+							dbjoins.getUsersBelongToWork(work.id, function(users, err) {
+								if(err) throw err;
+								else callback(null, users);
+							});
+						},
+						function() {
+							dbdislikes.searchWorksDislikes(work.id, function(dislikes, err) {
+								if(err) throw err;
+								else callback(null, dislikes);
+							});
+						}
+					], function(err, results) {
+						res.render("workpage.ejs", {
+							work: work,
+							numDislikes: results[1].length,
+							users: results[0],
+							login: req.authState,
+							host: set.host,
+							port: ((set.main)?'':':'+set.port),
+							user: (req.authState)?req.user:null
+						});
 					});
-				});
-			}
-		});
+				}
+			});
+		} catch(err) {
+			console.error(err);
+		}
 	})
 	.post(function(req, res){
 		dbworks.searchByName(req.params.workName, function(work, err){
@@ -323,25 +353,28 @@ app.route("/user/:userNick")
 		});
 	})
 	.post(auth.checkAuthState, function(req, res){
-		fs.writeFile('./public/userbios/' + req.user.nickname + '.html', md(req.body.bio), function(err) {
-			if(err) {
-				console.error(err);
-				res.send("500");
-			}
-			else {
-				dbusers.editInfoByNickname(req.user.nickname, {
-					bio: '.public/userbios/' + req.user.nickname + '.md'
-				}, function(user, err) {
-					if(err) {
-						console.error(err);
-						res.send("500");
-					} else {
-						res.send("200");
-					}
-				});
-				fs.writeFileSync('./public/userbios/' + req.user.nickname + '.md', req.body.bio);
-			}
-		})
+		try {
+			fs.mkdir('./public/userbios/' + req.user.nickname, function(err) {
+				if(err) throw err;
+				else {
+					fs.writeFile('./public/userbios/' + req.user.nickname + '/bio.html', md(req.body.bio), function(err) {
+						if(err) throw err;
+						else {
+							dbusers.editInfoByNickname(req.user.nickname, {
+								bio: '.public/userbios/' + req.user.nickname + '/bio.html'
+							}, function(user, err) {
+								if(err) throw err;
+								else res.send("200");
+							});
+							fs.writeFileSync('./public/userbios/' + req.user.nickname + 'bio.md', req.body.bio);
+						}
+					});
+				}
+			});
+		} catch(err) {
+			console.error(err);
+			res.send("500");
+		}
 	});
 
 // sockets
