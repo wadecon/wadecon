@@ -228,7 +228,6 @@ app.route("/join")
 					res.render('join.ejs', {
 						pageTitle: '가입',
 						name: req.user.name,
-						login: req.authState,
 						picture: req.user.picture,
 						host: set.host,
 						port: ((set.main)?'':':'+set.port)
