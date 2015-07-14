@@ -52,9 +52,11 @@
 	            });
 	        }
 	    </script>
-		<div id='originMD'>
-			<%- include('../../public/userbios/'+object.nickname+'/bio.md') %>
-		</div>
+		<% if(object.bio) { %>
+			<div id='originMD'>
+				<%- include('../../public/userbios/'+object.nickname+'/bio.md') %>
+			</div>
+		<% } %>
 	<% } %>
 </head>
 <body>

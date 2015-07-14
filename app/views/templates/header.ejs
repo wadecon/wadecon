@@ -20,7 +20,7 @@
 					</script>
 				</div>
 			</a>
-		<% } else if(!isIntro) { %>
+		<% } else if(typeof isIntro === 'undefined') { %>
 			<button id='login' onclick="location.href='/auth/fb'">로그인</button>
 		<% } %>
 		</div>

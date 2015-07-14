@@ -32,3 +32,6 @@ button {
     padding-bottom: 1em;
     border-bottom: 1px solid #dfdfdf;
 }
+.originCon {
+	display: none;
+}
