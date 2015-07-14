@@ -137,11 +137,10 @@ app.route("/")
 	});
 
 app.route("/makework")
-	.get(auth.inspect, function(req, res){
+	.get(auth.checkAuthState, function(req, res){
 		if(req.authState) {
 			res.render('makework.ejs', {
 				host: set.host,
-				login: req.authState,
 				port: ((set.main)?'':':'+set.port),
 				userId: req.user.id,
 				user: req.user,
@@ -219,7 +218,7 @@ app.route("/makework")
 	});
 
 app.route("/join")
-	.get(auth.checkAuthState, function(req, res) {
+	.get(auth.inspect, function(req, res) {
 		console.log("REQ", req.user)
 		dbusers.searchByFbid(req.user.fbId, function(user, err) {
 			console.log(user);
@@ -229,6 +228,7 @@ app.route("/join")
 					res.render('join.ejs', {
 						pageTitle: '가입',
 						name: req.user.name,
+						login: req.authState,
 						picture: req.user.picture,
 						host: set.host,
 						port: ((set.main)?'':':'+set.port)
