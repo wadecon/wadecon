@@ -1,15 +1,62 @@
 <!DOCTYPE html>
-<% include ./templates/head.ejs %>
+<head>
+	<% include ./templates/head.ejs %>
+	<style>
+		<% include ./style/userpage.css %>
+	</style>
+</head>
 <body>
 	<header>
         <% include ./templates/header.ejs %>
     </header>
-	<section>
 		<!--여기 소켓통신으로 동적으로 유저 정보 수정하도록-->
-		<div>너의 닉네임 -> <%= user.nickname %></div>
-		<div>너의 업보 -> <%= user.karma %></div>
-		<div>너의 페북 사진 -> <img src="<%=user.picture%>" alt=""></div>
-	</section>
+	<div class="contentBox maxWrapper">
+        <div class="content">
+			<article>
+				<div id='titlefield'>
+					<img id='obUserpic' src="<%= object.picture %>">
+					<div id='title' class='black'><%= object.nickname %></div>
+				</div>
+				<section>
+					<h1>조합원 정보</h1>
+					<div id='details'>
+						<div class='field'>
+							<div class='thin tag'>이름</div>
+							<div class='black value'><%= object.name %></div>
+						</div>
+						<div class='field'>
+							<div class='thin tag'>업보</div>
+							<div class='black value' id='karma' value=<%= object.karma %>><%= object.karma %></div>
+							<script>
+							    (function numberWithCommas() {
+							        $('#karma').text($('#karma').attr('value').toString().replace(/\B(?=(\d{3})+(?!\d))/g, ","));
+							    })() // thanks to Elias Zamaria
+							</script>
+						</div>
+						<div class='field'>
+							<div class='thin tag'>이메일</div>
+							<div class='black value'><%= object.email %></div>
+						</div>
+						<div class='field'>
+							<div class='thin tag'>가입 순서</div>
+							<div class='black value'><%= object.id %></div>
+						</div>
+					</div>
+				</section>
+				<section>
+					<h1>소개</h1>
+					<% if(object.bio) { %>
+						<div id='bio'>
+							<%= object.bio %>
+						</div>
+					<% } else { %>
+						<button id='writeBio'>쓰자</div>
+					<% } %>
+				</section>
+				
+			</article>
+		</div>
+	</div>
 	<footer>
         <% include ./templates/footer.ejs %>
     </footer>

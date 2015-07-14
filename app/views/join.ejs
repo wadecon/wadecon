@@ -9,6 +9,7 @@
         var socket = io.connect('http://<%=host%><%=port%>');
         var loadmsg = "으후루꾸꾸루";
         var loading = false;
+        var lastchecked = "";
         function load() {
             if(loading) {
                 console.log("loading")
@@ -20,7 +21,8 @@
         function check() {
             loading = false;
             var nick = $('#nameField').val();
-            if(nick.trim() == '' || nick.trim().length > 256) $('#status').text('1~256자').css('color', 'gray');
+            if(nick.trim().length > 256) $('#status').text('1~256자').css('color', 'gray');
+            else if(nick.trim() == '') $('#status').text('')
             else socket.emit('namecheck', nick);
         }
         
@@ -31,6 +33,7 @@
                 if(!loading) {
                     loading = true;
                     load();
+                    lastchecked = $('#nameField').val();
                 }
                 $('#status').css('color', 'gray');
                 clearTimeout(timeout);

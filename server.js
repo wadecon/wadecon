@@ -335,28 +335,14 @@ app.route("/user/:userNick")
 		dbusers.searchByNickname(req.params.userNick, function(user, err){
 			if(err) console.error(err);
 			else{
-				if(req.authState) {
-					if( req.params.userNick == req.user.nickname ){
-						res.render('userpage.ejs', {
-							host: set.host,
-							port: ((set.main)?'':':'+set.port),
-							pageTitle: '너의 정보',
-							login: req.authState,
-							user: user
-						});
-					}else{
-						res.render('userpage.ejs', {
-							host: set.host,
-							port: ((set.main)?'':':'+set.port),
-							pageTitle: '얘의 정보',
-							login: req.authState,
-							user: user
-						});
-					}
-				}else{
-					res.redirect('/');
-				}
-				
+				res.render('userpage.ejs', {
+					host: set.host,
+					port: ((set.main)?'':':'+set.port),
+					pageTitle: '얘의 정보',
+					login: req.authState,
+					user: req.user,
+					object: user
+				});
 			}
 		});
 	})
