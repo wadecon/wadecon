@@ -9,7 +9,5 @@ function createBadge( name, desc, karma, cb ){
 }
 
 module.exports = {
-	searchById: searchById,
-	createBadge: createBadge,
-	searchBadgeExist: searchBadgeExist
+	createBadge: createBadge
 }

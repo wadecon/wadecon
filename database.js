@@ -111,7 +111,7 @@ module.exports = function(global) {
             type: DOMAIN.INT32,
             allowNull: false,
             defaultValue: 0
-        }, // 업보 가감
+        } // 업보 가감
     });
     
     // M:N 테이블의 정의와 관계 설정

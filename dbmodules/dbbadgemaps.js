@@ -7,7 +7,7 @@ function searchById(userId, cb){
 }
 
 function searchBadgeExist( userId, badgeName, cb ){
-	Badges.findOne({
+	BadgeMaps.findOne({
 		where:{
 			userId: userId,
 			badgeName: badgeName
