@@ -294,14 +294,13 @@ app.route("/work/:workName")
 		});
 	})
 	.post(function(req, res){
-		console.log("이거 널이면 안되는데 : ".cyan + req.user.id);
-		dblogs.createLog( req.user.id, req.params.workName, "아아아아아아", dbworks, function(log, err){
-			if(err) console.error(err);
-			else{
-				console.log("로그가 성공적으로 올라갔습니다.".cyan);
-				res.redirect("/work/"+req.params.workName);
-			}
-		});
+		// dblogs.createLog( req.user.id, req.params.workName, "아아아아아아", dbworks, function(log, err){
+		// 	if(err) console.error(err);
+		// 	else{
+		// 		console.log("로그가 성공적으로 올라갔습니다.".cyan);
+		// 		res.redirect("/work/"+req.params.workName);
+		// 	}
+		// });
 	});
 
 app.route("/user/:userNick")
@@ -358,9 +357,10 @@ io.on('connection', function (socket) {
 	socket.on('clientUpdateDislike', socketMod.updateDislike);
 	socket.on('clientUpdateJoin', socketMod.updateJoin);
 	
-	socket.on('getNotice', socketMod.getNotice);
-	socket.on('getLogs', socketMod.getLogs);
-	socket.on('postLog', socketMod.postLog);
+	socket.on('clientGetNotice', socketMod.getNotice);
+	socket.on('clientGetLogs', socketMod.getLogs);
+	socket.on('clientPostLog', socketMod.postLog);
+	// socket.on('postLog', socketMod.postLog);
 });
 
 // handle 404

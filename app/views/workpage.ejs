@@ -102,7 +102,8 @@
 					<h3>로그오브공작</h3>
 					<!--여기에 소켓으로 로그 긁어와서 보여주기-->
 					<form action="/work/<%=work.name%>" method="post">
-						<input type="submit" value="똥싸기">
+						<input type="text" id="logText">
+						<input class="emitLog" type="submit" value="똥싸기">
 					</form>
 				</section>
 			</article>
@@ -139,8 +140,22 @@
 			});
 		});
 		
-		socket.on('serverUpdate',function(data){
+		// socket.on('serverUpdate',function(data){
 			
+		// });
+		
+		$('.emitLog').click(function(){
+			console.log("emitLog emitted");
+			var log = $('#logText').val();
+			socket.emit('clientPostLog',{
+				text: log,
+				workName: "<%=work.name%>",
+				<% if(user) { %>
+				userId: <%=user.id%>
+				<% } else { %>
+				user: null
+				<% } %>
+			});
 		});
 	</script>
 </body>
