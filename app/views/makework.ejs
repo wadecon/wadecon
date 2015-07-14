@@ -68,17 +68,17 @@
                     needs: needsEditor.codemirror.getValue()
                 },
                 success: function(data, status) {
-                    console.log(data.code, data.url);
                     switch(data.code) {
-                        case '201': {
-                            location.href=data.url;
-                            break;
+                        case 201: {
+                            console.log("공작 생성 성공", data.url);
+                            window.location = data.url;
+                            return false;
                         }
-                        case '400': {
+                        case 400: {
                             //미구현
                              break;
                         }
-                        case '500': {
+                        case 500: {
                             //미구현
                         }
                     }
