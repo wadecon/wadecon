@@ -1,7 +1,7 @@
-var dbnotices, dbusers, dbdislikes, dbjoins, dbworks, dbowns, dbbadges, dbbadgemaps;
+var dbnotices, dbusers, dbdislikes, dbjoins, dbworks, dbowns, dbbadges, dbbadgemaps, dblogs;
 var socket, async;
 
-function setDBs(_dbnotices, _dbusers, _dbdislikes, _dbjoins, _dbworks, _dbowns, _dbbadges, _dbbadgemaps) {
+function setDBs(_dbnotices, _dbusers, _dbdislikes, _dbjoins, _dbworks, _dbowns, _dbbadges, _dbbadgemaps, _dblogs) {
 	dbnotices = _dbnotices;
 	dbusers = _dbusers;
 	dbdislikes = _dbdislikes;
@@ -10,6 +10,7 @@ function setDBs(_dbnotices, _dbusers, _dbdislikes, _dbjoins, _dbworks, _dbowns, 
 	dbowns = _dbowns;
 	dbbadges = _dbbadges;
 	dbbadgemaps = _dbbadgemaps;
+	dblogs = _dblogs
 }
 
 function setSocketAndAsync(_socket, _async) {
@@ -116,13 +117,32 @@ function updateJoin(data){
 	});
 }
 
-
+// 아직 안쓰인 함수
 function getNotice(data){
-	// 이거 하자
 	dbnotices.peekNotice(data.userId, function(result, err){
 		if(err) console.error(err);
 		else{
 			socket.emit('getNotice', result);
+		}
+	});
+}
+
+// 아직 안쓰인 함수
+function postLog( userId, workId, text ){
+	dblogs.createLog( userId, workId, text, function(log, err){
+		if(err) console.error(err);
+		else{
+			console.log("로그가 성공적으로 올라갔습니다.".cyan);
+		}
+	});
+}
+
+// 아직 안쓰인 함수
+function getLogs( workId, text ){
+	dblogs.getWorksAllLog(workId, function(result, err){
+		if(err)	console.error(err);
+		else{
+			console.log("로그를 성공적으로 반환".cyan);
 		}
 	});
 }
@@ -133,5 +153,8 @@ module.exports = {
 	nameCheck: nameCheck,
 	titleCheck: titleCheck,
 	updateDislike: updateDislike,
-	updateJoin: updateJoin
+	updateJoin: updateJoin,
+	getNotice: getNotice,
+	postLog: postLog,
+	getLogs: getLogs
 }

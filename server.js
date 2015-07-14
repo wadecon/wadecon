@@ -347,13 +347,16 @@ app.route("/user/:userNick")
 // sockets
 io.on('connection', function (socket) {
 	socketMod.setSocketAndAsync(socket, async);
-	socketMod.setDBs(dbnotices, dbusers, dbdislikes, dbjoins, dbworks, dbowns, dbbadges, dbbadgemaps);
+	socketMod.setDBs(dbnotices, dbusers, dbdislikes, dbjoins, dbworks, dbowns, dbbadges, dbbadgemaps, dblogs);
 	socket.emit('news', {});
 	socket.on('namecheck', socketMod.nameCheck);
 	socket.on('titlecheck', socketMod.titleCheck);
 	socket.on('clientUpdateDislike', socketMod.updateDislike);
 	socket.on('clientUpdateJoin', socketMod.updateJoin);
-	// socket.on('');
+	
+	socket.on('getNotice', socketMod.getNotice);
+	socket.on('getLogs', socketMod.getLogs);
+	socket.on('postLog', socketMod.postLog);
 });
 
 // handle 404
