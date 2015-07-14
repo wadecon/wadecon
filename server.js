@@ -40,6 +40,7 @@ var dbnotices = require("./dbmodules/dbnotices.js");
 var dbusers = require("./dbmodules/dbusers.js");
 var dbdislikes = require("./dbmodules/dbdislikes.js");
 var dbjoins = require("./dbmodules/dbjoins.js");
+var dbworks = require("./dbmodules/dbworks.js");
 var systemMod = require("./systemMod.js");
 
 var auth = require("./auth.js");
@@ -123,7 +124,7 @@ app.route("/")
 					numDislikes: arrWorksDislikesNum,
 					joins: joins,
 					host: set.host,
-					port: ((set.main)?'':':'+set.port),
+					port: ((set.main)?'':':'+set.port)
 				});
 			});
 		});
@@ -132,6 +133,8 @@ app.route("/")
 app.route("/makework")
 	.get(function(req, res){
 		res.render('makework.ejs', {
+			host: set.host,
+			port: ((set.main)?'':':'+set.port),
 			pageTitle: '공작 모의'
 		});
 	})
@@ -308,6 +311,19 @@ io.on('connection', function (socket) {
 				}
 			});
 		} else socket.emit('namechecked', false);
+	});
+	socket.on('titlecheck', function (data) {
+		console.log(data);
+		if(data) {
+			dbworks.searchByName(data, function(work, err) {
+				if(err) console.error(err);
+				else if(!work) { // 가능한 공작이름
+					socket.emit('titlechecked', true);
+				} else { // 이미 존재하는 공작이름
+					socket.emit('titlechecked', false);
+				}
+			});
+		} else socket.emit('titlechecked', false);
 	});
 	
 	socket.on('clientUpdateDislike',function(data){
