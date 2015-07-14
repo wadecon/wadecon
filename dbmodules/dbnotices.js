@@ -1,11 +1,9 @@
 function peekNotice( userId, cb ){
-	Notices.findAndCountAll({
+	Notices.findAll({
 		where:{
 			userId: userId
 		}
-	}).then(
-		cb
-	);
+	}).then(cb);
 }
 
 function putNotice( userId, msg, cb ){

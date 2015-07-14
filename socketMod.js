@@ -66,30 +66,30 @@ function updateDislike(data) {
 				}
 			],
 			function(err, result) {
-				console.log("0-intro".cyan);
 				if(result[1] != null) {
 					dbnotices.putNotice( data.userId, "이런반동놈의자식!!!", function(){
 						dbbadgemaps.searchBadgeExist( data.userId, "반동놈의자식", function(exist, err){
 							if( exist == null){
-								dbbadgemaps.giveBadge( data.userId, "반동놈의자식", function(){
-									callback(null, result[0]);
+								dbbadgemaps.giveBadge( data.userId, "반동놈의자식", function(something, err){
+									callback( result[0]);
 								});
 							}else{
-								callback(null, result[0]);
+								callback( result[0]);
 							}
 						});
 					});
 				}else{
-					callback(null, result[0]);
+					callback( result[0]);
 				}
 			});
-		},
-		function(dislikes, callback) {
-			dbdislikes.toggleTuple(dislikes, data, function(){
-				callback();
-			});
 		}
-	]);
+	],
+	function( dislikes ) {
+		dbdislikes.toggleTuple( dislikes, data, function(){
+			// 여기서 broadcast
+		});
+	}
+);
 
 }
 function updateJoin(data){
@@ -119,6 +119,12 @@ function updateJoin(data){
 
 function getNotice(data){
 	// 이거 하자
+	dbnotices.peekNotice(data.userId, function(result, err){
+		if(err) console.error(err);
+		else{
+			
+		}
+	});
 }
 
 module.exports = {
