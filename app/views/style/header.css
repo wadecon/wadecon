@@ -8,7 +8,7 @@ a {
     text-decoration: none;
     color: black;
 }
-a:hover {
+.logotype a:hover {
     color: #444;
 }
 .logotype {
@@ -24,11 +24,19 @@ a:hover {
 }
 #dashboard {
     float: right;
-    height: 90px;
-    margin: 20px;
+    top: 0;
+    height: 50px;
+    padding: 20px;
+}
+#dashboard:hover {
+	transition: all 0.15s ease-out;
+	background-color: darksalmon;
+    opacity: 0.9;
+	color: white;
 }
 #userpic {
     display: inline-block;
+    background-color: white;
     width: 44px;
     height: 44px;
     border-radius: 22px;
@@ -40,10 +48,15 @@ a:hover {
     font-size: 1.5em;
     text-indent: 0.2em;
     vertical-align: middle;
+    color: white;
 }
 #userkarma {
     display: inline-block;
+    color: salmon;
+    background-color: white;
+    border-radius: 3px; 
+    vertical-align: sub;
     font-size: 1.5em;
-    color: white;
-    vertical-align: middle;
+    padding: 0.15em 0.4em;
+    margin-left: 0.5em;
 }

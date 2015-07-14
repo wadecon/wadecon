@@ -139,17 +139,14 @@ app.route("/")
 
 app.route("/makework")
 	.get(auth.checkAuthState, function(req, res){
-		if(req.authState) {
 			res.render('makework.ejs', {
 				host: set.host,
+				login: true,
 				port: ((set.main)?'':':'+set.port),
 				userId: req.user.id,
 				user: req.user,
 				pageTitle: '공작 모의'
 			});
-		} else {
-			res.redirect('/');
-		}
 	})
 	.post(auth.checkAuthState, function(req, res){
 		async.waterfall([
@@ -229,7 +226,7 @@ app.route("/join")
 					res.render('join.ejs', {
 						pageTitle: '가입',
 						name: req.user.name,
-						login: false,
+						login: false, //예외사항: 항시 거짓
 						picture: req.user.picture,
 						host: set.host,
 						port: ((set.main)?'':':'+set.port)
@@ -284,6 +281,7 @@ app.route("/work/:workName")
 					res.render("workpage.ejs", {
 						work: work,
 						numDislikes: numDislikes,
+						login: req.authState,
 						host: set.host,
 						port: ((set.main)?'':':'+set.port),
 						user: (req.authState)?req.user:null
