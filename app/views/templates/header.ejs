@@ -8,10 +8,12 @@
 			<div class="logotype"><a href="/">와동개발자협동조합</a></div>
 		</div>
 		<% if(login && user.nickname) { %>
-			<div id='dashboard'>
-				<img id='userpic' src='<%= user.picture %>'>
-				<div id='usernick' class='black'><%= user.nickname %></div>
-			</div>
+			<a href="/user/<%=user.nickname%>">
+				<div id='dashboard'>
+					<img id='userpic' src='<%= user.picture %>'>
+					<div id='usernick' class='black'><%= user.nickname %></div>
+				</div>
+			</a>
 		<% } %>
-	</div>
+		</div>
 </header>
