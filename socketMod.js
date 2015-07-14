@@ -43,26 +43,61 @@ function titleCheck(data) {
 
 function updateDislike(data){
 	async.waterfall([
-		function(cb){
-			dbdislikes.searchById(data.userId, data.workId, function(dislikes, err) {
-				if(err) console.log(err);
-				else{
-					cb(null, dislikes);
+		function(callback){
+			async.parralel([
+				function(cb){
+					dbdislikes.searchById(data.userId, data.workId, function(dislikes, err) {
+						if(err) console.log(err);
+						else{
+							cb(null, dislikes);
+						}
+					});
+				},
+				function(cb){
+					dbjoins.searchById( function( result, err ){
+						if(err) console.error(err);
+						else{
+							cb(null, result);
+						}
+					});
 				}
+			],
+			function( err, result ){
+				if( result[1] != null ){
+					dbnotices.putNotice(data.userId, "이런반동노무자식");
+				}
+				callback(null, result[0]);
 			});
 		},
-		function( dislikes, cb ){
+		function( dislikes, callback ){
 			dbdislikes.toggleTuple(dislikes, data, function(){
-				cb();
+				callback();
 			});
 		}
-	],
-	function(err, result){
-		dbdislikes.searchUsersDislikes(data.userId, function(result){
-			socket.broadcast.emit('serverUpdate',result);
-			socket.emit('serverUpdate',result);
-		});
-	});
+		
+	]);
+	
+	// async.waterfall([
+	// 	function(cb){
+	// 		dbdislikes.searchById(data.userId, data.workId, function(dislikes, err) {
+	// 			if(err) console.log(err);
+	// 			else{
+	// 				cb(null, dislikes);
+	// 			}
+	// 		});
+	// 	},
+	// 	function( dislikes, cb ){
+	// 		dbdislikes.toggleTuple(dislikes, data, function(){
+	// 			cb();
+	// 		});
+	// 	}
+	// ],
+	// function(err, result){
+	// 	dbdislikes.searchUsersDislikes(data.userId, function(result){
+	// 		socket.broadcast.emit('serverUpdate',result);
+	// 		socket.emit('serverUpdate',result);
+	// 	});
+	// });
 }
 function updateJoin(data){
 	async.waterfall([
@@ -86,6 +121,10 @@ function updateJoin(data){
 			socket.emit('serverUpdate',result);
 		});
 	});
+}
+
+function notifyNotice(data){
+	
 }
 
 module.exports = {
