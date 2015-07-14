@@ -3,9 +3,15 @@
 	<style>
 		<% include ../style/header.css %>
 	</style>
-	<div id="logoBar">
-		<div class="logotype maxWrapper"><a href="/">와동개발자협동조합</a></div>
-		<div id='notice'><img src="/images/n2.png" alt=""></div>
-		<div id='user'><img src="/images/user.png" alt=""></div>
+	<div class="maxWrapper">
+		<div id="logoBar">
+			<div class="logotype"><a href="/">와동개발자협동조합</a></div>
+		</div>
+		<% if(login && user.nickname) { %>
+			<div id='dashboard'>
+				<img id='userpic' src='<%= user.picture %>'>
+				<div id='usernick' class='black'><%= user.nickname %></div>
+			</div>
+		<% } %>
 	</div>
 </header>
