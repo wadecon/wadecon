@@ -16,10 +16,23 @@ function searchBadgeExist( userId, badgeName, cb ){
 }
 
 function giveBadge( userId, badgeName, cb ){
-	BadgeMaps.create({
-		userId: userId,
-		badgeName: badgeName
-	}).then(cb);
+	Badges.findOne({
+		where:{
+			name: badgeName
+		}
+	}).then(function(result, err){
+		if(err) console.error(err);
+		else{
+			if(result == null){
+				console.log("fuck it's null!".cyan);
+			}
+			BadgeMaps.create({
+				userId: userId,
+				badgeId: result.id,
+				badgeName: badgeName
+			}).then(cb);	
+		}
+	})
 }
 
 
