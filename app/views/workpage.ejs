@@ -112,10 +112,11 @@
 		var socket = io.connect('http://<%=host%><%=port%>');
 		var disliked = false;
 		
-		// socket.on('serverUpdate',function(data){
-			
-		// });
 		socket.on('news', function () {
+			socket.emit('clientGetLogs',{
+				workId: <%=work.id%>
+			});	// 로그를 
+			
 			$('.dislike').click(function(){
 				console.log("dislike emitted");
 				var id = $(this).attr('id');
@@ -152,8 +153,11 @@
 					user: null
 					<% } %>
 				});
+				socket.emit('clientGetLogs',{
+					workId: <%=work.id%>
+				});
 			});
-			socket.on('serverPostLog', function (data) {
+			socket.on('serverGetLogs', function (data) {
 	            console.log(data);
 	        });
 		});
