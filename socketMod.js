@@ -1,13 +1,14 @@
-var dbnotices, dbusers, dbdislikes, dbjoins, dbworks, dbowns;
+var dbnotices, dbusers, dbdislikes, dbjoins, dbworks, dbowns, dbbadges;
 var socket, async;
 
-function setDBs(_dbnotices, _dbusers, _dbdislikes, _dbjoins, _dbworks, _dbowns) {
+function setDBs(_dbnotices, _dbusers, _dbdislikes, _dbjoins, _dbworks, _dbowns, _dbbadges) {
 	dbnotices = _dbnotices;
 	dbusers = _dbusers;
 	dbdislikes = _dbdislikes;
 	dbjoins = _dbjoins;
 	dbworks = _dbworks;
-	dbowns = _dbowns; 
+	dbowns = _dbowns;
+	dbbadges = _dbbadges;
 }
 
 function setSocketAndAsync(_socket, _async) {
@@ -48,7 +49,6 @@ function updateDislike(data) {
 			async.parallel([
 				function(callback) {
 					dbdislikes.searchById(data.userId, data.workId, function(dislikes, err) {
-						console.log("범인은 dislikes ################################################3".cyan);
 						if(err) console.log(err);
 						else{
 							callback(null, dislikes);
@@ -57,7 +57,6 @@ function updateDislike(data) {
 				},
 				function(callback) {
 					dbjoins.searchById( data.userId, data.workId, function( result, err ){
-						console.log("범인은 joins ################################################3".cyan);
 						if(err) console.error(err);
 						else{
 							callback(null, result);
@@ -67,8 +66,8 @@ function updateDislike(data) {
 			],
 			function(err, result) {
 				if(result[1] != null) {
-					console.log("범인은 마지막에서 두번째 ################################################3".cyan);
 					dbnotices.putNotice(data.userId, "이런반동노무자식");
+					// dbbadges.
 				}
 				callback(null, result[0]);
 			});

@@ -99,7 +99,8 @@ module.exports = function(global) {
     Badges = sqlize.define('Badges', {
         name: {
             type: DOMAIN.SHORT_CHAR,
-            allowNull: false
+            unique: true,
+            primarykey: true
         },
         desc: {
             type: DOMAIN.MIDDLE_CHAR,
@@ -172,13 +173,13 @@ module.exports = function(global) {
             type: DOMAIN.INT32,
             primaryKey: true
         },
-        badgeId: {
-            type: DOMAIN.INT32,
+        badgeName: {
+            type: DOMAIN.SHORT_CHAR,
             primaryKey: true
         }
     });
     Users.belongsToMany(Badges, {foreignKey: 'userId', through: 'BadgeMaps'});
-    Badges.belongsToMany(Users, {foreignKey: 'badgeId', through: 'BadgeMaps'});
+    Badges.belongsToMany(Users, {foreignKey: 'badgeName', through: 'BadgeMaps'});
 
     Notices = sqlize.define('Notices', {
         userId: {
