@@ -281,43 +281,17 @@ app.route("/join")
 
 app.route("/work/:workName")
 	.get(auth.inspect, function(req, res){
-		try {
-			Works.findOne({
-				where: {
-					name: req.params.workName 
-				}
-			}).then(function(work, err) {
-				if(err) throw err;
-				else {
-					async.parallel([
-						function(callback) {
-							dbjoins.getUsersBelongToWork(work.id, function(users, err) {
-								if(err) throw err;
-								else callback(null, users);
-							});
-						},
-						function(callback) {
-							dbdislikes.searchWorksDislikes(work.id, function(dislikes, err) {
-								if(err) throw err;
-								else callback(null, dislikes);
-							});
-						}
-					], function(err, results) {
-						res.render("workpage.ejs", {
-							work: work,
-							numDislikes: results[1].length,
-							members: results[0],
-							login: req.authState,
-							host: set.host,
-							port: ((set.main)?'':':'+set.port),
-							user: (req.authState)?req.user:null
-						});
-					});
-				}
+		dbworks.getDislikeJoinedUserByName(req.params.workName, dbjoins, dbdislikes, function(err, results) {
+			res.render("workpage.ejs", {
+				work: results[2],
+				numDislikes: results[1].length,
+				members: results[0],
+				login: req.authState,
+				host: set.host,
+				port: ((set.main)?'':':'+set.port),
+				user: (req.authState)?req.user:null
 			});
-		} catch(err) {
-			console.error(err);
-		}
+		});
 	})
 	.post(function(req, res){
 		dbworks.searchByName(req.params.workName, function(work, err){
