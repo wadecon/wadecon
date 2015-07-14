@@ -155,19 +155,35 @@ app.route("/makework")
 					}
 				});
 			},
-			function( work, cb ){
-				dbowns.createOwn(req.user.id, work.id, function(own, err){
-					if(err) console.error(err);
-					else{
-						console.log("공작 생성 :".cyan, work.name);
-						fs.mkdir("./public/workpage/"+work.name, function(err){
+			function(work, cb){
+				async.parallel([
+					function(callback){
+						dbowns.createOwn(req.user.id, work.id, function(own, err){
 							if(err) console.error(err);
-				        	else{
-								cb( null, work );
-							} 
+							else{
+								console.log("공작 생성 :".cyan, work.name);
+								fs.mkdir("./public/workpage/"+work.name, function(err){
+									if(err) console.error(err);
+						        	else{
+										callback(null, {});
+									}
+								});
+							}
+						});
+					},
+					function(callback){
+						var data = {
+							workId: work.id,
+							userId: req.user.id
+						};
+						dbjoins.toggleTuple( null, data, function(){
+							callback(null, {});
 						});
 					}
-				})
+				],
+				function(err, result){
+					cb( null, work );
+				});
 			},
 			function( work, cb){
 				async.parallel([
@@ -227,9 +243,7 @@ app.route("/join")
 						else if(!user){ // 그 세션의 uid에 해당하는 게 등록 안되어있음 (이상한 케이스)
 							res.redirect('/');
 						} else {
-							user.updateAttributes({ // 찾은 유저정보에서 닉네임을 받은 닉네임으로 바꿔준다
-								nickname: req.body.nickname
-							}).then(function(user, err) {
+							dbusers.changeNickname(user, req.body.nickname, function(user, err) {
 								if(err) {
 									console.error(err);
 									res.send("500").end();
