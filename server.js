@@ -327,14 +327,26 @@ app.route("/work/:workName")
 
 app.route("/user/:userNick")
 	.get(auth.checkAuthState, function(req, res){
-		dbusers.searchById(req.user.id, function(user, err){
+		dbusers.searchByNickname(req.params.userNick, function(user, err){
 			if(err) console.error(err);
-			res.render('userpage.ejs', {
-				host: set.host,
-				port: ((set.main)?'':':'+set.port),
-				pageTitle: '너의 정보',
-				user: user
-			});
+			else{
+				if( req.params.userNick == req.user.nickname ){
+					res.render('userpage.ejs', {
+						host: set.host,
+						port: ((set.main)?'':':'+set.port),
+						pageTitle: '너의 정보',
+						user: user
+					});
+				}else{
+					res.render('userpage.ejs', {
+						host: set.host,
+						port: ((set.main)?'':':'+set.port),
+						pageTitle: '얘의 정보',
+						user: user
+					});
+				}
+				
+			}
 		});
 	})
 	.post(function(req, res){
@@ -360,7 +372,7 @@ app.use(function(req, res) {
 
 // handle 500
 app.use(function(error, req, res, next) {
-	res.send('500: Internal Server Error', 500);
+	res.status(500).send('500: Internal Server Error');
 });
 
 server.listen(set.port || 8080);

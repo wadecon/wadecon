@@ -5,7 +5,10 @@
         <% include ./templates/header.ejs %>
     </header>
 	<section>
-		
+		<!--여기 소켓통신으로 동적으로 유저 정보 수정하도록-->
+		<div>너의 닉네임 -> <%= user.nickname %></div>
+		<div>너의 업보 -> <%= user.karma %></div>
+		<div>너의 페북 사진 -> <img src="<%=user.picture%>" alt=""></div>
 	</section>
 	<footer>
         <% include ./templates/footer.ejs %>
