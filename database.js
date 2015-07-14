@@ -116,13 +116,16 @@ module.exports = function(global) {
     
     // M:N 테이블의 정의와 관계 설정
     Logs = sqlize.define('Logs', {
-        userId: {
+        logId:{
             type: DOMAIN.INT32,
-            primaryKey: true
+            primaryKey: true,
+            autoIncrement: true    
+        },
+        userId: {
+            type: DOMAIN.INT32
         },
         workId: {
-            type: DOMAIN.INT32,
-            primaryKey: true
+            type: DOMAIN.INT32
         },
         text: {
             type: DOMAIN.MIDDLE_CHAR //트위터보다 1자 더 지원합니다
