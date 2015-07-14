@@ -280,18 +280,48 @@ app.route("/join")
 	});
 
 app.route("/work/:workName")
-	.get(auth.inspect, function(req, res){
-		dbworks.getDislikeJoinedUserByName(req.params.workName, dbjoins, dbdislikes, function(err, results) {
-			res.render("workpage.ejs", {
-				work: results[2],
-				numDislikes: results[1].length,
-				members: results[0],
-				login: req.authState,
-				host: set.host,
-				port: ((set.main)?'':':'+set.port),
-				user: (req.authState)?req.user:null
+	.get(auth.inspect, function(req, res) {
+		try {
+			async.parallel([
+				function(callback) {
+					if(req.authState) {
+						dbworks.searchByName(req.params.workName, function(work, err) {
+							if(err) callback(err);
+							else {
+								dbjoins.searchById(req.user.id, work.id, function(join, err) {
+									if(err) throw callback(err);
+									else if(join && join.userId === req.user.id) callback(null, true);
+									else callback(null, false);
+								});
+							}
+						});
+					} else callback(null, false);
+				},
+				function(callback) {
+					dbworks.getDislikeJoinedUserByName(req.params.workName, dbjoins, dbdislikes, function(err, results) {
+						if(err) callback(err);
+						else callback(err, results);
+					});
+				}
+			], function(err, results) {
+				if(err) throw err;
+				else {
+					res.render("workpage.ejs", {
+						work: results[1][2],
+						numDislikes: results[1][1].length,
+						members: results[1][0],
+						login: req.authState,
+						isEditable: results[0],
+						host: set.host,
+						port: ((set.main)?'':':'+set.port),
+						user: (req.authState)?req.user:null
+					});
+				}
 			});
-		});
+		} catch(err) {
+			console.error(err);
+			res.send(500).end();
+		}
 	})
 	.post(function(req, res){
 		console.log("이거 널이면 안되는데 : ".cyan + req.user.id);

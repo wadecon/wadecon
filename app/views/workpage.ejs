@@ -4,7 +4,7 @@
 	<style>
 		<% include ./style/workpage.css %>
 	</style>
-	<% if(login && user.nickname) { %>
+	<% if(login && isEditable) { %>
 		<link rel="stylesheet" href="//cdn.jsdelivr.net/editor/0.1.0/editor.css">
 	    <script src="/js/editor.js"></script>
 	    <script src="/js/marked.js"></script>
