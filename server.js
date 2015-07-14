@@ -66,10 +66,6 @@ app.get('/auth/fb/callback',
 	})
 );
 
-app.get('/loginSuccess', auth.checkAuthState, function(req, res){
-	console.log("로그인성공");
-    res.send(req.user);
-});
 app.get('/logout', function(req, res){
     req.logout();
     res.redirect('/');
