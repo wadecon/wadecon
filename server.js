@@ -348,6 +348,7 @@ app.route("/user/:userNick")
 							host: set.host,
 							port: ((set.main)?'':':'+set.port),
 							pageTitle: '얘의 정보',
+							login: req.authState,
 							user: user
 						});
 					}
