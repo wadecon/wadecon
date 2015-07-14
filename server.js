@@ -326,8 +326,16 @@ app.route("/work/:workName")
 	});
 
 app.route("/user/:userNick")
-	.get(function(req, res){
-		var userNick = req.parmas.userNick;
+	.get(auth.checkAuthState, function(req, res){
+		dbusers.searchById(req.user.id, function(user, err){
+			if(err) console.error(err);
+			res.render('userpage.ejs', {
+				host: set.host,
+				port: ((set.main)?'':':'+set.port),
+				pageTitle: '너의 정보',
+				user: user
+			});
+		});
 	})
 	.post(function(req, res){
 		// edit user information

@@ -6,6 +6,14 @@ function searchByNickname(nickname, cb){
 	}).then(cb);
 }
 
+function searchById(userId, cb){
+	Users.findOne({
+		where: {
+			"id": userId
+		}
+	}).then(cb);
+}
+
 function searchByFbid(fbId, cb){
 	Users.findOne({
 		where: {
@@ -23,5 +31,6 @@ function changeNickname(user, nickname,cb){
 module.exports = {
 	searchByNickname: searchByNickname,
 	searchByFbid: searchByFbid,
+	searchById,
 	changeNickname: changeNickname
 }
