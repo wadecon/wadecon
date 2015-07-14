@@ -11,7 +11,7 @@
 }
 input[type=text] {
     font-family: 'NotoSansThin';
-    width: 600px;
+    width: 643px;
     background-color: #fff;
     border-radius: 3px;
     color: #bbb;
@@ -27,6 +27,10 @@ input[type=text]:focus {
 input[type=text]:hover {
     border: 1px solid coral;
 }
+#status {
+    text-indent: 1em;
+    
+}
 .field {
     margin-top: 20px;
     padding-bottom: 10px;
@@ -37,8 +41,9 @@ section {
 }
 .tag {
     display: inline-block;
+    font-size: 1.2em;
     line-height: 2em;
-    width: 100px;
+    width: 120px;
     padding: 0 10px;
     float: left;
 }
@@ -46,9 +51,9 @@ section {
     background-color: #fff;
     border: 1px solid #dfdfdf;
     border-radius: 3px;
-    margin-left: 120px;
+    margin-left: 140px;
     padding: 10px;
-    width: 600px;
+    width: 630px;
     height: 530px;
 }
 .editor-wrapper:hover {
