@@ -44,6 +44,7 @@ var dbjoins = require("./dbmodules/dbjoins.js");
 var dbworks = require("./dbmodules/dbworks.js");
 var dbowns = require("./dbmodules/dbowns.js");
 var dbbadges = require("./dbmodules/dbbadges.js");
+var dbbadgemaps = require("./dbmodules/dbbadgemaps.js");
 
 var socketMod = require("./socketMod.js");
 var systemMod = require("./systemMod.js");
@@ -374,7 +375,7 @@ app.route("/user/:userNick")
 // sockets
 io.on('connection', function (socket) {
 	socketMod.setSocketAndAsync(socket, async);
-	socketMod.setDBs(dbnotices, dbusers, dbdislikes, dbjoins, dbworks, dbowns, dbbadges);
+	socketMod.setDBs(dbnotices, dbusers, dbdislikes, dbjoins, dbworks, dbowns, dbbadges, dbbadgemaps);
 	socket.emit('news', {});
 	socket.on('namecheck', socketMod.nameCheck);
 	socket.on('titlecheck', socketMod.titleCheck);
@@ -395,3 +396,7 @@ app.use(function(req, res) {
 
 server.listen(set.port || 8080);
 console.log((set.host+":"+(set.port || 8080)).cyan+"에서 서버 시작".green);
+
+// dbbadges.createBadge("반동놈의자식", "이놈은빨갱입니다", 10, function(a, err){
+// 	console.log("됬을까".cyan);
+// })

@@ -1,7 +1,7 @@
-var dbnotices, dbusers, dbdislikes, dbjoins, dbworks, dbowns, dbbadges;
+var dbnotices, dbusers, dbdislikes, dbjoins, dbworks, dbowns, dbbadges, dbbadgemaps;
 var socket, async;
 
-function setDBs(_dbnotices, _dbusers, _dbdislikes, _dbjoins, _dbworks, _dbowns, _dbbadges) {
+function setDBs(_dbnotices, _dbusers, _dbdislikes, _dbjoins, _dbworks, _dbowns, _dbbadges, _dbbadgemaps) {
 	dbnotices = _dbnotices;
 	dbusers = _dbusers;
 	dbdislikes = _dbdislikes;
@@ -9,6 +9,7 @@ function setDBs(_dbnotices, _dbusers, _dbdislikes, _dbjoins, _dbworks, _dbowns, 
 	dbworks = _dbworks;
 	dbowns = _dbowns;
 	dbbadges = _dbbadges;
+	dbbadgemaps = _dbbadgemaps;
 }
 
 function setSocketAndAsync(_socket, _async) {
@@ -47,29 +48,49 @@ function updateDislike(data) {
 	async.waterfall([
 		function(callback) {
 			async.parallel([
-				function(callback) {
-					dbdislikes.searchById(data.userId, data.workId, function(dislikes, err) {
+				function(cb) {
+					dbdislikes.searchById( data.userId, data.workId, function(dislikes, err) {
+						console.log("0-1".cyan);
 						if(err) console.log(err);
 						else{
-							callback(null, dislikes);
+							console.log("0-1-success".cyan);
+							cb(null, dislikes);
 						}
 					});
 				},
-				function(callback) {
+				function(cb) {
 					dbjoins.searchById( data.userId, data.workId, function( result, err ){
+						console.log("0-2".cyan);
 						if(err) console.error(err);
 						else{
-							callback(null, result);
+							console.log("0-2-success".cyan);
+							cb(null, result);
 						}
 					});
 				}
 			],
 			function(err, result) {
+				console.log("0-intro".cyan);
 				if(result[1] != null) {
-					dbnotices.putNotice(data.userId, "이런반동노무자식");
-					// dbbadges.
+					console.log("0".cyan);
+					dbnotices.putNotice( data.userId, "이런반동놈의자식!!!", function(){
+						console.log("1".cyan);
+						dbbadgemaps.searchBadgeExist( data.userId, "반동놈의자식", function(exist, err){
+							console.log("2".cyan);
+							if( exist == null){
+								console.log("3".cyan);
+								dbbadgemaps.giveBadge( data.userId, "반동놈의자식", function(){
+									callback(null, result[0]);
+								});
+							}else{
+								callback(null, result[0]);
+							}
+						});
+					});
+				}else{
+					console.log("0-else".cyan);
+					callback(null, result[0]);
 				}
-				callback(null, result[0]);
 			});
 		},
 		function(dislikes, callback) {

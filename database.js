@@ -111,7 +111,7 @@ module.exports = function(global) {
             type: DOMAIN.INT32,
             allowNull: false,
             defaultValue: 0
-        }, // 업보 가감
+        } // 업보 가감
     });
     
     // M:N 테이블의 정의와 관계 설정
@@ -173,13 +173,17 @@ module.exports = function(global) {
             type: DOMAIN.INT32,
             primaryKey: true
         },
-        badgeName: {
-            type: DOMAIN.SHORT_CHAR,
+        badgeId: {
+            type: DOMAIN.INT32,
             primaryKey: true
+        },
+        badgeName:{
+            type: DOMAIN.SHORT_CHAR,
+            allowNull: false
         }
     });
     Users.belongsToMany(Badges, {foreignKey: 'userId', through: 'BadgeMaps'});
-    Badges.belongsToMany(Users, {foreignKey: 'badgeName', through: 'BadgeMaps'});
+    Badges.belongsToMany(Users, {foreignKey: 'badgeId', through: 'BadgeMaps'});
 
     Notices = sqlize.define('Notices', {
         userId: {
