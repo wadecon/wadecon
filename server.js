@@ -45,6 +45,7 @@ var dbworks = require("./dbmodules/dbworks.js");
 var dbowns = require("./dbmodules/dbowns.js");
 var dbbadges = require("./dbmodules/dbbadges.js");
 var dbbadgemaps = require("./dbmodules/dbbadgemaps.js");
+var dblogs = require("./dbmodules/dblogs.js");
 
 var socketMod = require("./socketMod.js");
 var systemMod = require("./systemMod.js");
@@ -81,7 +82,7 @@ app.route("/")
 				res.end("<script>location.href='https://www.google.com/chrome/browser/desktop/index.html';</script>");
 			}
 		});
-		
+
 		async.parallel([
 			function(callback) {
 				Works.findAll({
@@ -319,43 +320,18 @@ app.route("/work/:workName")
 		}
 	})
 	.post(function(req, res){
-		var workId = req.params.workId;
-		Works.findOne({
-			where: {
-				id: workId
-			}
-		}).then(function(work, err) {
+		dbworks.searchByName(req.params.workName, function(work, err){
 			if(err) console.error(err);
-			else {
-				fs.mkdir("./WorkPage/"+work.name, function(err){
-					console.log(err);
-					if (req.body.reqType == "md") {
-						var html = md(req.body.md);
-						fs.writeFile("./WorkPage/"+work.name+"/front.html", html, function(err){
-							if(err) console.log(err);
-							work.updateAttributes({
-								frontboard: "./WorkPage" + work.name + "/front.html"
-							}).then(function(work, err){
-								if(err) console.log(err);
-								res.redirect("/work/"+work.id+"/"+work.name);	
-							});
-						});
-					}
-					else if ( req.body.reqType == "need" ) {
-						var html = md(req.body.need)
-						fs.writeFile("./WorkPage/"+work.name+"/need.html", html, function(err){
-							if(err) console.log(err);
-							work.updateAttributes({
-								needs: "./WorkPage" + work.name + "/need.html"
-							}).then(function(work, err){
-								if(err) console.log(err);
-								res.redirect("/work/"+work.id+"/"+work.name);	
-							});
-						});
+			else{
+				dblogs.createLog(req.user.id, work.id, "aa"/*여기에는 유저가쓴 텍스트*/, function(log, err){
+					if(err) console.error(err);
+					else{
+						console.log("로그가 성공적으로 올라갔습니다.".cyan);
+						res.redirect("/work/"+req.parmas.workName);
 					}
 				});
 			}
-		});
+		})
 	});
 
 app.route("/user/:userNick")
@@ -364,7 +340,7 @@ app.route("/user/:userNick")
 			if(err) console.error(err);
 			else if(!user) {
 				res.status(404).end();
-			} 
+			}
 			else{
 				res.render('userpage.ejs', {
 					host: set.host,
@@ -405,13 +381,16 @@ app.route("/user/:userNick")
 // sockets
 io.on('connection', function (socket) {
 	socketMod.setSocketAndAsync(socket, async);
-	socketMod.setDBs(dbnotices, dbusers, dbdislikes, dbjoins, dbworks, dbowns, dbbadges, dbbadgemaps);
+	socketMod.setDBs(dbnotices, dbusers, dbdislikes, dbjoins, dbworks, dbowns, dbbadges, dbbadgemaps, dblogs);
 	socket.emit('news', {});
 	socket.on('namecheck', socketMod.nameCheck);
 	socket.on('titlecheck', socketMod.titleCheck);
 	socket.on('clientUpdateDislike', socketMod.updateDislike);
 	socket.on('clientUpdateJoin', socketMod.updateJoin);
-	// socket.on('');
+	
+	socket.on('getNotice', socketMod.getNotice);
+	socket.on('getLogs', socketMod.getLogs);
+	socket.on('postLog', socketMod.postLog);
 });
 
 // handle 404

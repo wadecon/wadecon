@@ -116,15 +116,20 @@ module.exports = function(global) {
     
     // M:N 테이블의 정의와 관계 설정
     Logs = sqlize.define('Logs', {
-        userId: {
+        logId:{
             type: DOMAIN.INT32,
-            primaryKey: true
+            primaryKey: true,
+            autoIncrement: true    
+        },
+        userId: {
+            type: DOMAIN.INT32
         },
         workId: {
-            type: DOMAIN.INT32,
-            primaryKey: true
+            type: DOMAIN.INT32
         },
-        text: DOMAIN.MIDDLE_CHAR, //트위터보다 1자 더 지원합니다
+        text: {
+            type: DOMAIN.MIDDLE_CHAR //트위터보다 1자 더 지원합니다
+        }
     });
     Users.belongsToMany(Works, {foreignKey: 'userId', through: 'Logs'});
     Works.belongsToMany(Users, {foreignKey: ['workId', 'name'], through: 'Logs'});
@@ -183,7 +188,7 @@ module.exports = function(global) {
         }
     });
     Users.belongsToMany(Badges, {foreignKey: 'userId', through: 'BadgeMaps'});
-    Badges.belongsToMany(Users, {foreignKey: 'badgeId', through: 'BadgeMaps'});
+    Badges.belongsToMany(Users, {foreignKey: ['badgeId', 'badgeName'], through: 'BadgeMaps'});
 
     Notices = sqlize.define('Notices', {
         userId: {
