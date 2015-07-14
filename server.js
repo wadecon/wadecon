@@ -240,7 +240,8 @@ app.route("/join")
 						login: false, //예외사항: 항시 거짓
 						picture: req.user.picture,
 						host: set.host,
-						port: ((set.main)?'':':'+set.port)
+						port: ((set.main)?'':':'+set.port),
+						isIntro: true
 					});
 				else res.redirect('/'); //닉네임 이미 등록됨.
 			} else {
@@ -289,13 +290,13 @@ app.route("/work/:workName")
 				if(err) throw err;
 				else {
 					async.parallel([
-						function() {
+						function(callback) {
 							dbjoins.getUsersBelongToWork(work.id, function(users, err) {
 								if(err) throw err;
 								else callback(null, users);
 							});
 						},
-						function() {
+						function(callback) {
 							dbdislikes.searchWorksDislikes(work.id, function(dislikes, err) {
 								if(err) throw err;
 								else callback(null, dislikes);
@@ -305,7 +306,7 @@ app.route("/work/:workName")
 						res.render("workpage.ejs", {
 							work: work,
 							numDislikes: results[1].length,
-							users: results[0],
+							members: results[0],
 							login: req.authState,
 							host: set.host,
 							port: ((set.main)?'':':'+set.port),

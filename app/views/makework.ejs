@@ -70,15 +70,15 @@
                 success: function(data, status) {
                     console.log(data.code, data.url);
                     switch(data.code) {
-                        case 201: {
+                        case '201': {
                             location.href=data.url;
                             break;
                         }
-                        case 400: {
+                        case '400': {
                             //미구현
                              break;
                         }
-                        case 500: {
+                        case '500': {
                             //미구현
                         }
                     }
