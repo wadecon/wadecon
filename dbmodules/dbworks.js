@@ -5,6 +5,13 @@ function searchByName(name, cb){
 		}
 	}).then(cb);
 }
+function createWork(name, desc, cb){
+	Works.create({
+		name: name,
+		desc: desc
+	}).then(cb);
+}
 module.exports = {
-	searchByName: searchByName
+	searchByName: searchByName,
+	createWork: createWork
 }

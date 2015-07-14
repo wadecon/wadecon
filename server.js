@@ -42,6 +42,7 @@ var dbusers = require("./dbmodules/dbusers.js");
 var dbdislikes = require("./dbmodules/dbdislikes.js");
 var dbjoins = require("./dbmodules/dbjoins.js");
 var dbworks = require("./dbmodules/dbworks.js");
+var dbowns = require("./dbmodules/dbowns.js");
 var systemMod = require("./systemMod.js");
 
 var auth = require("./auth.js");
@@ -136,42 +137,77 @@ app.route("/makework")
 		res.render('makework.ejs', {
 			host: set.host,
 			port: ((set.main)?'':':'+set.port),
+			userId: req.user.id,
 			pageTitle: '공작 모의'
 		});
 	})
 	.post(auth.checkAuthState, function(req, res){
-		Works.create({
-			name: req.body.name,
-			desc: req.body.desc
-		}).then(function(work, err) {
+		dbworks.createWork( req.body.name, req.body.desc, function(work, err) {
 			if(err) console.error(err);
 			else {
-				console.log("공작 생성 :".cyan, work.name);
-				fs.mkdir("./public/workpage/"+work.name, function(err){
+				dbowns.createOwn(req.user.id, work.id, function(own, err){
 					if(err) console.error(err);
-		        	else async.parallel([
-						function(callback) {
-							fs.writeFile("./public/workpage/" + work.name + "/front.html", md(req.body.readme), function(err) {
-								if(err) callback(err, null);
-								else callback(null);
+					else{
+						console.log("공작 생성 :".cyan, work.name);
+						fs.mkdir("./public/workpage/"+work.name, function(err){
+							if(err) console.error(err);
+				        	else async.parallel([
+								function(callback) {
+									fs.writeFile("./public/workpage/" + work.name + "/front.html", md(req.body.readme), function(err) {
+										if(err) callback(err, null);
+										else callback(null);
+									});
+								},
+								function(callback) {
+									fs.writeFile("./public/workpage/" + work.name + "/needs.html", md(req.body.needs), function(err) {
+										if(err) callback(err, null);
+										else callback(null);
+									});
+								}
+							], function(err, results) {
+								if(err) console.error(err);
+								else {
+									console.log("공작 생성 리스폰스");
+									res.send({code: 201, url: '/work/'+encodeURIComponent(work.name)});
+								}
 							});
-						},
-						function(callback) {
-							fs.writeFile("./public/workpage/" + work.name + "/needs.html", md(req.body.needs), function(err) {
-								if(err) callback(err, null);
-								else callback(null);
-							});
-						}
-					], function(err, results) {
-						if(err) console.error(err);
-						else {
-							console.log("공작 생성 리스폰스");
-							res.send({code: 201, url: '/work/'+encodeURIComponent(work.name)});
-						}
-					});
-				});
+						});
+					}
+				})
 			}
 		});
+		// Works.create({
+		// 	name: req.body.name,
+		// 	desc: req.body.desc
+		// }).then(function(work, err) {
+		// 	if(err) console.error(err);
+		// 	else {
+		// 		console.log("공작 생성 :".cyan, work.name);
+		// 		fs.mkdir("./public/workpage/"+work.name, function(err){
+		// 			if(err) console.error(err);
+		//         	else async.parallel([
+		// 				function(callback) {
+		// 					fs.writeFile("./public/workpage/" + work.name + "/front.html", md(req.body.readme), function(err) {
+		// 						if(err) callback(err, null);
+		// 						else callback(null);
+		// 					});
+		// 				},
+		// 				function(callback) {
+		// 					fs.writeFile("./public/workpage/" + work.name + "/needs.html", md(req.body.needs), function(err) {
+		// 						if(err) callback(err, null);
+		// 						else callback(null);
+		// 					});
+		// 				}
+		// 			], function(err, results) {
+		// 				if(err) console.error(err);
+		// 				else {
+		// 					console.log("공작 생성 리스폰스");
+		// 					res.send({code: 201, url: '/work/'+encodeURIComponent(work.name)});
+		// 				}
+		// 			});
+		// 		});
+		// 	}
+		// });
 	});
 
 app.route("/join")
