@@ -137,14 +137,19 @@ app.route("/")
 	});
 
 app.route("/makework")
-	.get(function(req, res){
-		res.render('makework.ejs', {
-			host: set.host,
-			port: ((set.main)?'':':'+set.port),
-			userId: req.user.id,
-			user: req.user,
-			pageTitle: '공작 모의'
-		});
+	.get(auth.inspect, function(req, res){
+		if(req.authState) {
+			res.render('makework.ejs', {
+				host: set.host,
+				login: req.authState,
+				port: ((set.main)?'':':'+set.port),
+				userId: req.user.id,
+				user: req.user,
+				pageTitle: '공작 모의'
+			});
+		} else {
+			res.redirect('/')
+		}
 	})
 	.post(auth.checkAuthState, function(req, res){
 		async.waterfall([
@@ -372,9 +377,9 @@ app.use(function(req, res) {
 });
 
 // handle 500
-app.use(function(error, req, res, next) {
-	res.status(500).send('500: Internal Server Error');
-});
+// app.use(function(error, req, res, next) {
+// 	res.status(500).send('500: Internal Server Error\n'+error);
+// });
 
 server.listen(set.port || 8080);
 console.log((set.host+":"+(set.port || 8080)).cyan+"에서 서버 시작".green);

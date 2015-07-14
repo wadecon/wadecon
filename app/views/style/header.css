@@ -1,6 +1,8 @@
 header {
     height: 90px;
     min-width: 960px;
+    background-color: lightsalmon;
+    border-bottom: 3px solid darksalmon;
 }
 a {
     text-decoration: none;
@@ -10,16 +12,32 @@ a:hover {
     color: #444;
 }
 .logotype {
-    display: inline-block;
-    font-family: wadecon;
+    font-family: 'wadecon';
     letter-spacing: -0.09em;
     font-size: 1.8em;
 }
 #logoBar {
-    margin: 0 auto;
+    display: inline-block;
     font-size: 2.5em;
     line-height: 2em;
     text-indent: 0.25em;
-    background-color: lightsalmon;
-    border-bottom: 3px solid darksalmon;
+}
+#dashboard {
+    float: right;
+    height: 90px;
+    margin: 20px;
+}
+#userpic {
+    display: inline-block;
+    width: 44px;
+    height: 44px;
+    border-radius: 22px;
+    margin-left: 0;
+    vertical-align: middle;
+}
+#usernick {
+    display: inline-block;
+    font-size: 1.5em;
+    text-indent: 0.2em;
+    vertical-align: middle;
 }

@@ -31,6 +31,6 @@ function changeNickname(user, nickname,cb){
 module.exports = {
 	searchByNickname: searchByNickname,
 	searchByFbid: searchByFbid,
-	searchById,
+	searchById: searchById,
 	changeNickname: changeNickname
 }
