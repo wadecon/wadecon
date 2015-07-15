@@ -435,7 +435,7 @@ io.on('connection', function (socket) {
 	socket.on('clientGetNotices', socketMod.getNotices);
 	socket.on('clientGetLogs', socketMod.getLogs);
 	socket.on('clientPostLog', socketMod.postLog);
-	// socket.on('postLog', socketMod.postLog);
+	socket.on('clientRemoveNotice', socketMod.removeNotice);
 });
 
 // handle 404

@@ -149,6 +149,12 @@ function getLogs( data ){
 	});
 }
 
+function removeNotice(data){
+	dbnotices.removeNotice(data.msgId, function(result, err){
+		console.log("삭제했다!!".cyan);
+	});
+}
+
 module.exports = {
 	setDBs: setDBs,
 	setSocketAndAsync: setSocketAndAsync,
@@ -158,5 +164,6 @@ module.exports = {
 	updateJoin: updateJoin,
 	getNotices: getNotices,
 	postLog: postLog,
-	getLogs: getLogs
+	getLogs: getLogs,
+	removeNotice: removeNotice
 }
