@@ -442,9 +442,4 @@ server.listen(set.port || 8080);
 console.log((set.host+":"+(set.port || 8080)).cyan+"에서 서버 시작".green);
 
 dbbadges.createBadge("반동놈의자식", "이놈은빨갱입니다", 10, function(a, err){
-<<<<<<< HEAD
-	console.log("됬을까".cyan);
-})
-=======
-})
->>>>>>> 8ae10b99a506188545052841a0b8232c818a1557
+});
