@@ -12,7 +12,7 @@
 			var editors = [];
 			function editMD(id) {
 				$('#edit'+id).attr({
-					onClick: 'saveMD("'+id+'")'
+					onClick: "saveMD('"+id+"')"
 				}).text('저장하자');
 				$('#'+id).html('<div class="editor-wrapper"><textarea id='+id+'Textarea" class="editor" name="bio" rows="8" cols="40"></textarea></div>');
 				editors[id] = new Editor({

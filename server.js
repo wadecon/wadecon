@@ -243,8 +243,13 @@ app.route("/join")
 									res.send("500").end();
 								}
 								else {
-									console.log("유저 생성 :".cyan, user.name);
-									res.send("201").end();
+									fs.mkdir('./public/userbios/' + req.user.nickname, function(err) {
+										if(err) console.error(err);
+										else {
+											console.log("유저 생성 :".cyan, user.name);
+											res.send("201").end();
+										}
+									});
 								}
 							});
 						}
@@ -389,7 +394,16 @@ app.route("/user/:userNick")
 			fs.mkdir('./public/userbios/' + req.user.nickname, function(err) {
 				if(err) throw err;
 				else {
-					fs.writeFile('./public/userbios/' + req.user.nickname + '/bio.html', md(req.body.bio), function(err) {
+					async.parallel([
+						function(callback) {
+							fs.writeFileSync('./public/userbios/' + req.user.nickname + '/bio.html', md(req.body.bio));
+							callback(null);
+						},
+						function(callback) {
+							fs.writeFileSync('./public/userbios/' + req.user.nickname + '/bio.md', req.body.bio);
+							callback(null);
+						}
+					], function(err, results) {
 						if(err) throw err;
 						else {
 							dbusers.editInfoByNickname(req.user.nickname, {
@@ -398,9 +412,8 @@ app.route("/user/:userNick")
 								if(err) throw err;
 								else res.send("200");
 							});
-							fs.writeFileSync('./public/userbios/' + req.user.nickname + '/bio.md', req.body.bio);
 						}
-					});
+					})
 				}
 			});
 		} catch(err) {
