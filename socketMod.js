@@ -131,6 +131,7 @@ function postLog( data ){
 		else{
 			console.log("로그가 성공적으로 올라갔습니다.".cyan);
 			socket.emit("serverPostLog", {thiss:"sss"})
+			getLogs( data );
 		}
 	});
 }
