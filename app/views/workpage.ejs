@@ -11,8 +11,8 @@
 	    <script>
 			function editMD(id) {
 				$('#editBio').attr({
-						id: 'saveBio',
-						onClick: 'saveBio()'
+					id: 'saveBio',
+					onClick: 'saveBio()'
 				}).text('저장하자');
 				$('#bio').html('<div class="editor-wrapper"><textarea id="bioTextarea" class="editor" name="bio" rows="8" cols="40"></textarea></div>');
 				bioEditor = new Editor({
@@ -139,7 +139,7 @@
 		socket.on('news', function () {
 			socket.emit('clientGetLogs',{
 				workId: <%=work.id%>
-			});	// 로그를 
+			});	// 로그를 가져옴
 			
 			$('.dislike').click(function(){
 				console.log("dislike emitted");

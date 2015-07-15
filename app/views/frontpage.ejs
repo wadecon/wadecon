@@ -1,6 +1,21 @@
 <!DOCTYPE html>
 <head>
     <% include ./templates/head.ejs %>
+    <script>
+        var socket = io.connect('http://<%=host%><%=port%>');
+        socket.on('news', function () {
+            <% if (login) { %>
+            socket.emit('clientGetNotices',{
+				userId: <%=user.id%>
+			});	// 로그를 가져옴
+            <% } %>
+            
+            socket.on('serverGetNotices', function(data){
+                console.log(data);
+            });
+        });
+        
+    </script>
 </head>
 <body>
     <% include ./templates/header.ejs %>
