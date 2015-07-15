@@ -1,13 +1,12 @@
-var dbnotices, dbusers, dbdislikes, dbjoins, dbworks, dbowns, dbbadges, dbbadgemaps, dblogs;
+var dbnotices, dbusers, dbdislikes, dbjoins, dbworks, dbbadges, dbbadgemaps, dblogs;
 var socket, async;
 
-function setDBs(_dbnotices, _dbusers, _dbdislikes, _dbjoins, _dbworks, _dbowns, _dbbadges, _dbbadgemaps, _dblogs) {
+function setDBs(_dbnotices, _dbusers, _dbdislikes, _dbjoins, _dbworks, _dbbadges, _dbbadgemaps, _dblogs) {
 	dbnotices = _dbnotices;
 	dbusers = _dbusers;
 	dbdislikes = _dbdislikes;
 	dbjoins = _dbjoins;
 	dbworks = _dbworks;
-	dbowns = _dbowns;
 	dbbadges = _dbbadges;
 	dbbadgemaps = _dbbadgemaps;
 	dblogs = _dblogs
@@ -117,7 +116,6 @@ function updateJoin(data){
 	});
 }
 
-// 아직 안쓰인 함수
 function getNotice(data){
 	dbnotices.peekNotice(data.userId, function(result, err){
 		if(err) console.error(err);

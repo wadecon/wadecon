@@ -19,10 +19,20 @@ function toggleTuple(joins, data, cb) {
 	} else {
 		Joins.create({
 			userId: data.userId,
-			workId: data.workId
+			workId: data.workId,
+			owns: false
 		}).then(cb);
 	}
 }
+
+function makeWorkWithJoin(joins, data, cb) {
+	Joins.create({
+		userId: data.userId,
+		workId: data.workId,
+		owns: true
+	}).then(cb);
+}
+
 function searchUsersJoin(userId, cb){
 	Joins.findAll({
 		where: {
@@ -72,5 +82,6 @@ module.exports = {
 	toggleTuple: toggleTuple,
 	searchUsersJoin: searchUsersJoin,
 	searchWorksJoin: searchWorksJoin,
-	getUsersBelongToWork: getUsersBelongToWork
+	getUsersBelongToWork: getUsersBelongToWork,
+	makeWorkWithJoin: makeWorkWithJoin
 }

@@ -155,23 +155,14 @@ module.exports = function(global) {
         workId: {
             type: DOMAIN.INT32,
             primaryKey: true
+        },
+        owns:{
+            type: DOMAIN.BOOLEAN,
+            allowNull: false
         }
     });
     Users.belongsToMany(Works, {foreignKey: 'userId', through: 'Joins'});
     Works.belongsToMany(Users, {foreignKey: ['workId', 'name'], through: 'Joins'});
-    
-    Owns = sqlize.define('Owns', {
-        userId: {
-            type: DOMAIN.INT32,
-            primaryKey: true
-        },
-        workId:{
-            type: DOMAIN.INT32,
-            primaryKey: true
-        }
-    });
-    Owns.hasMany(Users, {foreignKey: 'userId'});
-    Owns.hasOne(Works, {foreignKey: 'workId'});
 
     BadgeMaps = sqlize.define('BadgeMaps', {
         userId: {
@@ -215,7 +206,6 @@ module.exports = function(global) {
     Joins.sync();
     BadgeMaps.sync();
     Notices.sync();
-    Owns.sync();
     // Users.sync({force: true});
     // Works.sync({force: true});
     // Badges.sync({force: true});
