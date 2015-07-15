@@ -1,25 +1,25 @@
-var io, socket, async;
+var io, socket, async, redisMod;
 var dbnotices, dbusers, dbdislikes, dbjoins, dbworks, dbbadges, dbbadgemaps, dblogs;
 
-function setIoAndAsync(_io, _async) {
+function setIoAsyncRedis(_io, _async, _redisMod) {
 	io = _io;
 	async = _async;
+	redisMod = _redisMod;
 	
-	// sockets
 	io.on('connection', function(_socket) {
 		socket = _socket;
 		
-		_socket.emit('news', {});
+		socket.emit('news', {});
 		
-		_socket.on('namecheck', nameCheck);
-		_socket.on('titlecheck', titleCheck);
-		_socket.on('clientUpdateDislike', updateDislike);
-		_socket.on('clientUpdateJoin', updateJoin);
-		_socket.on('reqNotices', getNotices);
-		_socket.on('clientGetLogs', getLogs);
-		_socket.on('clientPostLog', postLog);
-		_socket.on('readNotice', readNotice);
-		_socket.on('removeNotice', removeNotice);
+		socket.on('namecheck', nameCheck);
+		socket.on('titlecheck', titleCheck);
+		socket.on('clientUpdateDislike', updateDislike);
+		socket.on('clientUpdateJoin', updateJoin);
+		socket.on('reqNotices', getNotices);
+		socket.on('clientGetLogs', getLogs);
+		socket.on('clientPostLog', postLog);
+		socket.on('readNotice', readNotice);
+		socket.on('removeNotice', removeNotice);
 	});
 }
 
@@ -185,5 +185,5 @@ function readNotice(data) {
 
 module.exports = {
 	setDBs: setDBs,
-	setIoAndAsync: setIoAndAsync
+	setIoAsyncRedis: setIoAsyncRedis
 }

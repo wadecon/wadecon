@@ -2,7 +2,7 @@ var redis = require("redis");
 var client = redis.createClient();
 
 client.auth('321654', function(err){
-	console.log("Error1 ".red + err);
+	console.log("Error(null 이아니면 레디스를 실행시켜라 패스워드는 321654로):  ".red + err);
 });
 
 function vomitErr(err, cb) {
@@ -24,18 +24,34 @@ function setSession(userId, data, cb) {
 }
 
 function getSession(userId, cb) {
-    client.hkeys(userId, function (err, replies) {
-        console.log(replies.length + " replies:");
-        replies.forEach(function (reply, i) {
-            console.log("    " + i + ": ".red + reply);
-            if(i == replies.length-1) {
-                cb(null);
-            }
-        });
+    client.hgetall(userId, function (err, obj) {
+        console.dir(obj);
+        cb(obj);    // 해시 테이블에 저장되어 있는 오브젝트 반환 (json)
     });
+}
+
+function useRedis(req, res, next){
+	if( req.user != null ){
+		getSession(req.user.id, function(session) {	
+			if(session != null) {
+				console.log("샷시가 잆다!!! 아들아!!".cyan);
+				req.redis = session;	// 세션에 유저가 있을때 세션 정보를 채워줌
+				next();
+			}else{
+				console.log("샷시가 읎다!!! 아들아!!".cyan);
+				req.redis = null;	// 세션에 유저가 없으므로 세션을 채워서 보내주지 않음
+				next();
+			}
+		});
+	}
+	else{
+		req.redis = null;	// 로그인 안한 상태이므로 널을 넣어 반환
+		next();
+	}
 }
 
 module.exports = {
 	setSession: setSession,
-    getSession: getSession
+    getSession: getSession,
+    useRedis: useRedis
 }

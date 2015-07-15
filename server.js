@@ -47,11 +47,12 @@ var dbbadges = require("./dbmodules/dbbadges.js");
 var dbbadgemaps = require("./dbmodules/dbbadgemaps.js");
 var dblogs = require("./dbmodules/dblogs.js");
 
-var socketMod = require("./socketMod.js");
-socketMod.setIoAndAsync(io, async);
-socketMod.setDBs(dbnotices, dbusers, dbdislikes, dbjoins, dbworks, dbbadgemaps, dbbadgemaps, dblogs);
 var systemMod = require("./systemMod.js");
 var redisMod = require("./redisMod.js");
+var socketMod = require("./socketMod.js");
+socketMod.setIoAsyncRedis(io, async, redisMod);
+socketMod.setDBs(dbnotices, dbusers, dbdislikes, dbjoins, dbworks, dbbadgemaps, dbbadgemaps, dblogs);
+
 
 
 var auth = require("./auth.js");
@@ -76,7 +77,7 @@ app.get('/logout', function(req, res){
 });
 
 app.route("/")
-	.get(auth.inspect, function(req, res) {
+	.get(auth.inspect, redisMod.useRedis, function(req, res) {
 		systemMod.checkBrowser(req.headers['user-agent'],function(browserName){
 			// && browserVersion <= 9
 			if (browserName == 'IE') {
@@ -116,6 +117,11 @@ app.route("/")
 		], function(err, results) {
 			if(err) console.error(err);
 			else{
+				if(req.user != null) {
+					redisMod.setSession(req.user.id, req.user, function() { // 널을 반환하므로 받을 필요가 없다
+						console.log("세션 설정!!".cyan);
+					});
+				}
 				var works = results[0];
 				var dislikes = results[1];
 				var joins = results[2];
@@ -137,7 +143,7 @@ app.route("/")
 	});
 
 app.route("/makework")
-	.get(auth.checkAuthState, function(req, res){
+	.get(auth.checkAuthState, redisMod.useRedis, function(req, res){
 			res.render('makework.ejs', {
 				host: set.host,
 				login: true,
@@ -205,7 +211,7 @@ app.route("/makework")
 	});
 
 app.route("/join")
-	.get(auth.checkAuthState, function(req, res) {
+	.get(auth.checkAuthState, redisMod.useRedis, function(req, res) {
 		dbusers.searchByFbid(req.user.fbId, function(user, err) {
 			if(err) console.error(err);
 			else if(user) {
@@ -263,7 +269,7 @@ app.route("/join")
 	});
 
 app.route("/work/:workName")
-	.get(auth.inspect, function(req, res) {
+	.get(auth.inspect, redisMod.useRedis, function(req, res) {
 		try {
 			async.parallel([
 				function(callback) {
@@ -306,7 +312,7 @@ app.route("/work/:workName")
 			res.send(500).end();
 		}
 	})
-	.post(auth.checkAuthState, function(req, res){
+	.post(auth.checkAuthState, redisMod.useRedis, function(req, res){
 		try {
 			var inputData = {};
 			async.waterfall([
@@ -369,13 +375,8 @@ app.route("/work/:workName")
 	});
 
 app.route("/user/:userNick")
-	.get(auth.inspect, function(req, res){
+	.get(auth.inspect, redisMod.useRedis, function(req, res){
 		dbusers.searchByNickname(req.params.userNick, function(user, err){
-			redisMod.setSession(user.id, user, function() { // 널을 반환하므로 받을 필요가 없다
-				redisMod.getSession(user.id, function() {	// 널을 반환하므로 받을 필요가 없다
-					console.log("세션설정!!".cyan);
-				});
-			});
 			if(err) console.error(err);
 			else if(!user) {
 				res.status(404).end();
@@ -392,7 +393,7 @@ app.route("/user/:userNick")
 			}
 		});
 	})
-	.post(auth.checkAuthState, function(req, res){
+	.post(auth.checkAuthState, redisMod.useRedis, function(req, res){
 		try {
 			async.parallel([
 				function(callback) {
