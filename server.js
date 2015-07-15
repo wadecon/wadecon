@@ -12,6 +12,7 @@ var path = require('path');
 var async = require('async');
 var md = require("node-markdown").Markdown;
 var fs = require("fs");
+var request = require("request");
 
 require('colors');	// for fantastic debug
 
@@ -243,12 +244,14 @@ app.route("/join")
 									res.send("500").end();
 								}
 								else {
-									fs.mkdir('./public/userbios/' + req.user.nickname, function(err) {
-										if(err) console.error(err);
-										else {
-											console.log("유저 생성 :".cyan, user.name);
-											res.send("201").end();
-										}
+									dbusers.cacheUserImage( user.picture, user.id, request, fs, function(){
+										fs.mkdir('./public/userbios/' + req.user.nickname, function(err) {
+											if(err) console.error(err);
+											else {
+												console.log("유저 생성 :".cyan, user.name);
+												res.send("201").end();
+											}
+										});
 									});
 								}
 							});
