@@ -74,15 +74,9 @@ function updateDislike(data) {
 			function(err, result) {
 				if(result[1] != null) {
 					dbnotices.putNotice( data.userId, "이런반동놈의자식!!!", function(){
-						dbbadgemaps.searchBadgeExist( data.userId, "반동놈의자식", function(exist, err){
-							if( exist == null){
-								dbbadgemaps.giveBadge( data.userId, "반동놈의자식", function(something, err){
-									callback( result[0]);
-								});
-							}else{
-								callback( result[0]);
-							}
-						});
+						dbbadgemaps.giveBadge(data.userId, "반동놈의자식", function(something, err){
+							callback( result[0] );
+						})
 					});
 				}else{
 					callback( result[0]);

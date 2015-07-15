@@ -16,21 +16,27 @@ function searchBadgeExist( userId, badgeName, cb ){
 }
 
 function giveBadge( userId, badgeName, cb ){
-	Badges.findOne({
-		where:{
-			name: badgeName
+	searchBadgeExist( userId, badgeName, function(exist, err){
+		if( exist == null){
+			Badges.findOne({
+				where:{
+					name: badgeName
+				}
+			}).then(function(result, err){
+				if(err) console.error(err);
+				else{
+					if(result == null)	console.error("fuck it's null!".cyan);
+					BadgeMaps.create({
+						userId: userId,
+						badgeId: result.id,
+						badgeName: badgeName
+					}).then(cb);	
+				}
+			});
+		}else{
+			cb();
 		}
-	}).then(function(result, err){
-		if(err) console.error(err);
-		else{
-			if(result == null)	console.error("fuck it's null!".cyan);
-			BadgeMaps.create({
-				userId: userId,
-				badgeId: result.id,
-				badgeName: badgeName
-			}).then(cb);	
-		}
-	})
+	});
 }
 
 
