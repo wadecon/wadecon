@@ -9,28 +9,30 @@
 	    <script src="/js/editor.js"></script>
 	    <script src="/js/marked.js"></script>
 	    <script>
+			editors = [];
 			function editMD(id) {
-				$('#editBio').attr({
-						id: 'saveBio',
-						onClick: 'saveBio()'
+				$('#edit'+id).attr({
+					onClick: 'saveMD(id)'
 				}).text('저장하자');
-				$('#bio').html('<div class="editor-wrapper"><textarea id="bioTextarea" class="editor" name="bio" rows="8" cols="40"></textarea></div>');
-				bioEditor = new Editor({
-					element: document.getElementById('bioTextarea')
+				$('#'+id).html('<div class="editor-wrapper"><textarea id=id+"Textarea" class="editor" name="bio" rows="8" cols="40"></textarea></div>');
+				editors[id] = new Editor({
+					element: document.getElementById(id+'Textarea')
 				});
-				bioEditor.render();
-				bioEditor.codemirror.setValue($('#originMD').text().trim());
-				$("html, body").animate({scrollTop: $(document).height()});
+				editors[id].render();
+				editors[id].codemirror.setValue($('.origin'+id).text().trim());
+				//$("html, body").animate({scrollTop: $(document).height()});
 			}
-	        function saveBio() {
+	        function saveMD(id) {
+				console.log(editors);
 	            $.ajax({
 	                type: "POST",
-	                url: '/user/<%=user.name%>',
+	                url: '/work/<%=work.name%>',
 	                xhrFields: {
 	                       withCredentials: true
 	                },
 	                data: {
-	                    bio: bioEditor.codemirror.getValue()
+	                    readme: editors["readme"].codemirror.getValue(),
+						needs: editors["needs"].codemirror.getValue(),
 	                },
 	                success: function(data, status) {
 	                    console.log(data);
@@ -53,12 +55,12 @@
 	        }
 	    </script>
 		<% if(work.frontboard) { %>
-			<div id='originReadme' class='originCon'>
+			<div id='originreadme' class='originCon'>
 				<%- include('../../public/workpage/'+work.name+'/front.md') %>
 			</div>
 		<% } %>
 		<% if(work.needs) { %>
-			<div id='originNeeds' class='originCon'>
+			<div id='originneeds' class='originCon'>
 				<%- include('../../public/workpage/'+work.name+'/needs.md') %>
 			</div>
 		<% } %>
@@ -75,7 +77,6 @@
 					<h1><%= work.name %></h1>
 					<span id="buttons">
 						<button class="dislike" id="<%=work.id%>" dislikes=<%=numDislikes%>>싫어요 <span class='hh'><%= numDislikes %></span></button>
-						<button class="joins" id="<%=work.id%>">참여</button>
 					</span>
 					<h2><%= work.desc %></h2>
 				</div>
@@ -83,10 +84,10 @@
 					<div class='sectionTitle'>
 						<h3>README.md</h3>
 						<% if(login && isJoined) { %>
-							<% if(!object.bio) { %>
-								<button id='editMD' onClick='editBio("#readme")'>쓰자</button>
+							<% if(!work.frontboard) { %>
+								<button class='editMD' id='editreadme' onClick='editMD("readme")'>쓰자</button>
 							<% } else { %>
-								<button id='editMD' onClick='editBio("#readme")'>고치자</button>
+								<button class='editMD' id='editreadme' onClick='editMD("readme")'>고치자</button>
 							<% } %>
 						<% } %>
 					</div>
@@ -95,7 +96,10 @@
 					</div>
 				</section>
 				<section id='membersSec' class='half md'>
-					<h3>참여하는 무리</h3>
+					<div class='sectionTitle'>
+						<h3>참여하는 무리</h3>
+						<button class="joins" id="<%=work.id%>">참여</button>
+					</div>
 					<div id='members'>
 						<% for(var i = 0; i < members.length; i++) { %>
 							<a href="/user/<%=members[i].nickname%>" class='memField'>
@@ -109,10 +113,10 @@
 					<div class='sectionTitle'>
 						<h3>이런 사람 와라</h3>
 						<% if(login && isJoined) { %>
-							<% if(!object.bio) { %>
-								<button id='editMD' onClick='editBio("#needs")'>쓰자</button>
+							<% if(!work.needs) { %>
+								<button class='editMD' id='editneeds' onClick='editMD("needs")'>쓰자</button>
 							<% } else { %>
-								<button id='editMD' onClick='editBio("#needs")'>고치자</button>
+								<button class='editMD' id='editneeds' onClick='editMD("needs")'>고치자</button>
 							<% } %>
 						<% } %>
 					</div>
