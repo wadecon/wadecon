@@ -413,7 +413,7 @@ app.route("/user/:userNick")
 	});
 
 // sockets
-io.on('connection', function (socket) {
+io.on('connection', function(socket) {
 	socketMod.setSocketAndAsync(socket, async);
 	socketMod.setDBs(dbnotices, dbusers, dbdislikes, dbjoins, dbworks, dbbadges, dbbadgemaps, dblogs);
 	socket.emit('news', {});
