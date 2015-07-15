@@ -25,7 +25,7 @@
 	        function saveBio() {
 	            $.ajax({
 	                type: "POST",
-	                url: '/user/<%=user.name%>',
+	                url: location.href,
 	                xhrFields: {
 	                       withCredentials: true
 	                },
