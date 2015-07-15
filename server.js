@@ -147,61 +147,61 @@ app.route("/makework")
 			});
 	})
 	.post(auth.checkAuthState, function(req, res){
-		async.waterfall([
-			function(cb){
-				dbworks.createWork( req.body.name, req.body.desc, function(work, err) {
-					if(err) console.error(err);
-					else {
-						cb( null, work );
-					}
-				});
-			},
-			function(work, cb){
-				var data = {
-					workId: work.id,
-					userId: req.user.id
-				};
-				dbjoins.makeWorkWithJoin( null, data, function(){
-					cb( null, work );
-				})
-			},
-			function( work, cb){
-				async.parallel([
-					function(callback) {
-						fs.writeFile("./public/workpage/" + work.name + "/front.html", md(req.body.readme), function(err) {
-							if(err) callback(err, null);
-							else callback(null);
-						});
-					},
-					function(callback) {
-						fs.writeFile("./public/workpage/" + work.name + "/needs.html", md(req.body.needs), function(err) {
-							if(err) callback(err, null);
-							else callback(null);
-						});
-					},
-					function(callback) {
-						fs.writeFile("./public/workpage/" + work.name + "/front.md", req.body.readme, function(err) {
-							if(err) callback(err, null);
-							else callback(null);
-						});
-					},
-					function(callback) {
-						fs.writeFile("./public/workpage/" + work.name + "/needs.md", req.body.needs, function(err) {
-							if(err) callback(err, null);
-							else callback(null);
-						});
-					},
-				], function(err, results) {
-					if(err) console.error(err);
-					else {
-						console.log("공작 생성 리스폰스");
-						cb( err, results, work );
-					}
-				});
-			}
-		], function(err, result, work){
-			res.send({code: 201, url: '/work/'+encodeURIComponent(work.name)});
-		});
+		try {
+			async.waterfall([
+				function(callback) {
+					dbworks.createWork( req.body.name, req.body.desc, function(work, err) {
+						if(err) throw err;
+						else callback(null, work);
+					});
+				},
+				function(work, callback) {
+					var data = {
+						workId: work.id,
+						userId: req.user.id
+					};
+					dbjoins.joinOwner(null, data, function(join, err) {
+						if(err) throw err;
+						else callback(null, work);
+					})
+				},
+				function(work, callback) {
+					fs.mkdir("./public/workpage/" + work.name, function(err) {
+						if(err) callback(err);
+						else {
+							async.parallel([
+								function(cb) {
+									fs.writeFileSync("./public/workpage/" + work.name + "/front.html", md(req.body.readme));
+									cb(null);
+								},
+								function(cb) {
+									fs.writeFileSync("./public/workpage/" + work.name + "/needs.html", md(req.body.needs));
+									cb(null);
+								},
+								function(cb) {
+									fs.writeFileSync("./public/workpage/" + work.name + "/front.md", req.body.readme);
+									cb(null);
+								},
+								function(cb) {
+									fs.writeFileSync("./public/workpage/" + work.name + "/needs.md", req.body.needs);
+									cb(null);
+								},
+							], function(err, results) {
+								//여긴 에러를 받을 일이 없다. fs에서 오류나면 그냥 catch됨.
+								console.log("공작 생성 리스폰스");
+								callback(null, results, work);
+							});
+						}
+					})
+				}
+			], function(err, result, work){
+				if(err) throw err;
+				else res.send({code: 201, url: '/work/'+encodeURIComponent(work.name)});
+			});
+		} catch(err) {
+			console.log(err);
+			res.status(500).end();
+		}
 	});
 
 app.route("/join")
@@ -301,7 +301,68 @@ app.route("/work/:workName")
 			res.send(500).end();
 		}
 	})
-	.post(function(req, res){
+	.post(auth.checkAuthState, function(req, res){
+		try {
+			console.log("RECV", req.body)
+			var inputData = {};
+			async.waterfall([
+				function(callback) {
+					console.log(req.params.workName);
+					dbworks.searchByName(req.params.workName, function(work, err) {
+						if(err) throw err;
+						else if(work) callback(null, work);
+						else throw 'No work';
+					});
+				},
+				function(work, callback) {
+					async.parallel([
+						function(cb) {
+							if(req.body.readme) {
+								fs.writeFileSync("./public/workpage/" + work.name + "/front.html", md(req.body.readme));
+								inputData.frontboard = "./public/workpage/" + work.name + "/front.html";
+							}
+							cb(null);
+						},
+						function(cb) {
+							if(req.body.needs) {
+								fs.writeFileSync("./public/workpage/" + work.name + "/needs.html", md(req.body.needs));
+								inputData.frontboard = "./public/workpage/" + work.name + "/needs.html";
+							}
+							cb(null);
+						},
+						function(cb) {
+							if(req.body.readme)
+								fs.writeFileSync("./public/workpage/" + work.name + "/front.md", req.body.readme);
+							cb(null);
+						},
+						function(cb) {
+							if(req.body.needs)
+								fs.writeFileSync("./public/workpage/" + work.name + "/needs.md", req.body.needs);
+							cb(null);
+						},
+					], function(err, results) {
+						//여긴 에러를 받을 일이 없다. fs에서 오류나면 그냥 catch됨.
+						callback(null, work);
+					});
+				},
+				function(work, callback) {
+					
+					dbworks.editWorkInfo(work.id, inputData, function(work, err) {
+						if(err) throw err;
+						else callback(null, work);
+					});
+				}
+			], function(err, work){
+				if(err) throw err;
+				else {
+					console.log(work.name + " 수정 성공".green);
+					res.send('200');
+				}
+			});
+		} catch(err) {
+			console.log(err);
+			res.status(500).end();
+		}
 	});
 
 app.route("/user/:userNick")

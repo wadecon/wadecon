@@ -25,7 +25,7 @@ function toggleTuple(joins, data, cb) {
 	}
 }
 
-function makeWorkWithJoin(joins, data, cb) {
+function joinOwner(joins, data, cb) {
 	Joins.create({
 		userId: data.userId,
 		workId: data.workId,
@@ -83,5 +83,5 @@ module.exports = {
 	searchUsersJoin: searchUsersJoin,
 	searchWorksJoin: searchWorksJoin,
 	getUsersBelongToWork: getUsersBelongToWork,
-	makeWorkWithJoin: makeWorkWithJoin
+	joinOwner: joinOwner
 }
