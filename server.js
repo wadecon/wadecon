@@ -398,7 +398,7 @@ app.route("/user/:userNick")
 								if(err) throw err;
 								else res.send("200");
 							});
-							fs.writeFileSync('./public/userbios/' + req.user.nickname + 'bio.md', req.body.bio);
+							fs.writeFileSync('./public/userbios/' + req.user.nickname + '/bio.md', req.body.bio);
 						}
 					});
 				}
