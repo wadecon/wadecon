@@ -77,8 +77,8 @@ function updateDislike(data) {
 				function(err, result) {
 					if(result[0] == null && result[1] != null) {
 						dbnotices.putNotice(data.userId, "이런반동놈의자식!!!", function(){
-							dbbadgemaps.giveBadge(data.userId, 1, function(something, err) {
-								callback(result[0]);
+							dbbadgemaps.giveBadge(data.userId, 1, function(badgemaps, err) {
+								if(badgemaps == null) callback(result[0]);	// 이미 뱃지를 가지고 있었다면 null 을 반환한다
 							});
 						});
 					} else {

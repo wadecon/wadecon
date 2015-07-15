@@ -1,3 +1,5 @@
+var dbusers = require("./dbusers.js");
+
 function searchById(userId, cb){
 	BadgeMaps.findAll({
 		where: {
@@ -34,23 +36,15 @@ function giveBadge(userId, badgeId, cb) {
 								badgeId: badge.id
 							}).then(function(badgemap, err) {
 								if(err) throw err;
-								else Users.findOne({
-									where: userId
-								}).then(function(user, err) {
-									if(err) throw err;
-									else user.updateAttributes({
-										karma: user.karma + badge.karma
-									}).then(function(user, err) {
-										if(err) throw err;
-										else cb(badge, null);
-									});
-								})
+								else dbusers.addKarma(userId, 10, function() {	// 뱃지를 줬으므로 뱃지의 업보 효과를 유저에게 적용시킨다.
+									cb(null);
+								});
 							});
 						}
 					}
 				});
 			} else {
-				cb(null, null);
+				cb(null);
 			}
 		});
 	} catch(err) {

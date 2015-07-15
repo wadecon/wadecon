@@ -54,7 +54,7 @@
 	    </script>
 		<% if(object.bio) { %>
 			<div id='originMD'>
-				<%- include('../../public/userbios/'+object.nickname+'/bio.md') %>
+				<%- include('../../public/userbios/'+object.id+'/bio.md') %>
 			</div>
 		<% } %>
 	<% } %>
@@ -110,7 +110,7 @@
 					</div>
 					<div id='bio'>
 						<% if(object.bio) { %>
-							<%- include('../../public/userbios/'+object.nickname+'/bio.html') %>
+							<%- include('../../public/userbios/'+object.id+'/bio.html') %>
 						<% } %>
 					</div>
 				</section>

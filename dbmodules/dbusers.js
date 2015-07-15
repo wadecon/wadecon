@@ -37,8 +37,6 @@ function editInfoByNickname(nick, data, callback) {
 }
 
 function cacheUserImage(path, userId, request, fs, cb) {
-	// var tmp = path.split("/").slice(-1).pop();
-	// var directory = tmp.join("/");
 	console.log("이건파랑이".cyan+path);
 	Users.findOne({
 		where: {
@@ -48,7 +46,7 @@ function cacheUserImage(path, userId, request, fs, cb) {
 		if(err) console.error(err);
 		else {
 			user.updateAttributes({
-				picture: 'public/images/users/'+userId+'.jpg'
+				picture: '/images/users/'+userId+'.jpg'
 			})
 		}
 	});
@@ -62,11 +60,30 @@ function cacheUserImage(path, userId, request, fs, cb) {
 	cb();
 }
 
+function addKarma(userId, karma, cb) {
+	searchById(userId, function(user, err) {
+		if(err) console.error(err);
+		else {
+			if(user != null) {
+				var addingKarma = Number(user.karma) + Number(karma); // 기존 업보와 인자로 받은 업보를 더함
+				console.log(addingKarma+"이거 몇이냐".cyan);
+				user.updateAttributes({
+					karma: addingKarma
+				}).then(cb);
+			}
+			else{
+				cb(null, "없음!"); // 유저가 존재하지 않으므로 없다고 메시지를 보냄
+			}
+		}
+	});
+}
+
 module.exports = {
 	searchByNickname: searchByNickname,
 	searchByFbid: searchByFbid,
 	searchById: searchById,
 	changeNickname: changeNickname,
 	editInfoByNickname: editInfoByNickname,
-	cacheUserImage: cacheUserImage
+	cacheUserImage: cacheUserImage,
+	addKarma: addKarma
 };
