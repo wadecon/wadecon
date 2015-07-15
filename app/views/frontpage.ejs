@@ -11,7 +11,13 @@
             <% } %>
             
             socket.on('serverGetNotices', function(data){
-                console.log(data);
+                for( var i in data){
+                    if( window.confirm( "알림!: " + data[i].msg ) == true ){
+                        socket.emit('clientRemoveNotice',{
+                            msgId: data[i].msgId
+                        });
+                    }
+                }
             });
         });
         

@@ -16,7 +16,16 @@ function putNotice( userId, msg, cb ){
 	});
 }
 
+function removeNotice( msgId, cb ){
+	Notices.destroy({
+		where:{
+			msgId: msgId
+		}
+	}).then(cb);
+}
+
 module.exports = {
 	peekNotice: peekNotice,
-	putNotice: putNotice
+	putNotice: putNotice,
+	removeNotice: removeNotice
 }
