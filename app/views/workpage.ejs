@@ -151,7 +151,6 @@
 				console.log("dislike emitted");
 				var id = $(this).attr('id');
 				socket.emit('clientUpdateDislike', {
-					onlyOneUser: false,
 					workId: <%=work.id%>,
 					<% if(user) { %>
 					userId: <%=user.id%>
