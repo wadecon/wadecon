@@ -9,12 +9,12 @@
 	    <script src="/js/editor.js"></script>
 	    <script src="/js/marked.js"></script>
 	    <script>
-			editors = [];
+			var editors = [];
 			function editMD(id) {
 				$('#edit'+id).attr({
 					onClick: 'saveMD(id)'
 				}).text('저장하자');
-				$('#'+id).html('<div class="editor-wrapper"><textarea id=id+"Textarea" class="editor" name="bio" rows="8" cols="40"></textarea></div>');
+				$('#'+id).html('<div class="editor-wrapper"><textarea id='+id+'Textarea" class="editor" name="bio" rows="8" cols="40"></textarea></div>');
 				editors[id] = new Editor({
 					element: document.getElementById(id+'Textarea')
 				});
@@ -23,7 +23,6 @@
 				//$("html, body").animate({scrollTop: $(document).height()});
 			}
 	        function saveMD(id) {
-				console.log(editors);
 	            $.ajax({
 	                type: "POST",
 	                url: '/work/<%=work.name%>',
@@ -31,8 +30,8 @@
 	                       withCredentials: true
 	                },
 	                data: {
-	                    readme: editors["readme"].codemirror.getValue(),
-						needs: editors["needs"].codemirror.getValue(),
+	                    readme: (id=='readme')?editors.readme.codemirror.getValue():null,
+						needs: (id=='needs')?editors.neeeds.codemirror.getValue():null,
 	                },
 	                success: function(data, status) {
 	                    console.log(data);
