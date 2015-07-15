@@ -89,7 +89,6 @@ app.route("/")
 				}).then(function(works, err) {
 		            if(err) callback(err, null);
 		            else {
-						console.log(works);
 						callback(null, works);
 		            }
 		        });
@@ -98,7 +97,6 @@ app.route("/")
 				Dislikes.findAll().then(function(dislikes, err){
 					if(err)	callback(err, null);
 					else{
-						console.log(dislikes);
 						callback(null, dislikes);
 					}
 				});
@@ -107,7 +105,6 @@ app.route("/")
 				Joins.findAll().then(function(joins, err){
 					if(err) callback(err, null);
 					else{
-						console.log(joins);
 						callback(null, joins);
 					}
 				});
@@ -188,7 +185,6 @@ app.route("/makework")
 								},
 							], function(err, results) {
 								//여긴 에러를 받을 일이 없다. fs에서 오류나면 그냥 catch됨.
-								console.log("공작 생성 리스폰스");
 								callback(null, results, work);
 							});
 						}
@@ -199,17 +195,15 @@ app.route("/makework")
 				else res.send({code: 201, url: '/work/'+encodeURIComponent(work.name)});
 			});
 		} catch(err) {
-			console.log(err);
+			console.error(err);
 			res.status(500).end();
 		}
 	});
 
 app.route("/join")
 	.get(auth.checkAuthState, function(req, res) {
-		console.log("REQ", req.user)
 		dbusers.searchByFbid(req.user.fbId, function(user, err) {
-			console.log(user);
-			if(err) console.error("ERROR".red, err);
+			if(err) console.error(err);
 			else if(user) {
 				if(user.nickname == null)
 					res.render('join.ejs', {
@@ -308,11 +302,9 @@ app.route("/work/:workName")
 	})
 	.post(auth.checkAuthState, function(req, res){
 		try {
-			console.log("RECV", req.body)
 			var inputData = {};
 			async.waterfall([
 				function(callback) {
-					console.log(req.params.workName);
 					dbworks.searchByName(req.params.workName, function(work, err) {
 						if(err) throw err;
 						else if(work) callback(null, work);
@@ -365,7 +357,7 @@ app.route("/work/:workName")
 				}
 			});
 		} catch(err) {
-			console.log(err);
+			console.error(err);
 			res.status(500).end();
 		}
 	});
@@ -447,5 +439,4 @@ server.listen(set.port || 8080);
 console.log((set.host+":"+(set.port || 8080)).cyan+"에서 서버 시작".green);
 
 dbbadges.createBadge("반동놈의자식", "이놈은빨갱입니다", 10, function(a, err){
-	console.log("됬을까".cyan);
 })
