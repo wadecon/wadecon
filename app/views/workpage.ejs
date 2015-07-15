@@ -198,7 +198,7 @@
 			socket.on('serverUpdateJoin', function(data){
 				$('#members').empty();
 				for(i in data) {
-					$('#members').append('<a href="/user/'+data[i].nickname+'" class="memField">'+'<img class="memPic" src="'+data[i].picture+'">'+'<div class="memNick">'+data[i].nickname+'</div></a>');
+					$('#members').append('<a href="/user/'+data[i].nickname+'" class="memField"><img class="memPic" src="'+data[i].picture+'"><div class="memNick">'+data[i].nickname+'</div></a>');
 				}
 			});
 		});
