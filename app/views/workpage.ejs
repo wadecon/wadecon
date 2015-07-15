@@ -12,20 +12,20 @@
 			var editors = [];
 			function editMD(id) {
 				$('#edit'+id).attr({
-					onClick: 'saveMD(id)'
+					onClick: 'saveMD("'+id+'")'
 				}).text('저장하자');
 				$('#'+id).html('<div class="editor-wrapper"><textarea id='+id+'Textarea" class="editor" name="bio" rows="8" cols="40"></textarea></div>');
 				editors[id] = new Editor({
 					element: document.getElementById(id+'Textarea')
 				});
 				editors[id].render();
-				editors[id].codemirror.setValue($('.origin'+id).text().trim());
+				editors[id].codemirror.setValue($('#origin'+id).text().trim());
 				//$("html, body").animate({scrollTop: $(document).height()});
 			}
 	        function saveMD(id) {
 	            $.ajax({
 	                type: "POST",
-	                url: '/work/<%=work.name%>',
+	                url: location.href,
 	                xhrFields: {
 	                       withCredentials: true
 	                },

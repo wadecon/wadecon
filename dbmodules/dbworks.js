@@ -1,6 +1,6 @@
 var async = require("async");
 
-function searchByName(name, cb){
+function searchByName(name, cb) {
 	Works.findOne({
 		where: {
 			name: name
@@ -8,7 +8,7 @@ function searchByName(name, cb){
 	}).then(cb);
 }
 
-function searchById(workId, cb){
+function searchById(workId, cb) {
 	Works.findOne({
 		where: {
 			id: workId
@@ -16,12 +16,29 @@ function searchById(workId, cb){
 	}).then(cb);
 }
 
-function createWork(name, desc, cb){
+function createWork(name, desc, cb) {
 	Works.create({
 		name: name,
 		desc: desc
 	}).then(cb);
 }
+
+function editWorkInfo(workId, data, callback) {
+	try {
+		searchById(workId, function(work, err) {
+			if(err) throw err;
+			else if(work) {
+				work.updateAttributes(data).then(function(work, err) {
+					if(err) throw err;
+					else callback(work, null);
+				});
+			} else throw 'No Work';
+		});
+	} catch(err) {
+		console.error(err);
+	}
+}
+
 function getDislikeJoinedUserByName(workName, dbjoins, dbdislikes, cb){
 	try {
 		searchByName(workName, function(work, err) {
@@ -54,5 +71,6 @@ function getDislikeJoinedUserByName(workName, dbjoins, dbdislikes, cb){
 module.exports = {
 	searchByName: searchByName,
 	createWork: createWork,
-	getDislikeJoinedUserByName: getDislikeJoinedUserByName
+	getDislikeJoinedUserByName: getDislikeJoinedUserByName,
+	editWorkInfo: editWorkInfo
 }
