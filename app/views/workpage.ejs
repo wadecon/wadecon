@@ -142,13 +142,13 @@
 		var socket = io.connect('http://<%=host%><%=port%>');
 		var disliked = false;
 		
-		socket.on('news', function () {
+		socket.on('news', function() {
 			socket.emit('clientGetLogs',{
 				userId: <%= user.id %>,
 				workId: <%=work.id%>
 			});	// 로그를 가져옴
 			
-			$('.dislike').click(function(){
+			$('.dislike').click(function() {
 				console.log("dislike emitted");
 				var id = $(this).attr('id');
 				socket.emit('clientUpdateDislike', {
@@ -160,7 +160,7 @@
 					<% } %>
 				});
 			});
-			$('.joins').click(function(){
+			$('.joins').click(function() {
 				console.log("joins emitted");
 				var id = $(this).attr('id');
 				socket.emit('clientUpdateJoin',{

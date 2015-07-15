@@ -38,8 +38,20 @@ function editInfoByNickname(nick, data, callback) {
 
 function cacheUserImage(path, userId, request, fs, cb) {
 	console.log("이건파랑이".cyan+path);
+	Users.findOne({
+		where: {
+			id: userId
+		}
+	}).then(function(user, err) {
+		if(err) console.error(err);
+		else {
+			user.updateAttributes({
+				picture: '/images/users/'+userId+'.jpg'
+			})
+		}
+	});
 	request
-		.get( path )
+		.get(path)
 		.on('response', function(response) {
 			console.log(response.statusCode) // 200
 			console.log(response.headers['content-type']) // 'image/jpeg'
@@ -48,11 +60,11 @@ function cacheUserImage(path, userId, request, fs, cb) {
 	cb();
 }
 
-function addToKarma( userId, karma, cb){
-	searchById(userId, function(user, err){
+function addKarma(userId, karma, cb) {
+	searchById(userId, function(user, err) {
 		if(err) console.error(err);
-		else{
-			if( user != null ){
+		else {
+			if(user != null) {
 				var addingKarma = Number(user.karma) + Number(karma); // 기존 업보와 인자로 받은 업보를 더함
 				console.log(addingKarma+"이거 몇이냐".cyan);
 				user.updateAttributes({
@@ -73,5 +85,5 @@ module.exports = {
 	changeNickname: changeNickname,
 	editInfoByNickname: editInfoByNickname,
 	cacheUserImage: cacheUserImage,
-	addToKarma: addToKarma
+	addKarma: addKarma
 };
