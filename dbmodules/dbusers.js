@@ -36,10 +36,25 @@ function editInfoByNickname(nick, data, callback){
 	
 }
 
+function cacheUserImage( path, userId, request, fs, cb){
+	// var tmp = path.split("/").slice(-1).pop();
+	// var directory = tmp.join("/");
+	console.log("이건파랑이".cyan+path);
+	request
+		.get( path )
+		.on('response', function(response) {
+			console.log(response.statusCode) // 200
+			console.log(response.headers['content-type']) // 'image/jpeg'
+		})
+		.pipe(fs.createWriteStream('public/images/users/'+userId+'.jpg'));
+	cb();
+}
+
 module.exports = {
 	searchByNickname: searchByNickname,
 	searchByFbid: searchByFbid,
 	searchById: searchById,
 	changeNickname: changeNickname,
-	editInfoByNickname: editInfoByNickname
+	editInfoByNickname: editInfoByNickname,
+	cacheUserImage: cacheUserImage
 };
