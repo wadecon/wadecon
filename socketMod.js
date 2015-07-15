@@ -76,7 +76,7 @@ function updateDislike(data) {
 					dbnotices.putNotice( data.userId, "이런반동놈의자식!!!", function(){
 						dbbadgemaps.giveBadge(data.userId, "반동놈의자식", function(something, err){
 							callback( result[0] );
-						})
+						});
 					});
 				}else{
 					callback( result[0]);
