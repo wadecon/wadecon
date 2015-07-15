@@ -27,7 +27,7 @@ function giveBadge(userId, badgeId, cb) {
 				}).then(function(badge, err){
 					if(err) console.error(err);
 					else {
-						if(badge == null)	throw 'No Badge';
+						if(badge == null) throw 'No Badge';
 						else {
 							BadgeMaps.create({
 								userId: userId,
