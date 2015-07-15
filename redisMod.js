@@ -51,6 +51,11 @@ function useRedis(req, res, next){	// 레디스에 저장되어 있는 세션 �
 	}
 }
 
+function refreshSession(userId, expire, cb) {
+	client.expire(userId, expire, redis.print);	// 세션 
+	cb(null);
+}
+
 module.exports = {
 	setSession: setSession,
     getSession: getSession,
