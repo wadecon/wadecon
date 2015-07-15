@@ -3,7 +3,7 @@ module.exports = function(global) {
     var set = require('./setting.json');
     
     var DOMAIN = {
-        SHORT_CHAR  : Sqlize.STRING(64),
+        SHORT_CHAR  : Sqlize.STRING(32),
         MIDDLE_CHAR : Sqlize.STRING(141),
         LONG_CHAR   : Sqlize.STRING(256),
         URL         : Sqlize.STRING(64),
@@ -156,9 +156,13 @@ module.exports = function(global) {
             type: DOMAIN.INT32,
             primaryKey: true
         },
-        owns:{
+        owns: {
             type: DOMAIN.BOOLEAN,
             allowNull: false
+        },
+        roles: {
+            type: DOMAIN.SHORT_CHAR,
+            allowNull: true
         }
     });
     Users.belongsToMany(Works, {foreignKey: 'userId', through: 'Joins'});
@@ -172,10 +176,6 @@ module.exports = function(global) {
         badgeId: {
             type: DOMAIN.INT32,
             primaryKey: true
-        },
-        badgeName:{
-            type: DOMAIN.SHORT_CHAR,
-            allowNull: false
         }
     });
     Users.belongsToMany(Badges, {foreignKey: 'userId', through: 'BadgeMaps'});
