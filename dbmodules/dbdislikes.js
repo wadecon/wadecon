@@ -1,5 +1,5 @@
 var async = require("async");
-function searchById(userId, workId, cb){
+function searchById(userId, workId, cb) {
 	Dislikes.findOne({
 		where: {
 			userId: userId,
@@ -7,7 +7,7 @@ function searchById(userId, workId, cb){
 		}
 	}).then(cb);
 }
-function toggleTuple( dislikes, data, cb ){
+function toggleTuple(dislikes, data, cb) {
 	if( dislikes != null ){
 		Dislikes.destroy({
 			where: {
@@ -23,10 +23,10 @@ function toggleTuple( dislikes, data, cb ){
 		}).then(cb);
 	}
 }
-function getWorksDislikesNum(works, callback){
+function getWorksDislikesNum(works, callback) {
 	var arrWorksDislikes = [];
 	async.forEachOf(works, function(work, key, callback) {
-		searchWorksDislikes(work.id,function(result){
+		searchWorksDislikes(work.id,function(result) {
 			var numDislikes = result.length;
 			arrWorksDislikes[key] = numDislikes;
 			callback();
@@ -35,21 +35,21 @@ function getWorksDislikesNum(works, callback){
 		callback(arrWorksDislikes);
 	});
 }
-function getWorkDislikesNum( workId, cb ){
-	searchWorksDislikes( workId, function(result){
+function getWorkDislikesNum(workId, cb) {
+	searchWorksDislikes( workId, function(result) {
 		var numDislike = result.length;
 		cb(numDislike);
 	});
 }
 
-function searchUsersDislikes( userId, cb ){
+function searchUsersDislikes(userId, cb) {
 	Dislikes.findAll({
 		where: {
 			userId: userId
 		} 
 	}).then(cb);
 }
-function searchWorksDislikes( workId, cb){
+function searchWorksDislikes(workId, cb) {
 	Dislikes.findAll({
 		where:{
 			workId: workId
