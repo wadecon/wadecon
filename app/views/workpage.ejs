@@ -143,7 +143,7 @@
 		socket.on('news', function () {
 			socket.emit('clientGetLogs',{
 				workId: <%=work.id%>
-			});	// 로그를 
+			});	// 로그를 가져옴
 			
 			$('.dislike').click(function(){
 				console.log("dislike emitted");
