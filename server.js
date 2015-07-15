@@ -238,10 +238,11 @@ app.route("/join")
 									res.send("500").end();
 								}
 								else {
-									dbusers.cacheUserImage( user.picture, user.id, request, fs, function(){
-										fs.mkdir('./public/userbios/' + user.nickname, function(err) {
+									dbusers.cacheUserImage(user.picture, user.id, request, fs, function() {
+										fs.mkdir('./public/userbios/' + user.id, function(err) {
 											if(err) console.error(err);
 											else {
+												/* 이미지저장한걸로업데이트 */
 												console.log("유저 생성 :".cyan, user.name);
 												res.send("201").end();
 											}

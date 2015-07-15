@@ -40,8 +40,20 @@ function cacheUserImage(path, userId, request, fs, cb) {
 	// var tmp = path.split("/").slice(-1).pop();
 	// var directory = tmp.join("/");
 	console.log("이건파랑이".cyan+path);
+	Users.findOne({
+		where: {
+			id: userId
+		}
+	}).then(function(user, err) {
+		if(err) console.error(err);
+		else {
+			user.updateAttributes({
+				picture: 'public/images/users/'+userId+'.jpg'
+			})
+		}
+	});
 	request
-		.get( path )
+		.get(path)
 		.on('response', function(response) {
 			console.log(response.statusCode) // 200
 			console.log(response.headers['content-type']) // 'image/jpeg'
