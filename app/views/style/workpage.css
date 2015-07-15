@@ -8,14 +8,17 @@ article {
 section {
 	margin-bottom: 2.5em;
 }
+.sectionTitle {
+	border-bottom: 1px solid #dfdfdf;
+}
 h1 {
     font-size: 2em;
     display: inline-block;
 }
 h3 {
 	font-size: 1.9em;
-	border-bottom: 1px solid #dfdfdf;
 	margin-bottom: 0.2em;
+	display: inline-block;
 }
 .md {
 	font-size: 0.8em;
@@ -60,10 +63,17 @@ h3 {
     display: inline-block;
     vertical-align: bottom;
 }
-button {
-    font-size: 1.1em;
+button.dislike {
+    font-size: 1.2em;
     margin: 3px;
 	padding: 0.15em 0.5em;
+	vertical-align: middle;
+}
+button {
+	float: right;
+    padding: 5px 12px;
+	font-size: 1.3em;
+    vertical-align: bottom;
 }
 #workhead {
     margin-bottom: 1em;
@@ -72,4 +82,13 @@ button {
 }
 .originCon {
 	display: none;
+}
+.editor-wrapper {
+    background-color: #fff;
+    border: 1px solid #dfdfdf;
+    border-radius: 3px;
+	margin: 0.5em 0;
+}
+.editor-wrapper:hover {
+    border: 1px solid coral;
 }

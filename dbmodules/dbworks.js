@@ -26,7 +26,7 @@ function getDislikeJoinedUserByName(workName, dbjoins, dbdislikes, cb){
 	try {
 		searchByName(workName, function(work, err) {
 			if(err) throw err;
-			else {
+			else if(work) {
 				async.parallel([
 					function(callback) {
 						dbjoins.getUsersBelongToWork(work.id, function(users, err) {
@@ -44,7 +44,7 @@ function getDislikeJoinedUserByName(workName, dbjoins, dbdislikes, cb){
 						callback(null, work);
 					}
 				],cb);
-			}
+			} else cb('No work', null);
 		});
 	} catch(err) {
 		console.error(err);
