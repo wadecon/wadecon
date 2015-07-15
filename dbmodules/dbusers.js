@@ -1,4 +1,4 @@
-function searchByNickname(nickname, cb){
+function searchByNickname(nickname, cb) {
 	Users.findOne({ // 해당 닉네임 있는지 확인
 		where: {
 			nickname: nickname
@@ -6,7 +6,7 @@ function searchByNickname(nickname, cb){
 	}).then(cb);
 }
 
-function searchById(userId, cb){
+function searchById(userId, cb) {
 	Users.findOne({
 		where: {
 			"id": userId
@@ -14,7 +14,7 @@ function searchById(userId, cb){
 	}).then(cb);
 }
 
-function searchByFbid(fbId, cb){
+function searchByFbid(fbId, cb) {
 	Users.findOne({
 		where: {
 			"fbId": fbId
@@ -22,13 +22,13 @@ function searchByFbid(fbId, cb){
 	}).then(cb);
 }
 
-function changeNickname(user, nickname, cb){
+function changeNickname(user, nickname, cb) {
 	user.updateAttributes({ // 찾은 유저정보에서 닉네임을 받은 닉네임으로 바꿔준다
 		nickname: nickname
 	}).then(cb);
 }
 
-function editInfoByNickname(nick, data, callback){
+function editInfoByNickname(nick, data, callback) {
 	searchByNickname(nick, function(user, err) {
 		if(err) callback(null, err);
 		else user.updateAttributes(data).then(callback);
@@ -36,7 +36,7 @@ function editInfoByNickname(nick, data, callback){
 	
 }
 
-function cacheUserImage( path, userId, request, fs, cb){
+function cacheUserImage(path, userId, request, fs, cb) {
 	// var tmp = path.split("/").slice(-1).pop();
 	// var directory = tmp.join("/");
 	console.log("이건파랑이".cyan+path);

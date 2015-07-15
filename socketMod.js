@@ -59,7 +59,7 @@ function updateDislike(data) {
 		function(callback) {
 			async.parallel([
 				function(cb) {
-					dbdislikes.searchById( data.userId, data.workId, function(dislikes, err) {
+					dbdislikes.searchById(data.userId, data.workId, function(dislikes, err) {
 						if(err) console.log(err);
 						else{
 							cb(null, dislikes);
@@ -67,7 +67,7 @@ function updateDislike(data) {
 					});
 				},
 				function(cb) {
-					dbjoins.searchById( data.userId, data.workId, function( result, err ){
+					dbjoins.searchById(data.userId, data.workId, function( result, err ){
 						if(err) console.error(err);
 						else{
 							cb(null, result);
@@ -76,20 +76,20 @@ function updateDislike(data) {
 				}
 			],
 			function(err, result) {
-				if(result[1] != null) {
-					dbnotices.putNotice( data.userId, "이런반동놈의자식!!!", function(){
-						dbbadgemaps.giveBadge(data.userId, "반동놈의자식", function(something, err){
-							callback( result[0] );
+				if(result[0] == null && result[1] != null) {
+					dbnotices.putNotice(data.userId, "이런반동놈의자식!!!", function(){
+						dbbadgemaps.giveBadge(data.userId, 0, function(something, err){
+							callback(result[0]);
 						});
 					});
-				}else{
-					callback( result[0]);
+				} else {
+					callback(result[0]);
 				}
 			});
 		}
 	],
-	function( dislikes ) {
-		dbdislikes.toggleTuple( dislikes, data, function(){
+	function(dislikes) {
+		dbdislikes.toggleTuple(dislikes, data, function() {
 			getDislikesAtWorkPage(data);
 		});
 	});

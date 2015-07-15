@@ -179,7 +179,7 @@ module.exports = function(global) {
         }
     });
     Users.belongsToMany(Badges, {foreignKey: 'userId', through: 'BadgeMaps'});
-    Badges.belongsToMany(Users, {foreignKey: ['badgeId', 'badgeName'], through: 'BadgeMaps'});
+    Badges.belongsToMany(Users, {foreignKey: 'badgeId', through: 'BadgeMaps'});
 
     Notices = sqlize.define('Notices', {
         userId: {

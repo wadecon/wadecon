@@ -6,37 +6,43 @@ function searchById(userId, cb){
 	}).then(cb);
 }
 
-function searchBadgeExist( userId, badgeName, cb ){
+function searchBadgeExist(userId, badgeId, cb) {
 	BadgeMaps.findOne({
 		where:{
 			userId: userId,
-			badgeName: badgeName
+			badgeId: badgeId
 		}
 	}).then(cb);
 }
 
-function giveBadge( userId, badgeName, cb ){
-	searchBadgeExist( userId, badgeName, function(exist, err){
-		if( exist == null){
-			Badges.findOne({
-				where:{
-					name: badgeName
-				}
-			}).then(function(result, err){
-				if(err) console.error(err);
-				else{
-					if(result == null)	console.error("fuck it's null!".cyan);
-					BadgeMaps.create({
-						userId: userId,
-						badgeId: result.id,
-						badgeName: badgeName
-					}).then(cb);	
-				}
-			});
-		}else{
-			cb();
-		}
-	});
+function giveBadge(userId, badgeId, cb) {
+	try {
+		searchBadgeExist(userId, badgeId, function(exist, err) {
+			if(err) throw err;
+			if(exist == null) {
+				Badges.findOne({
+					where:{
+						id: badgeId
+					}
+				}).then(function(badge, err){
+					if(err) console.error(err);
+					else {
+						if(badge == null)	throw 'No Badge';
+						else {
+							BadgeMaps.create({
+								userId: userId,
+								badgeId: badge.id
+							}).then(cb);
+						}
+					}
+				});
+			} else {
+				cb();
+			}
+		});
+	} catch(err) {
+		console.error(err);
+	}
 }
 
 
