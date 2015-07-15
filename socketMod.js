@@ -35,23 +35,17 @@ function setDBs(_dbnotices, _dbusers, _dbdislikes, _dbjoins, _dbworks, _dbbadges
 }
 
 function nameCheck(data) {
-	if(data.userId != null) {
-		redisMod.getSession(data.userId, function(obj) {		// 유저가 레디스에 저장되어 있다면 obj 는 null 이 아니다
-			if(obj != null) {
-				console.log(data);
-				if(data) {
-					dbusers.searchByNickname(data, function(user, err) {
-						if(err) console.error(err);
-						else if(!user) { // 가능한 닉네임
-							socket.emit('namechecked', true);
-						} else { // 이미 존재하는 닉네임
-							socket.emit('namechecked', false);
-						}
-					});
-				} else socket.emit('namechecked', false);
+	console.log(data);	// 닉네임 체크할 때는 가입이 되어있지 않은 상태이므로 그냥 봐준다.
+	if(data) {
+		dbusers.searchByNickname(data.nickname, function(user, err) {
+			if(err) console.error(err);
+			else if(!user) { // 가능한 닉네임
+				socket.emit('namechecked', true);
+			} else { // 이미 존재하는 닉네임
+				socket.emit('namechecked', false);
 			}
 		});
-	}
+	} else socket.emit('namechecked', false);
 }
 function titleCheck(data) {
 	if(data.userId != null) {
@@ -59,7 +53,7 @@ function titleCheck(data) {
 			if(obj != null) {
 				console.log(data);
 				if(data) {
-					dbworks.searchByName(data, function(work, err) {
+					dbworks.searchByName(data.title, function(work, err) {
 						if(err) console.error(err);
 						else if(!work) { // 가능한 공작이름
 							socket.emit('titlechecked', true);

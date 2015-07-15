@@ -398,11 +398,11 @@ app.route("/user/:userNick")
 		try {
 			async.parallel([
 				function(callback) {
-					fs.writeFileSync('./public/userbios/' + req.user.nickname + '/bio.html', md(req.body.bio));
+					fs.writeFileSync('./public/userbios/' + req.user.id + '/bio.html', md(req.body.bio));
 					callback(null);
 				},
 				function(callback) {
-					fs.writeFileSync('./public/userbios/' + req.user.nickname + '/bio.md', req.body.bio);
+					fs.writeFileSync('./public/userbios/' + req.user.id + '/bio.md', req.body.bio);
 					callback(null);
 				}
 			], function(err, results) {

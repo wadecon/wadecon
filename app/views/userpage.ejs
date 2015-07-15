@@ -11,8 +11,8 @@
 	    <script>
 			function editBio() {
 				$('#editBio').attr({
-						id: 'saveBio',
-						onClick: 'saveBio()'
+					id: 'saveBio',
+					onClick: 'saveBio()'
 				}).text('저장하자');
 				$('#bio').html('<div class="editor-wrapper"><textarea id="bioTextarea" class="editor" name="bio" rows="8" cols="40"></textarea></div>');
 				bioEditor = new Editor({
@@ -27,7 +27,7 @@
 	                type: "POST",
 	                url: location.href,
 	                xhrFields: {
-	                       withCredentials: true
+                       withCredentials: true
 	                },
 	                data: {
 	                    bio: bioEditor.codemirror.getValue()

@@ -17,7 +17,7 @@
                 if( window.confirm( "알림!: " + data[i].msg ) == true) {
                     socket.emit('readNotice', {
                         msgId: data[i].msgId,
-                        <% if(user != null) { %>
+                        <% if( login ) { %>
                         userId: <%= user.id %>
                         <% } else { %>
                         userId: null
