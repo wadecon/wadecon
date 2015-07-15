@@ -173,6 +173,7 @@
 				var log = $('#logText').val();
 				socket.emit('clientPostLog',{
 					text: log,
+					workId: <%=work.id%>,
 					workName: "<%=work.name%>",
 					<% if(user) { %>
 					userId: <%=user.id%>
@@ -180,9 +181,9 @@
 					user: null
 					<% } %>
 				});
-				socket.emit('clientGetLogs',{
-					workId: <%=work.id%>
-				});
+				// socket.emit('clientGetLogs',{
+				// 	workId: <%=work.id%>
+				// });
 			});
 			socket.on('serverGetLogs', function (data) {
 	            console.log(data);

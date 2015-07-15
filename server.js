@@ -42,7 +42,6 @@ var dbusers = require("./dbmodules/dbusers.js");
 var dbdislikes = require("./dbmodules/dbdislikes.js");
 var dbjoins = require("./dbmodules/dbjoins.js");
 var dbworks = require("./dbmodules/dbworks.js");
-var dbowns = require("./dbmodules/dbowns.js");
 var dbbadges = require("./dbmodules/dbbadges.js");
 var dbbadgemaps = require("./dbmodules/dbbadgemaps.js");
 var dblogs = require("./dbmodules/dblogs.js");
@@ -158,34 +157,13 @@ app.route("/makework")
 				});
 			},
 			function(work, cb){
-				async.parallel([
-					function(callback){
-						dbowns.createOwn(req.user.id, work.id, function(own, err){
-							if(err) console.error(err);
-							else{
-								console.log("공작 생성 :".cyan, work.name);
-								fs.mkdir("./public/workpage/"+work.name, function(err){
-									if(err) console.error(err);
-						        	else{
-										callback(null, {});
-									}
-								});
-							}
-						});
-					},
-					function(callback){
-						var data = {
-							workId: work.id,
-							userId: req.user.id
-						};
-						dbjoins.toggleTuple( null, data, function(){
-							callback(null, {});
-						});
-					}
-				],
-				function(err, result){
+				var data = {
+					workId: work.id,
+					userId: req.user.id
+				};
+				dbjoins.makeWorkWithJoin( null, data, function(){
 					cb( null, work );
-				});
+				})
 			},
 			function( work, cb){
 				async.parallel([
@@ -373,7 +351,7 @@ app.route("/user/:userNick")
 // sockets
 io.on('connection', function (socket) {
 	socketMod.setSocketAndAsync(socket, async);
-	socketMod.setDBs(dbnotices, dbusers, dbdislikes, dbjoins, dbworks, dbowns, dbbadges, dbbadgemaps, dblogs);
+	socketMod.setDBs(dbnotices, dbusers, dbdislikes, dbjoins, dbworks, dbbadges, dbbadgemaps, dblogs);
 	socket.emit('news', {});
 	
 	socket.on('namecheck', socketMod.nameCheck);
