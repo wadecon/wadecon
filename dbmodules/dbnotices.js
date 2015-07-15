@@ -8,14 +8,18 @@ function peekNotice(userId, cb) {
 }
 
 function readNotice(msgId, callback) {
-	Notices.findAll({
+	Notices.findOne({
 		where: {
 			msgId: msgId
 		}
-	}).then(function(noti, err) {
-		noti.updateAttributes({
-			unread: false
-		}).then(callback);
+	}).then(function(notice, err) {
+		if(err) console.error(err);
+		else {
+			console.log(notice)
+			notice.updateAttributes({
+				unread: false
+			}).then(cb);
+		}
 	});
 }
 

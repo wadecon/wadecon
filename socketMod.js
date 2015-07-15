@@ -48,6 +48,7 @@ function getDislikesAtWorkPage(data){
 	dbdislikes.getWorkDislikesNum(data.workId, function(numDislikes) {
 		console.log("방송을한다!!".cyan);
 		socket.emit('serverGetDislikesNum', numDislikes);
+		socket.broadcast.emit('serverGetDislikesNum', numDislikes);
 	});
 }
 
@@ -155,7 +156,7 @@ function removeNotice(data) {
 }
 
 function readNotice(data) {
-	dbnotices.readNotice(data.msgId, function(result, err){
+	dbnotices.readNotice(data.msgId, function(result, err) {
 		console.log("읽었다!!".cyan);
 	});
 }

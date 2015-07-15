@@ -13,9 +13,9 @@
         <% } %>
         
         socket.on('downNotices', function(data){
-            for( var i in data){
-                if( window.confirm( "알림!: " + data[i].msg ) == true ){
-                    socket.emit('readNotice',{
+            for(var i in data) {
+                if( window.confirm( "알림!: " + data[i].msg ) == true) {
+                    socket.emit('readNotice', {
                         msgId: data[i].msgId
                     });
                 }
