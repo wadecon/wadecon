@@ -77,7 +77,7 @@ app.get('/logout', function(req, res){
 });
 
 app.route("/")
-	.get(auth.inspect, redisMod.useRedis, function(req, res) {
+	.get(auth.inspect, function(req, res) {
 		systemMod.checkBrowser(req.headers['user-agent'],function(browserName){
 			// && browserVersion <= 9
 			if (browserName == 'IE') {
@@ -118,7 +118,7 @@ app.route("/")
 			if(err) console.error(err);
 			else{
 				if(req.user != null) {
-					redisMod.setSession(req.user.id, req.user, function() { // 널을 반환하므로 받을 필요가 없다
+					redisMod.setSession(req.user.id, set.expire, req.user, function() { // 널을 반환하므로 받을 필요가 없다
 						console.log("세션 설정!!".cyan);
 					});
 				}
@@ -143,7 +143,7 @@ app.route("/")
 	});
 
 app.route("/makework")
-	.get(auth.checkAuthState, redisMod.useRedis, function(req, res){
+	.get(auth.checkAuthState, function(req, res){
 			res.render('makework.ejs', {
 				host: set.host,
 				login: true,
@@ -211,7 +211,7 @@ app.route("/makework")
 	});
 
 app.route("/join")
-	.get(auth.checkAuthState, redisMod.useRedis, function(req, res) {
+	.get(auth.checkAuthState, function(req, res) {
 		dbusers.searchByFbid(req.user.fbId, function(user, err) {
 			if(err) console.error(err);
 			else if(user) {
@@ -269,7 +269,7 @@ app.route("/join")
 	});
 
 app.route("/work/:workName")
-	.get(auth.inspect, redisMod.useRedis, function(req, res) {
+	.get(auth.inspect, function(req, res) {
 		try {
 			async.parallel([
 				function(callback) {
@@ -312,7 +312,7 @@ app.route("/work/:workName")
 			res.send(500).end();
 		}
 	})
-	.post(auth.checkAuthState, redisMod.useRedis, function(req, res){
+	.post(auth.checkAuthState, function(req, res){
 		try {
 			var inputData = {};
 			async.waterfall([
@@ -375,7 +375,7 @@ app.route("/work/:workName")
 	});
 
 app.route("/user/:userNick")
-	.get(auth.inspect, redisMod.useRedis, function(req, res){
+	.get(auth.inspect, function(req, res){
 		dbusers.searchByNickname(req.params.userNick, function(user, err){
 			if(err) console.error(err);
 			else if(!user) {
@@ -393,7 +393,7 @@ app.route("/user/:userNick")
 			}
 		});
 	})
-	.post(auth.checkAuthState, redisMod.useRedis, function(req, res){
+	.post(auth.checkAuthState, function(req, res){
 		try {
 			async.parallel([
 				function(callback) {

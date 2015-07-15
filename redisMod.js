@@ -9,7 +9,7 @@ function vomitErr(err, cb) {
     if(err) cb(err);
 }
 
-function setSession(userId, data, cb) {
+function setSession(userId, expire, data, cb) {
     client.hset(userId, "nickname", data.nickname, redis.print);
     client.hset(userId, "email", data.email, redis.print);
     client.hset(userId, "name", data.name, redis.print);
@@ -20,6 +20,7 @@ function setSession(userId, data, cb) {
     client.hset(userId, "fbToken", data.fbToken, redis.print);
     client.hset(userId, "createdAt", data.createAt, redis.print);
     client.hset(userId, "updatedAt", data.updateAt, redis.print);
+	client.expire(userId, expire, redis.print);
     cb(null);
 }
 
@@ -30,7 +31,7 @@ function getSession(userId, cb) {
     });
 }
 
-function useRedis(req, res, next){
+function useRedis(req, res, next){	// 레디스에 저장되어 있는 세션 정보를 사용하려면 미들웨어로 추가
 	if( req.user != null ){
 		getSession(req.user.id, function(session) {	
 			if(session != null) {
