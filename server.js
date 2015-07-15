@@ -391,29 +391,24 @@ app.route("/user/:userNick")
 	})
 	.post(auth.checkAuthState, function(req, res){
 		try {
-			fs.mkdir('./public/userbios/' + req.user.nickname, function(err) {
+			async.parallel([
+				function(callback) {
+					fs.writeFileSync('./public/userbios/' + req.user.nickname + '/bio.html', md(req.body.bio));
+					callback(null);
+				},
+				function(callback) {
+					fs.writeFileSync('./public/userbios/' + req.user.nickname + '/bio.md', req.body.bio);
+					callback(null);
+				}
+			], function(err, results) {
 				if(err) throw err;
 				else {
-					async.parallel([
-						function(callback) {
-							fs.writeFileSync('./public/userbios/' + req.user.nickname + '/bio.html', md(req.body.bio));
-							callback(null);
-						},
-						function(callback) {
-							fs.writeFileSync('./public/userbios/' + req.user.nickname + '/bio.md', req.body.bio);
-							callback(null);
-						}
-					], function(err, results) {
+					dbusers.editInfoByNickname(req.user.nickname, {
+						bio: '.public/userbios/' + req.user.nickname + '/bio.html'
+					}, function(user, err) {
 						if(err) throw err;
-						else {
-							dbusers.editInfoByNickname(req.user.nickname, {
-								bio: '.public/userbios/' + req.user.nickname + '/bio.html'
-							}, function(user, err) {
-								if(err) throw err;
-								else res.send("200");
-							});
-						}
-					})
+						else res.send("200");
+					});
 				}
 			});
 		} catch(err) {
