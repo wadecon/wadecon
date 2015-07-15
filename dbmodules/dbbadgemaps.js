@@ -37,7 +37,7 @@ function giveBadge(userId, badgeId, cb) {
 					}
 				});
 			} else {
-				cb();
+				cb(null);
 			}
 		});
 	} catch(err) {
