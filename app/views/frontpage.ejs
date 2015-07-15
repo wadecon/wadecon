@@ -1,27 +1,6 @@
 <!DOCTYPE html>
 <head>
     <% include ./templates/head.ejs %>
-    <script>
-        var socket = io.connect('http://<%=host%><%=port%>');
-        socket.on('news', function () {
-            <% if (login) { %>
-            socket.emit('clientGetNotices',{
-				userId: <%=user.id%>
-			});	// 로그를 가져옴
-            <% } %>
-            
-            socket.on('serverGetNotices', function(data){
-                for( var i in data){
-                    if( window.confirm( "알림!: " + data[i].msg ) == true ){
-                        socket.emit('clientRemoveNotice',{
-                            msgId: data[i].msgId
-                        });
-                    }
-                }
-            });
-        });
-        
-    </script>
 </head>
 <body>
     <% include ./templates/header.ejs %>
