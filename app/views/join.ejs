@@ -23,7 +23,7 @@
             var nick = $('#nameField').val();
             if(nick.trim().length > 64) $('#status').text('1~64자').css('color', 'gray');
             else if(nick.trim() == '') $('#status').text('')
-            else socket.emit('namecheck', nick);
+            else socket.emit('namecheck', {nickname: nick, userId: <%= user.id %>});
         }
         
         var timeout;

@@ -144,6 +144,7 @@
 		
 		socket.on('news', function () {
 			socket.emit('clientGetLogs',{
+				userId: <%= user.id %>,
 				workId: <%=work.id%>
 			});	// 로그를 가져옴
 			
