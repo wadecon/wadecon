@@ -153,9 +153,17 @@ function updateJoin(data){
 					}
 				],
 				function(err, result) {
-					dbjoins.searchUsersJoin(data.userId, function(result){
-						socket.broadcast.emit('serverUpdate',result);
-						socket.emit('serverUpdate',result);
+					dbjoins.searchWorksJoin(data.workId, function(result){
+						var joinedUsers = [];
+						async.forEachOf(result, function(join, key, callback) {
+							dbusers.searchById(join.userId, function(user){
+								joinedUsers[key] = user;
+								callback();
+							});
+						}, function(err) {
+							socket.broadcast.emit('serverUpdateJoin', joinedUsers);
+							socket.emit('serverUpdateJoin', joinedUsers);
+						});
 					});
 				});
 			}
