@@ -45,7 +45,7 @@ function titleCheck(data) {
 }
 
 function getDislikesAtWorkPage(data){
-	dbdislikes.getWorkDislikesNum(data.workId, function(numDislikes){
+	dbdislikes.getWorkDislikesNum(data.workId, function(numDislikes) {
 		console.log("방송을한다!!".cyan);
 		socket.emit('serverGetDislikesNum', numDislikes);
 	});
@@ -65,7 +65,7 @@ function updateDislike(data) {
 						});
 					},
 					function(cb) {
-						dbjoins.searchById(data.userId, data.workId, function( result, err ){
+						dbjoins.searchById(data.userId, data.workId, function(result, err) {
 							if(err) console.error(err);
 							else{
 								cb(null, result);
@@ -76,7 +76,7 @@ function updateDislike(data) {
 				function(err, result) {
 					if(result[0] == null && result[1] != null) {
 						dbnotices.putNotice(data.userId, "이런반동놈의자식!!!", function(){
-							dbbadgemaps.giveBadge(data.userId, 1, function(something, err){
+							dbbadgemaps.giveBadge(data.userId, 1, function(something, err) {
 								callback(result[0]);
 							});
 						});
@@ -156,7 +156,7 @@ function removeNotice(data) {
 
 function readNotice(data) {
 	dbnotices.readNotice(data.msgId, function(result, err){
-		console.log("삭제했다!!".cyan);
+		console.log("읽었다!!".cyan);
 	});
 }
 

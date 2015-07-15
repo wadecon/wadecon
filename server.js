@@ -239,7 +239,7 @@ app.route("/join")
 								}
 								else {
 									dbusers.cacheUserImage( user.picture, user.id, request, fs, function(){
-										fs.mkdir('./public/userbios/' + req.user.nickname, function(err) {
+										fs.mkdir('./public/userbios/' + user.nickname, function(err) {
 											if(err) console.error(err);
 											else {
 												console.log("유저 생성 :".cyan, user.name);
