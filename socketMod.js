@@ -98,7 +98,7 @@ function updateDislike(data) {
 function updateJoin(data){
 	async.waterfall([
 		function(callback) {
-			dbjoins.searchById(data.userId, data.workId, function(joins, err){
+			dbjoins.searchById(data.userId, data.workId, function(joins, err) {
 				if(err) console.log(err);
 				else{
 					callback(null, joins);
@@ -106,13 +106,13 @@ function updateJoin(data){
 			});
 		},
 		function(joins, callback) {
-			dbjoins.toggleTuple(joins, data, function(){
+			dbjoins.toggleTuple(joins, data, function() {
 				callback();
 			});
 		}
 	],
 	function(err, result) {
-		dbjoins.searchUsersJoin(data.userId, function(result){
+		dbjoins.searchUsersJoin(data.userId, function(result) {
 			socket.broadcast.emit('serverUpdate',result);
 			socket.emit('serverUpdate',result);
 		});
@@ -120,7 +120,7 @@ function updateJoin(data){
 }
 
 function getNotices(data) {
-	dbnotices.peekNotice(data.userId, function(result, err){
+	dbnotices.peekNotice(data.userId, function(result, err) {
 		if(err) console.error(err);
 		else {
 			socket.emit('downNotices', result);
@@ -129,7 +129,7 @@ function getNotices(data) {
 }
 
 function postLog(data) {
-	dblogs.createLog( data.userId, data.workName, data.text, dbworks, function(log, err){
+	dblogs.createLog(data.userId, data.workName, data.text, dbworks, function(log, err) {
 		if(err) console.error(err);
 		else{
 			console.log("로그가 성공적으로 올라갔습니다.".cyan);
@@ -140,7 +140,7 @@ function postLog(data) {
 }
 
 function getLogs(data) {
-	dblogs.getWorksAllLog( data.workId, function(result, err){
+	dblogs.getWorksAllLog(data.workId, function(result, err) {
 		if(err)	console.error(err);
 		else{
 			console.log("로그를 성공적으로 반환".cyan);
@@ -150,7 +150,7 @@ function getLogs(data) {
 }
 
 function removeNotice(data) {
-	dbnotices.removeNotice(data.msgId, function(result, err){
+	dbnotices.removeNotice(data.msgId, function(result, err) {
 		console.log("삭제했다!!".cyan);
 	});
 }

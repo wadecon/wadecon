@@ -25,19 +25,32 @@ function giveBadge(userId, badgeId, cb) {
 						id: badgeId
 					}
 				}).then(function(badge, err){
-					if(err) console.error(err);
+					if(err) throw err;
 					else {
 						if(badge == null) throw 'No Badge';
 						else {
 							BadgeMaps.create({
 								userId: userId,
 								badgeId: badge.id
-							}).then(cb);
+							}).then(function(badgemap, err) {
+								if(err) throw err;
+								else Users.findOne({
+									where: userId
+								}).then(function(user, err) {
+									if(err) throw err;
+									else user.updateAttributes({
+										karma: user.karma + badge.karma
+									}).then(function(user, err) {
+										if(err) throw err;
+										else cb(badge, null);
+									});
+								})
+							});
 						}
 					}
 				});
 			} else {
-				cb();
+				cb(null, null);
 			}
 		});
 	} catch(err) {
