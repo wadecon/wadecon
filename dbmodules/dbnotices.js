@@ -18,7 +18,7 @@ function readNotice(msgId, callback) {
 			console.log(notice)
 			notice.updateAttributes({
 				unread: false
-			}).then(cb);
+			}).then(callback);
 		}
 	});
 }
