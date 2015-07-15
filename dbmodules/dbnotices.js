@@ -9,8 +9,8 @@ function peekNotice(userId, cb) {
 
 function readNotice(msgId, callback) {
 	Notices.findAll({
-		where:{
-			msgId; msgId
+		where: {
+			msgId: msgId
 		}
 	}).then(function(noti, err) {
 		noti.updateAttibutes({
