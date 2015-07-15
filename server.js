@@ -17,7 +17,7 @@ require('colors');	// for fantastic debug
 
 // setting app -> too dizzy to fuck with
 app.use(cookieParser());
-app.use(session({ secret: "secret" }));
+app.use(session({ secret: "secret", resave: false, saveUninitialized: false}));
 
 var set = require('./setting.json');
 
