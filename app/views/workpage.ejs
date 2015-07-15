@@ -128,6 +128,9 @@
 					<!--여기에 소켓으로 로그 긁어와서 보여주기-->
 					<input type="text" id="logText">
 					<input type="button" class="emitLog" value="똥싸기">
+					<div>
+						<ul id="logList"></ul>
+					</div>
 				</section>
 			</article>
 		</div>
@@ -184,7 +187,10 @@
 				});
 			});
 			socket.on('serverGetLogs', function (data) {
-	            console.log(data);
+				$('#logList').empty();
+				for( var i in data ){
+					$('#logList').append("<li>"+data[i].text+"</li>");
+				}
 	        });
 			socket.on('serverGetDislikesNum', function(data){
 				$('#dislikeNum').text(data);
