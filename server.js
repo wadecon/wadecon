@@ -17,7 +17,7 @@ require('colors');	// for fantastic debug
 
 // setting app -> too dizzy to fuck with
 app.use(cookieParser());
-app.use(session({ secret: "secret" }));
+app.use(session({ secret: "secret", resave: false, saveUninitialized: false}));
 
 var set = require('./setting.json');
 
@@ -419,7 +419,7 @@ io.on('connection', function (socket) {
 	socket.on('titlecheck', socketMod.titleCheck);
 	socket.on('clientUpdateDislike', socketMod.updateDislike);
 	socket.on('clientUpdateJoin', socketMod.updateJoin);
-	socket.on('clientGetNotices', socketMod.getNotice);
+	socket.on('clientGetNotices', socketMod.getNotices);
 	socket.on('clientGetLogs', socketMod.getLogs);
 	socket.on('clientPostLog', socketMod.postLog);
 	// socket.on('postLog', socketMod.postLog);

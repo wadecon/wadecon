@@ -75,7 +75,7 @@
 				<div id="workhead">
 					<h1><%= work.name %></h1>
 					<span id="buttons">
-						<button class="dislike" id="<%=work.id%>" dislikes=<%=numDislikes%>>싫어요 <span class='hh'><%= numDislikes %></span></button>
+						<button class="dislike" id="<%=work.id%>" dislikes=<%=numDislikes%>>싫어요 <span id='dislikeNum' class='hh'><%= numDislikes %></span></button>
 					</span>
 					<h2><%= work.desc %></h2>
 				</div>
@@ -181,13 +181,13 @@
 					user: null
 					<% } %>
 				});
-				// socket.emit('clientGetLogs',{
-				// 	workId: <%=work.id%>
-				// });
 			});
 			socket.on('serverGetLogs', function (data) {
 	            console.log(data);
 	        });
+			socket.on('serverGetDislikesNum', function(data){
+				$('#dislikeNum').text(data);
+			});
 		});
 	</script>
 </body>

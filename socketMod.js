@@ -44,6 +44,12 @@ function titleCheck(data) {
 	} else socket.emit('titlechecked', false);
 }
 
+function getDislikesAtWorkPage(data){
+	dbdislikes.getWorkDislikesNum(data.workId, function(numDislikes){
+		socket.emit('serverGetDislikesNum', numDislikes);
+	});
+}
+
 function updateDislike(data) {
 	async.waterfall([
 		function(callback) {
@@ -68,14 +74,8 @@ function updateDislike(data) {
 			function(err, result) {
 				if(result[1] != null) {
 					dbnotices.putNotice( data.userId, "이런반동놈의자식!!!", function(){
-						dbbadgemaps.searchBadgeExist( data.userId, "반동놈의자식", function(exist, err){
-							if( exist == null){
-								dbbadgemaps.giveBadge( data.userId, "반동놈의자식", function(something, err){
-									callback( result[0]);
-								});
-							}else{
-								callback( result[0]);
-							}
+						dbbadgemaps.giveBadge(data.userId, "반동놈의자식", function(something, err){
+							callback( result[0] );
 						});
 					});
 				}else{
@@ -86,12 +86,11 @@ function updateDislike(data) {
 	],
 	function( dislikes ) {
 		dbdislikes.toggleTuple( dislikes, data, function(){
-			// 여기서 broadcast
+			getDislikesAtWorkPage(data);
 		});
-	}
-);
-
+	});
 }
+
 function updateJoin(data){
 	async.waterfall([
 		function(callback) {
@@ -116,7 +115,7 @@ function updateJoin(data){
 	});
 }
 
-function getNotice(data){
+function getNotices(data){
 	dbnotices.peekNotice(data.userId, function(result, err){
 		if(err) console.error(err);
 		else{
@@ -153,7 +152,7 @@ module.exports = {
 	titleCheck: titleCheck,
 	updateDislike: updateDislike,
 	updateJoin: updateJoin,
-	getNotice: getNotice,
+	getNotices: getNotices,
 	postLog: postLog,
 	getLogs: getLogs
 }
