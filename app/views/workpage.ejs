@@ -55,12 +55,12 @@
 	    </script>
 		<% if(work.frontboard) { %>
 			<div id='originreadme' class='originCon'>
-				<%- include('../../public/workpage/'+work.name+'/front.md') %>
+				<%- include('../../public/workpage/'+work.id+'/front.md') %>
 			</div>
 		<% } %>
 		<% if(work.needs) { %>
 			<div id='originneeds' class='originCon'>
-				<%- include('../../public/workpage/'+work.name+'/needs.md') %>
+				<%- include('../../public/workpage/'+work.id+'/needs.md') %>
 			</div>
 		<% } %>
 	<% } %>
