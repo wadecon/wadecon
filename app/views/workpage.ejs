@@ -182,13 +182,13 @@
 					user: null
 					<% } %>
 				});
-				// socket.emit('clientGetLogs',{
-				// 	workId: <%=work.id%>
-				// });
 			});
 			socket.on('serverGetLogs', function (data) {
 	            console.log(data);
 	        });
+			socket.on('serverGetDislikesNum', function(data){
+				$('.hh').text(data);
+			});
 		});
 	</script>
 </body>

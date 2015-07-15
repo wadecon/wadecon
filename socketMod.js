@@ -44,6 +44,12 @@ function titleCheck(data) {
 	} else socket.emit('titlechecked', false);
 }
 
+function getDislikesAtWorkPage(data){
+	dbdislikes.getWorkDislikesNum(data.workId, function(numDislikes){
+		socket.emit('serverGetDislikesNum', numDislikes);
+	});
+}
+
 function updateDislike(data) {
 	async.waterfall([
 		function(callback) {
@@ -86,12 +92,11 @@ function updateDislike(data) {
 	],
 	function( dislikes ) {
 		dbdislikes.toggleTuple( dislikes, data, function(){
-			// 여기서 broadcast
+			getDislikesAtWorkPage(data);
 		});
-	}
-);
-
+	});
 }
+
 function updateJoin(data){
 	async.waterfall([
 		function(callback) {
@@ -116,7 +121,7 @@ function updateJoin(data){
 	});
 }
 
-function getNotice(data){
+function getNotices(data){
 	dbnotices.peekNotice(data.userId, function(result, err){
 		if(err) console.error(err);
 		else{
@@ -153,7 +158,7 @@ module.exports = {
 	titleCheck: titleCheck,
 	updateDislike: updateDislike,
 	updateJoin: updateJoin,
-	getNotice: getNotice,
+	getNotices: getNotices,
 	postLog: postLog,
 	getLogs: getLogs
 }
