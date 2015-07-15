@@ -3,7 +3,7 @@ var express = require("express");
 var app = express();
 
 // fucking dependencies
-var server = require('http').Server(app)
+var server = require('http').Server(app);
 var io = require('socket.io')(server);
 var bodyParser = require("body-parser");
 var cookieParser = require("cookie-parser");
@@ -48,6 +48,8 @@ var dbbadgemaps = require("./dbmodules/dbbadgemaps.js");
 var dblogs = require("./dbmodules/dblogs.js");
 
 var socketMod = require("./socketMod.js");
+socketMod.setIoAndAsync(io, async);
+socketMod.setDBs(dbnotices, dbusers, dbdislikes, dbjoins, dbworks, dbbadgemaps, dbbadgemaps, dblogs);
 var systemMod = require("./systemMod.js");
 
 
@@ -411,23 +413,6 @@ app.route("/user/:userNick")
 			res.send("500");
 		}
 	});
-
-// sockets
-io.on('connection', function(socket) {
-	socketMod.setSocketAndAsync(socket, async);
-	socketMod.setDBs(dbnotices, dbusers, dbdislikes, dbjoins, dbworks, dbbadges, dbbadgemaps, dblogs);
-	socket.emit('news', {});
-	
-	socket.on('namecheck', socketMod.nameCheck);
-	socket.on('titlecheck', socketMod.titleCheck);
-	socket.on('clientUpdateDislike', socketMod.updateDislike);
-	socket.on('clientUpdateJoin', socketMod.updateJoin);
-	socket.on('reqNotices', socketMod.getNotices);
-	socket.on('clientGetLogs', socketMod.getLogs);
-	socket.on('clientPostLog', socketMod.postLog);
-	socket.on('readNotice', socketMod.readNotice);
-	socket.on('removeNotice', socketMod.removeNotice);
-});
 
 // handle 404
 app.use(function(req, res) {

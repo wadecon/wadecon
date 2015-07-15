@@ -1,5 +1,27 @@
+var io, socket, async;
 var dbnotices, dbusers, dbdislikes, dbjoins, dbworks, dbbadges, dbbadgemaps, dblogs;
-var socket, async;
+
+function setIoAndAsync(_io, _async) {
+	io = _io;
+	async = _async;
+	
+	// sockets
+	io.on('connection', function(_socket) {
+		socket = _socket;
+		
+		_socket.emit('news', {});
+		
+		_socket.on('namecheck', nameCheck);
+		_socket.on('titlecheck', titleCheck);
+		_socket.on('clientUpdateDislike', updateDislike);
+		_socket.on('clientUpdateJoin', updateJoin);
+		_socket.on('reqNotices', getNotices);
+		_socket.on('clientGetLogs', getLogs);
+		_socket.on('clientPostLog', postLog);
+		_socket.on('readNotice', readNotice);
+		_socket.on('removeNotice', removeNotice);
+	});
+}
 
 function setDBs(_dbnotices, _dbusers, _dbdislikes, _dbjoins, _dbworks, _dbbadges, _dbbadgemaps, _dblogs) {
 	dbnotices = _dbnotices;
@@ -10,11 +32,6 @@ function setDBs(_dbnotices, _dbusers, _dbdislikes, _dbjoins, _dbworks, _dbbadges
 	dbbadges = _dbbadges;
 	dbbadgemaps = _dbbadgemaps;
 	dblogs = _dblogs
-}
-
-function setSocketAndAsync(_socket, _async) {
-	socket = _socket;
-	async = _async;
 }
 
 function nameCheck(data) {
@@ -168,14 +185,5 @@ function readNotice(data) {
 
 module.exports = {
 	setDBs: setDBs,
-	setSocketAndAsync: setSocketAndAsync,
-	nameCheck: nameCheck,
-	titleCheck: titleCheck,
-	updateDislike: updateDislike,
-	updateJoin: updateJoin,
-	getNotices: getNotices,
-	postLog: postLog,
-	getLogs: getLogs,
-	removeNotice: removeNotice,
-	readNotice: readNotice
+	setIoAndAsync: setIoAndAsync
 }
