@@ -13,9 +13,9 @@ function readNotice(msgId, callback) {
 			msgId: msgId
 		}
 	}).then(function(noti, err) {
-		noti.updateAttibutes({
+		noti.updateAttributes({
 			unread: false
-		}).then(cb);
+		}).then(callback);
 	});
 }
 
