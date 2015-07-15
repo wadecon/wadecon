@@ -51,6 +51,7 @@ var socketMod = require("./socketMod.js");
 socketMod.setIoAndAsync(io, async);
 socketMod.setDBs(dbnotices, dbusers, dbdislikes, dbjoins, dbworks, dbbadgemaps, dbbadgemaps, dblogs);
 var systemMod = require("./systemMod.js");
+var redisMod = require("./redisMod.js");
 
 
 var auth = require("./auth.js");
@@ -370,6 +371,11 @@ app.route("/work/:workName")
 app.route("/user/:userNick")
 	.get(auth.inspect, function(req, res){
 		dbusers.searchByNickname(req.params.userNick, function(user, err){
+			redisMod.setSession(user.id, user, function() { // 널을 반환하므로 받을 필요가 없다
+				redisMod.getSession(user.id, function() {	// 널을 반환하므로 받을 필요가 없다
+					console.log("세션설정!!".cyan);
+				});
+			});
 			if(err) console.error(err);
 			else if(!user) {
 				res.status(404).end();
