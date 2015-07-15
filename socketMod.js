@@ -46,53 +46,52 @@ function titleCheck(data) {
 
 function getDislikesAtWorkPage(data){
 	dbdislikes.getWorkDislikesNum(data.workId, function(numDislikes){
+		console.log("방송을한다!!".cyan);
 		socket.emit('serverGetDislikesNum', numDislikes);
-		if( !data.onlyOneUser ){
-			console.log("방송을한다!!".cyan);
-			socket.broadcast.emit('serverGetDislikesNum', numDislikes);
-		}
 	});
 }
 
 function updateDislike(data) {
-	async.waterfall([
-		function(callback) {
-			async.parallel([
-				function(cb) {
-					dbdislikes.searchById(data.userId, data.workId, function(dislikes, err) {
-						if(err) console.log(err);
-						else{
-							cb(null, dislikes);
-						}
-					});
-				},
-				function(cb) {
-					dbjoins.searchById(data.userId, data.workId, function( result, err ){
-						if(err) console.error(err);
-						else{
-							cb(null, result);
-						}
-					});
-				}
-			],
-			function(err, result) {
-				if(result[0] == null && result[1] != null) {
-					dbnotices.putNotice(data.userId, "이런반동놈의자식!!!", function(){
-						dbbadgemaps.giveBadge(data.userId, 0, function(something, err){
-							callback(result[0]);
+	if(data.userId != null) {
+		async.waterfall([
+			function(callback) {
+				async.parallel([
+					function(cb) {
+						dbdislikes.searchById(data.userId, data.workId, function(dislikes, err) {
+							if(err) console.log(err);
+							else{
+								cb(null, dislikes);
+							}
 						});
-					});
-				} else {
-					callback(result[0]);
-				}
+					},
+					function(cb) {
+						dbjoins.searchById(data.userId, data.workId, function( result, err ){
+							if(err) console.error(err);
+							else{
+								cb(null, result);
+							}
+						});
+					}
+				],
+				function(err, result) {
+					if(result[0] == null && result[1] != null) {
+						dbnotices.putNotice(data.userId, "이런반동놈의자식!!!", function(){
+							dbbadgemaps.giveBadge(data.userId, 1, function(something, err){
+								callback(result[0]);
+							});
+						});
+					} else {
+						callback(result[0]);
+					}
+				});
+			}
+		],
+		function(dislikes) {
+			dbdislikes.toggleTuple(dislikes, data, function() {
+				getDislikesAtWorkPage(data);
 			});
-		}
-	],
-	function(dislikes) {
-		dbdislikes.toggleTuple(dislikes, data, function() {
-			getDislikesAtWorkPage(data);
 		});
-	});
+	}
 }
 
 function updateJoin(data){
@@ -119,16 +118,16 @@ function updateJoin(data){
 	});
 }
 
-function getNotices(data){
+function getNotices(data) {
 	dbnotices.peekNotice(data.userId, function(result, err){
 		if(err) console.error(err);
-		else{
-			socket.emit('serverGetNotices', result);
+		else {
+			socket.emit('downNotices', result);
 		}
 	});
 }
 
-function postLog( data ){
+function postLog(data) {
 	dblogs.createLog( data.userId, data.workName, data.text, dbworks, function(log, err){
 		if(err) console.error(err);
 		else{
@@ -139,7 +138,7 @@ function postLog( data ){
 	});
 }
 
-function getLogs( data ){
+function getLogs(data) {
 	dblogs.getWorksAllLog( data.workId, function(result, err){
 		if(err)	console.error(err);
 		else{
@@ -149,7 +148,7 @@ function getLogs( data ){
 	});
 }
 
-function removeNotice(data){
+function removeNotice(data) {
 	dbnotices.removeNotice(data.msgId, function(result, err){
 		console.log("삭제했다!!".cyan);
 	});

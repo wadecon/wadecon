@@ -422,10 +422,11 @@ io.on('connection', function (socket) {
 	socket.on('titlecheck', socketMod.titleCheck);
 	socket.on('clientUpdateDislike', socketMod.updateDislike);
 	socket.on('clientUpdateJoin', socketMod.updateJoin);
-	socket.on('clientGetNotices', socketMod.getNotices);
+	socket.on('reqNotices', socketMod.getNotices);
 	socket.on('clientGetLogs', socketMod.getLogs);
 	socket.on('clientPostLog', socketMod.postLog);
-	socket.on('clientRemoveNotice', socketMod.removeNotice);
+	socket.on('readNotice', socketMod.readNotice);
+	socket.on('removeNotice', socketMod.removeNotice);
 });
 
 // handle 404
@@ -441,5 +442,5 @@ app.use(function(req, res) {
 server.listen(set.port || 8080);
 console.log((set.host+":"+(set.port || 8080)).cyan+"에서 서버 시작".green);
 
-dbbadges.createBadge("반동놈의자식", "이놈은빨갱입니다", 10, function(a, err){
+dbbadges.createBadge("반동놈의자식", "이놈은빨갱입니다", 10, function(a, err) {
 });
