@@ -193,6 +193,11 @@ module.exports = function(global) {
         msg: {
             type: DOMAIN.MIDDLE_CHAR,
             allowNull: false
+        },
+        unread: {
+            type: DOMAIN.BOOLEAN,
+            defaultValue: true,
+            allowNull: false
         }
     });
     Notices.hasMany(Users, {foreignKey: 'userId'});

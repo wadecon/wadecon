@@ -7,15 +7,15 @@
     var socket = io.connect('http://<%=host%><%=port%>');
     socket.on('news', function () {
         <% if (login) { %>
-        socket.emit('clientGetNotices',{
+        socket.emit('reqNotices',{
             userId: <%=user.id%>
         });	// 로그를 가져옴
         <% } %>
         
-        socket.on('serverGetNotices', function(data){
+        socket.on('downNotices', function(data){
             for( var i in data){
                 if( window.confirm( "알림!: " + data[i].msg ) == true ){
-                    socket.emit('clientRemoveNotice',{
+                    socket.emit('readNotice',{
                         msgId: data[i].msgId
                     });
                 }

@@ -118,16 +118,16 @@ function updateJoin(data){
 	});
 }
 
-function getNotices(data){
+function getNotices(data) {
 	dbnotices.peekNotice(data.userId, function(result, err){
 		if(err) console.error(err);
-		else{
-			socket.emit('serverGetNotices', result);
+		else {
+			socket.emit('downNotices', result);
 		}
 	});
 }
 
-function postLog( data ){
+function postLog(data) {
 	dblogs.createLog( data.userId, data.workName, data.text, dbworks, function(log, err){
 		if(err) console.error(err);
 		else{
@@ -138,7 +138,7 @@ function postLog( data ){
 	});
 }
 
-function getLogs( data ){
+function getLogs(data) {
 	dblogs.getWorksAllLog( data.workId, function(result, err){
 		if(err)	console.error(err);
 		else{
@@ -148,7 +148,7 @@ function getLogs( data ){
 	});
 }
 
-function removeNotice(data){
+function removeNotice(data) {
 	dbnotices.removeNotice(data.msgId, function(result, err){
 		console.log("삭제했다!!".cyan);
 	});
