@@ -47,6 +47,10 @@ function titleCheck(data) {
 function getDislikesAtWorkPage(data){
 	dbdislikes.getWorkDislikesNum(data.workId, function(numDislikes){
 		socket.emit('serverGetDislikesNum', numDislikes);
+		if( !data.onlyOneUser ){
+			console.log("방송을한다!!".cyan);
+			socket.broadcast.emit('serverGetDislikesNum', numDislikes);
+		}
 	});
 }
 
