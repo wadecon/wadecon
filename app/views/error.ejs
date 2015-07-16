@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<head>
+    <% include ./templates/head.ejs %>
+</head>
+<body>
+    <% include ./templates/header.ejs %>
+    <div class="contentBox maxWrapper">
+        <div class="content">
+            <div class="maincon">
+            	<section id="error">
+            		<style>
+            		</style>
+            		<h1>수정은없는것이차라리나았소</h1>
+                    <h2><a href='https://github.com/wadecon/wadecon'>GitHub</a>에서 포크해서 고쳐줘</h2>
+            		<p>
+            			<%= error %>
+            		</p>
+            	</section>
+            </div>
+        </div>
+    </div>
+    <% include ./templates/footer.ejs %>
+</body>
+</html>

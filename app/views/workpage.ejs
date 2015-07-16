@@ -52,6 +52,69 @@
 	                }
 	            });
 	        }
+			var socket = io.connect('http://<%=host%><%=port%>');
+			var disliked = false;
+			
+			socket.on('news', function() {
+				socket.emit('clientGetLogs',{
+					userId: <%=user.id%>,
+					workId: <%=work.id%>
+				});	// 로그를 가져옴
+				
+				$('.dislike').click(function() {
+					console.log("dislike emitted");
+					var id = $(this).attr('id');
+					socket.emit('clientUpdateDislike', {
+						workId: <%=work.id%>,
+						<% if(user) { %>
+						userId: <%=user.id%>
+						<% } else { %>
+						user: null
+						<% } %>
+					});
+				});
+				$('.joins').click(function() {
+					console.log("joins emitted");
+					var id = $(this).attr('id');
+					socket.emit('clientUpdateJoin',{
+						workId: <%=work.id%>,
+						<% if(user) { %>
+						userId: <%=user.id%>
+						<% } else { %>
+						user: null
+						<% } %>
+					});
+				});
+				$('.emitLog').click(function(){
+					console.log("emitLog emitted");
+					var log = $('#logText').val();
+					socket.emit('clientPostLog',{
+						text: log,
+						workId: <%=work.id%>,
+						workName: "<%=work.name%>",
+						<% if(user) { %>
+						userId: <%=user.id%>
+						<% } else { %>
+						user: null
+						<% } %>
+					});
+				});
+				socket.on('serverGetLogs', function (data) {
+					$('#logList').empty();
+					for( var i in data ){
+						$('#logList').append("<li>"+data[i].text+"</li>");
+					}
+				});
+				socket.on('serverGetDislikesNum', function(data){
+					$('#dislikeNum').text(data);
+				});
+				socket.on('serverUpdateJoin', function(data){
+					$('#members').empty();
+					for(i in data) {
+						$('#members').append('<a href="/user/'+data[i].nickname+'" class="memField"><img class="memPic" src="'+data[i].picture+'"><div class="memNick">'+data[i].nickname+'</div></a>');
+					}
+				});
+			});
 	    </script>
 		<% if(work.frontboard) { %>
 			<div id='originreadme' class='originCon'>
@@ -138,69 +201,5 @@
 	<footer>
         <% include ./templates/footer.ejs %>
     </footer>
-	<script>
-		var socket = io.connect('http://<%=host%><%=port%>');
-		var disliked = false;
-		socket.on('news', function() {
-			socket.emit('clientGetLogs',{
-				userId: <%= user.id %>,
-				workId: <%=work.id%>
-			});	// 로그를 가져옴
-			
-			$('.dislike').click(function() {
-				console.log("dislike emitted");
-				var id = $(this).attr('id');
-				socket.emit('clientUpdateDislike', {
-					workId: <%=work.id%>,
-					<% if(user) { %>
-					userId: <%=user.id%>
-					<% } else { %>
-					user: null
-					<% } %>
-				});
-			});
-			$('.joins').click(function() {
-				console.log("joins emitted");
-				var id = $(this).attr('id');
-				socket.emit('clientUpdateJoin',{
-					workId: <%=work.id%>,
-					<% if(user) { %>
-					userId: <%=user.id%>
-					<% } else { %>
-					user: null
-					<% } %>
-				});
-			});
-			$('.emitLog').click(function(){
-				console.log("emitLog emitted");
-				var log = $('#logText').val();
-				socket.emit('clientPostLog',{
-					text: log,
-					workId: <%=work.id%>,
-					workName: "<%=work.name%>",
-					<% if(user) { %>
-					userId: <%=user.id%>
-					<% } else { %>
-					user: null
-					<% } %>
-				});
-			});
-			socket.on('serverGetLogs', function (data) {
-				$('#logList').empty();
-				for( var i in data ){
-					$('#logList').append("<li>"+data[i].text+"</li>");
-				}
-	        });
-			socket.on('serverGetDislikesNum', function(data){
-				$('#dislikeNum').text(data);
-			});
-			socket.on('serverUpdateJoin', function(data){
-				$('#members').empty();
-				for(i in data) {
-					$('#members').append('<a href="/user/'+data[i].nickname+'" class="memField"><img class="memPic" src="'+data[i].picture+'"><div class="memNick">'+data[i].nickname+'</div></a>');
-				}
-			});
-		});
-	</script>
 </body>
 </html>
