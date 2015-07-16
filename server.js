@@ -247,8 +247,11 @@ app.route("/join")
 					dbusers.searchByFbid(req.user.fbId, function(user, err) {
 						if(err) console.error(err);
 						else if(!user){ // 그 세션의 uid에 해당하는 게 등록 안되어있음 (이상한 케이스)
-							res.redirect('/');
+							res.redirect('/login');
 						} else {
+							// 여기서 검사는 다 끝남
+							console.log("유저 생성 :".cyan, user.name);
+							res.send("201").end();
 							dbusers.changeNickname(user, req.body.nickname, function(user, err) {
 								if(err) {
 									console.error(err);
@@ -258,11 +261,7 @@ app.route("/join")
 									dbusers.cacheUserImage(user.picture, user.id, request, fs, function() {
 										fs.mkdir('./public/userbios/' + user.id, function(err) {
 											if(err) console.error(err);
-											else {
-												/* 이미지저장한걸로업데이트 */
-												console.log("유저 생성 :".cyan, user.name);
-												res.send("201").end();
-											}
+											else console.log('이미지 저장')
 										});
 									});
 								}
