@@ -75,7 +75,7 @@ module.exports = function(global) {
             allowNull: false
         }, //plain text
         dislikes:{
-            type: DOMAIN.INT32,
+            type: DOMAIN.INT,
             defaultValue: 0,
             allowNull: false
         },
@@ -92,60 +92,62 @@ module.exports = function(global) {
         name: {
             type: DOMAIN.SHORT_CHAR,
             unique: true,
-            primarykey: true
+            primaryKey: true
         },
         desc: {
             type: DOMAIN.MIDDLE_CHAR,
             allowNull: false
         }, //plain 
-        picture: DOMAIN.URL, //path
         karma: {
-            type: DOMAIN.INT32,
+            type: DOMAIN.INT,
             allowNull: false,
             defaultValue: 0
-        } // 업보 가감
+        }, // 업보 가감
+        multi: {
+            type: DOMAIN.BOOLEAN,
+            allowNull: false,
+            defaultValue: false
+        }
     });
     
     // M:N 테이블의 정의와 관계 설정
     Logs = sqlize.define('Logs', {
-        logId:{
-            type: DOMAIN.INT32,
-            primaryKey: true,
-            autoIncrement: true    
-        },
+        // logId:{
+        //     type: DOMAIN.INT,
+        //     primaryKey: true,
+        //     autoIncrement: true    
+        // },
         userId: {
-            type: DOMAIN.INT32
+            type: DOMAIN.INT,
+            primaryKey: true
         },
         workId: {
-            type: DOMAIN.INT32
+            type: DOMAIN.INT,
+            primaryKey: true
         },
         text: {
             type: DOMAIN.MIDDLE_CHAR //트위터보다 1자 더 지원합니다
         }
     });
-    Users.belongsToMany(Works, {foreignKey: 'userId', through: 'Logs'});
-    Works.belongsToMany(Users, {foreignKey: ['workId', 'name'], through: 'Logs'});
     
     Dislikes = sqlize.define('Dislikes', {
         userId: {
-            type: DOMAIN.INT32,
+            type: DOMAIN.INT,
             primaryKey: true
         },
         workId: {
-            type: DOMAIN.INT32,
+            type: DOMAIN.INT,
             primaryKey: true
         }
     });
-    Users.belongsToMany(Works, {foreignKey: 'userId', through: 'Dislike'});
-    Works.belongsToMany(Users, {foreignKey: ['workId', 'name'], through: 'Dislike'});
     
     Joins = sqlize.define('Joins', {
         userId: {
-            type: DOMAIN.INT32,
+            type: DOMAIN.INT,
             primaryKey: true
         },
         workId: {
-            type: DOMAIN.INT32,
+            type: DOMAIN.INT,
             primaryKey: true
         },
         owns: {
@@ -157,31 +159,32 @@ module.exports = function(global) {
             allowNull: true
         }
     });
-    Users.belongsToMany(Works, {foreignKey: 'userId', through: 'Joins'});
-    Works.belongsToMany(Users, {foreignKey: ['workId', 'name'], through: 'Joins'});
 
     BadgeMaps = sqlize.define('BadgeMaps', {
         userId: {
-            type: DOMAIN.INT32,
+            type: DOMAIN.INT,
             primaryKey: true
         },
         badgeId: {
-            type: DOMAIN.INT32,
+            type: DOMAIN.INT,
             primaryKey: true
+        },
+        count: {
+            type: DOMAIN.INT,
+            defaultValue: 1
         }
     });
-    Users.belongsToMany(Badges, {foreignKey: 'userId', through: 'BadgeMaps'});
-    Badges.belongsToMany(Users, {foreignKey: 'badgeId', through: 'BadgeMaps'});
 
     Notices = sqlize.define('Notices', {
         userId: {
-            type: DOMAIN.INT32
-        },
-        msgId:{
             type: DOMAIN.INT,
-            primaryKey: true,
-            autoIncrement: true
+            primaryKey: true
         },
+        // msgId:{
+        //     type: DOMAIN.INT,
+        //     primaryKey: true,
+        //     autoIncrement: true
+        // },
         msg: {
             type: DOMAIN.MIDDLE_CHAR,
             allowNull: false
@@ -192,21 +195,36 @@ module.exports = function(global) {
             allowNull: false
         }
     });
-    Notices.hasMany(Users, {foreignKey: 'userId'});
+    
+    Users.belongsToMany(Works, {foreignKey: 'userId', through: 'Logs'});
+    Works.belongsToMany(Users, {foreignKey: 'workId', through: 'Logs'});
+    
+    Users.belongsToMany(Works, {foreignKey: 'userId', through: 'Dislikes'});
+    Works.belongsToMany(Users, {foreignKey: 'workId', through: 'Dislikes'});
+    
+    Users.belongsToMany(Works, {foreignKey: 'userId', through: 'Joins'});
+    Works.belongsToMany(Users, {foreignKey: 'workId', through: 'Joins'});
+    
+    Users.belongsToMany(Badges, {foreignKey: 'userId', through: 'BadgeMaps'});
+    Badges.belongsToMany(Users, {foreignKey: 'badgeId', through: 'BadgeMaps'});
+    
+    Users.belongsToMany(Notices, {foreignKey: 'userId', through: 'Notices'});
     
     //DB 싱크 : 테이블 없으면 생성 그리고 동기화
     Users.sync();
     Works.sync();
+    Joins.sync();
     Badges.sync();
     Logs.sync();
     Dislikes.sync();
-    Joins.sync();
     BadgeMaps.sync();
     Notices.sync();
     // Users.sync({force: true});
     // Works.sync({force: true});
     // Badges.sync({force: true});
-    // Logs.sync({force: true});
+    // Dislikes.sync({force: true});
     // Joins.sync({force: true});
+    // Logs.sync({force: true});
     // BadgeMaps.sync({force: true});
+    // Notices.sync({force: true});
 };

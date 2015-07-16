@@ -99,6 +99,18 @@
 				</section>
 				<section>
 					<div class='sectionTitle'>
+						<h1>뱃지</h1>
+					</div>
+					<div id='badge'>
+						<% if(badges) { %>
+							<% for(var i = 0; i < badges.length; i++) { %>
+								<img class='badgeImg' src='/images/badges/<%=badges[i].id%>'>
+							<% } %>
+ 						<% } %>
+					</div>
+				</section>
+				<section>
+					<div class='sectionTitle'>
 						<h1>소개</h1>
 						<% if(isMember && user.nickname == object.nickname) { %>
 							<% if(!object.bio) { %>

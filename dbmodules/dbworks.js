@@ -64,7 +64,7 @@ function getDislikeJoinedUserByName(workName, dbjoins, dbdislikes, cb){
 			} else cb('No work', null);
 		});
 	} catch(err) {
-		console.error(err);
+		cb(err);
 	}
 }
 

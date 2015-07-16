@@ -208,6 +208,7 @@ app.route("/makework")
 								},
 							], function(err, results) {
 								//여긴 에러를 받을 일이 없다. fs에서 오류나면 그냥 catch됨.
+								//근데 안된다. 어쩌지
 								callback(null, results, work);
 							});
 						}
@@ -300,7 +301,7 @@ app.route("/work/:workName")
 				function(callback) {
 					dbworks.getDislikeJoinedUserByName(req.params.workName, dbjoins, dbdislikes, function(err, results) {
 						if(err) callback(err);
-						else callback(err, results);
+						else callback(null, results);
 					});
 				}
 			], function(err, results) {
@@ -328,9 +329,9 @@ app.route("/work/:workName")
 			async.waterfall([
 				function(callback) {
 					dbworks.searchByName(req.params.workName, function(work, err) {
-						if(err) throw err;
+						if(err) callback(err)
 						else if(work) callback(null, work);
-						else throw 'No work';
+						else callback('그런 공작 없수다');
 					});
 				},
 				function(work, callback) {
@@ -365,7 +366,6 @@ app.route("/work/:workName")
 					});
 				},
 				function(work, callback) {
-					
 					dbworks.editWorkInfo(work.id, inputData, function(work, err) {
 						if(err) throw err;
 						else callback(null, work);
@@ -389,16 +389,19 @@ app.route("/user/:userNick")
 			if(err) console.error(err);
 			else if(!user) {
 				res.status(404).end();
-			}
-			else{
-				res.render('userpage.ejs', {
-					host: set.host,
-					port: ((set.main)?'':':'+set.port),
-					pageTitle: '얘의 정보',
-					isMember: req.regiState,
-					user: req.user,
-					object: user
-				});
+			} else {
+				dbbadgemaps.getBadgesOfUser(user.id, function(badges, err) {
+					if(err) console.error(err);
+					else res.render('userpage.ejs', {
+						host: set.host,
+						port: ((set.main)?'':':'+set.port),
+						pageTitle: '얘의 정보',
+						isMember: req.regiState,
+						user: req.user,
+						object: user,
+						badges: badges
+					});
+				})
 			}
 		});
 	})
@@ -442,6 +445,7 @@ function handle500(error, req, res, next) {
 		port: ((set.main)?'':':'+set.port),
 		pageTitle: '500',
 		isMember: req.regiState,
+		user: req.user,
 		error: error
 	});
 };
@@ -452,5 +456,5 @@ app.use(handle500);
 server.listen(set.port || 8080);
 console.log((set.host+":"+(set.port || 8080)).cyan+"에서 서버 시작".green);
 
-dbbadges.createBadge("반동놈의자식", "이놈은빨갱입니다", 10, function(a, err) {
+dbbadges.createBadge("반동놈의자식", "이놈은빨갱입니다", 10, true, function(a, err) {
 });

@@ -1,11 +1,12 @@
 var async = require("async");
 
-function createBadge( name, desc, karma, cb ){
+function createBadge(name, desc, karma, multi, cb) {
 	Badges.findOrCreate({
 		where:{
 			name: name,
 			desc: desc,
-			karma: karma
+			karma: karma,
+			multi: multi
 		}
 	}).then(cb);
 }
