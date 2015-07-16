@@ -15,7 +15,7 @@
                 for(var i in data) {
                     if( window.confirm( "알림!: " + data[i].msg ) == true) {
                         socket.emit('readNotice', {
-                            msgId: data[i].msgId,
+                            msgId: data[i].id,
                             userId: <%= user.id %>
                         });
                     }

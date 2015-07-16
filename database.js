@@ -91,8 +91,7 @@ module.exports = function(global) {
     Badges = sqlize.define('Badges', {
         name: {
             type: DOMAIN.SHORT_CHAR,
-            unique: true,
-            primaryKey: true
+            unique: true
         },
         desc: {
             type: DOMAIN.MIDDLE_CHAR,
@@ -112,18 +111,16 @@ module.exports = function(global) {
     
     // M:N 테이블의 정의와 관계 설정
     Logs = sqlize.define('Logs', {
-        // logId:{
-        //     type: DOMAIN.INT,
-        //     primaryKey: true,
-        //     autoIncrement: true    
-        // },
-        userId: {
+        logId:{
             type: DOMAIN.INT,
-            primaryKey: true
+            primaryKey: true,
+            autoIncrement: true    
+        },
+        userId: {
+            type: DOMAIN.INT
         },
         workId: {
-            type: DOMAIN.INT,
-            primaryKey: true
+            type: DOMAIN.INT
         },
         text: {
             type: DOMAIN.MIDDLE_CHAR //트위터보다 1자 더 지원합니다
@@ -176,15 +173,14 @@ module.exports = function(global) {
     });
 
     Notices = sqlize.define('Notices', {
-        userId: {
+        id:{
             type: DOMAIN.INT,
-            primaryKey: true
+            primaryKey: true,
+            autoIncrement: true
         },
-        // msgId:{
-        //     type: DOMAIN.INT,
-        //     primaryKey: true,
-        //     autoIncrement: true
-        // },
+        userId: {
+            type: DOMAIN.INT
+        },
         msg: {
             type: DOMAIN.MIDDLE_CHAR,
             allowNull: false
@@ -207,8 +203,6 @@ module.exports = function(global) {
     
     Users.belongsToMany(Badges, {foreignKey: 'userId', through: 'BadgeMaps'});
     Badges.belongsToMany(Users, {foreignKey: 'badgeId', through: 'BadgeMaps'});
-    
-    Users.belongsToMany(Notices, {foreignKey: 'userId', through: 'Notices'});
     
     //DB 싱크 : 테이블 없으면 생성 그리고 동기화
     Users.sync();

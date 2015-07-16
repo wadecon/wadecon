@@ -22,6 +22,7 @@ function getBadgesOfUser(userId, callback) {
 				}).then(function (badge, err) {
 					if(err) cb(err);
 					else {
+						badge.count = bm.count;
 						badges.push(badge);
 						cb(null);
 					}
@@ -54,10 +55,23 @@ function giveBadge(userId, badgeId, cb) {
 			else if(badge) {
 				searchBadgeExist(userId, badgeId, function(badgemap, err) {
 					if(err) throw err;
-					else if(badgemap && !badge.multi) cb(null, null); //뱃지가 존재하고 중복으로 수여 불가능
-					else {
-						badgemap.updateAttributes({
-							count: badgemap.count + 1
+					else if(badgemap) {
+						if(!badge.multi) cb(null, null); //뱃지가 존재하고 중복으로 수여 불가능
+						else { // 뱃지 더 주기
+							badgemap.updateAttributes({
+								count: badgemap.count + 1
+							}).then(function(bm, err) {
+								if(err) throw err;
+								else dbusers.addKarma(userId, badge.karma, function() {	// 뱃지를 줬으므로 뱃지의 업보 효과를 유저에게 적용시킨다.
+									cb(bm, null);
+								});
+							});
+						}
+					}
+					else { // 뱃지 처음 줌
+						BadgeMaps.create({
+							userId: userId,
+							badgeId: badgeId
 						}).then(function(bm, err) {
 							if(err) throw err;
 							else dbusers.addKarma(userId, badge.karma, function() {	// 뱃지를 줬으므로 뱃지의 업보 효과를 유저에게 적용시킨다.
@@ -75,9 +89,9 @@ function giveBadge(userId, badgeId, cb) {
 
 function removeBadge(userId, badgeId, callback) {
 	try {
-		searchBadgeExist(userId, badgeId, function(badgemaps, err) {
+		searchBadgeExist(userId, badgeId, function(badgemap, err) {
 			if(err) throw err;
-			else if(badgemaps) {
+			else if(badgemap) {
 				Badges.findOne({
 					where: {
 						id: badgeId
@@ -95,14 +109,8 @@ function removeBadge(userId, badgeId, callback) {
 								});
 							});
 						} else {
-							BadgeMaps.destroy({
-								where: {
-									userId: userId,
-									badgeId: badgeId
-								}
-							}).then(function(err) {
-								if(err) throw err;
-								else dbusers.addKarma(userId, -Number(badge.karma), function() {
+							badgemap.destroy().then(function() {
+								dbusers.addKarma(userId, -Number(badge.karma), function() {
 									callback(null);
 								});
 							});

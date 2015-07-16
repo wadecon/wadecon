@@ -104,7 +104,9 @@
 					<div id='badge'>
 						<% if(badges) { %>
 							<% for(var i = 0; i < badges.length; i++) { %>
-								<img class='badgeImg' src='/images/badges/<%=badges[i].id%>'>
+								<% for(var j = 0; j < badges[i].count; j++) { %>
+									<img class='badgeImg' src='/images/badges/<%=badges[i].id%>'>
+								<% } %>
 							<% } %>
  						<% } %>
 					</div>

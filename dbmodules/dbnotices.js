@@ -10,7 +10,7 @@ function peekNotice(userId, cb) {
 function readNotice(msgId, callback) {
 	Notices.findOne({
 		where: {
-			msgId: msgId
+			id: msgId
 		}
 	}).then(function(notice, err) {
 		if(err) console.error(err);
@@ -36,7 +36,7 @@ function putNotice(userId, msg, cb) {
 function removeNotice(msgId, cb) {
 	Notices.destroy({
 		where:{
-			msgId: msgId
+			id: msgId
 		}
 	}).then(cb);
 }
