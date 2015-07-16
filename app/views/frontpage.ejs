@@ -6,32 +6,28 @@
     <% include ./templates/header.ejs %>
     <div class="contentBox maxWrapper">
         <div class="content">
-            <% if(!login) { %>
-                <% include ./templates/intro.ejs %>
-            <% } else { %>
-                <style>
-                    <% include ./style/frontpage.css %>
-                </style>
-                <section id="openedWorks">
-                    <div class='sectionTitle'>
-                        <h2>공작 일람</h2>
-                        <a href='/makework'><button id="makeWork">공작 모의</button></a>
-                    </div>
-                    <ul id="workul">
-                        <% if ( works != null ) {
-                            for( var i = 0; i < works.length; i++) { %>
-                            <a href="work/<%= encodeURIComponent(works[i].name)%>"><li class='workli'>
-                                <div class='workname black'><%= works[i].name %></div><div class='workdislike hh'><%= numDislikes[i] %></div>
-                                <div class='workdesc'><%= works[i].desc %></div></a>
-                            </li>
-                            <% }
-                        } %>
-                    </ul>
-                </section>
-                <section id="joinedWorks">
-                    <!--user specific work-->
-                </section>
-            <% } %>
+            <style>
+                <% include ./style/frontpage.css %>
+            </style>
+            <section id="openedWorks">
+                <div class='sectionTitle'>
+                    <h2>공작 일람</h2>
+                    <a href='/makework'><button id="makeWork">공작 모의</button></a>
+                </div>
+                <ul id="workul">
+                    <% if ( works != null ) {
+                        for( var i = 0; i < works.length; i++) { %>
+                        <a href="work/<%= encodeURIComponent(works[i].name)%>"><li class='workli'>
+                            <div class='workname black'><%= works[i].name %></div><div class='workdislike hh'><%= numDislikes[i] %></div>
+                            <div class='workdesc'><%= works[i].desc %></div></a>
+                        </li>
+                        <% }
+                    } %>
+                </ul>
+            </section>
+            <section id="joinedWorks">
+                <!--user specific work-->
+            </section>
         </div>
     </div>
     <% include ./templates/footer.ejs %>

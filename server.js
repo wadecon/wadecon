@@ -71,13 +71,23 @@ app.get('/auth/fb/callback',
 	})
 );
 
+app.get('/login', function(req, res) {
+	res.render("login.ejs", {
+		isIntro: true, //메인페이지에서 헤더에 로그인버튼을 보여주지 않는데 사용
+		host: set.host,
+		user: req.user,
+		port: ((set.main)?'':':'+set.port),
+		isMember: false
+	});
+});
+
 app.get('/logout', function(req, res){
     req.logout();
     res.redirect('/');
 });
 
 app.route("/")
-	.get(auth.inspectRegi, function(req, res) {
+	.get(auth.checkAuthRegi, function(req, res) {
 		systemMod.checkBrowser(req.headers['user-agent'],function(browserName){
 			// && browserVersion <= 9
 			if (browserName == 'IE') {
@@ -128,14 +138,13 @@ app.route("/")
 				dbdislikes.getWorksDislikesNum(works, function(arrWorksDislikesNum) {
 					res.render("frontpage.ejs", {
 						works: works,
-						login: req.regiState,
+						isMember: true,
 						user: req.user,
 						dislikes: dislikes,
 						numDislikes: arrWorksDislikesNum,
 						joins: joins,
 						host: set.host,
-						port: ((set.main)?'':':'+set.port),
-						isIntro: true //메인페이지에서 헤더에 로그인버튼을 보여주지 않는데 사용
+						port: ((set.main)?'':':'+set.port)
 					});
 				});
 			}
@@ -146,7 +155,7 @@ app.route("/makework")
 	.get(auth.checkAuthRegi, function(req, res){
 			res.render('makework.ejs', {
 				host: set.host,
-				login: true,
+				isMember: true,
 				port: ((set.main)?'':':'+set.port),
 				userId: req.user.id,
 				user: req.user,
@@ -218,9 +227,8 @@ app.route("/join")
 				if(user.nickname == null)
 					res.render('join.ejs', {
 						pageTitle: '가입',
-						name: req.user.name,
-						login: false, //예외사항: 항시 거짓
-						picture: req.user.picture,
+						user: req.user,
+						isMember: false, //예외사항: 항시 거짓
 						host: set.host,
 						port: ((set.main)?'':':'+set.port),
 						isIntro: true
@@ -300,8 +308,8 @@ app.route("/work/:workName")
 						work: results[1][2],
 						numDislikes: results[1][1].length,
 						members: results[1][0],
-						login: req.regiState,
-						isJoined: results[0],
+						isMember: req.regiState, // 조합원
+						isJoined: results[0], // 공작 참여
 						host: set.host,
 						port: ((set.main)?'':':'+set.port),
 						user: (req.regiState)?req.user:null
@@ -387,7 +395,7 @@ app.route("/user/:userNick")
 					host: set.host,
 					port: ((set.main)?'':':'+set.port),
 					pageTitle: '얘의 정보',
-					login: req.regiState,
+					isMember: req.regiState,
 					user: req.user,
 					object: user
 				});

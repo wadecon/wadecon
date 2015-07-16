@@ -4,7 +4,7 @@
 	<style>
 		<% include ./style/workpage.css %>
 	</style>
-	<% if(login && isJoined) { %>
+	<% if(isMember && isJoined) { %>
 		<link rel="stylesheet" href="//cdn.jsdelivr.net/editor/0.1.0/editor.css">
 	    <script src="/js/editor.js"></script>
 	    <script src="/js/marked.js"></script>
@@ -82,7 +82,7 @@
 				<section id='readmeSec' class='md'>
 					<div class='sectionTitle'>
 						<h3>README.md</h3>
-						<% if(login && isJoined) { %>
+						<% if(isMember && isJoined) { %>
 							<% if(!work.frontboard) { %>
 								<button class='editMD' id='editreadme' onClick='editMD("readme")'>쓰자</button>
 							<% } else { %>
@@ -111,7 +111,7 @@
 				<section id='needsSec' class='half md'>
 					<div class='sectionTitle'>
 						<h3>이런 사람 와라</h3>
-						<% if(login && isJoined) { %>
+						<% if(isMember && isJoined) { %>
 							<% if(!work.needs) { %>
 								<button class='editMD' id='editneeds' onClick='editMD("needs")'>쓰자</button>
 							<% } else { %>

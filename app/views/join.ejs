@@ -25,11 +25,7 @@
             else if(nick.trim() == '') $('#status').text('')
             else socket.emit('namecheck', {
                 nickname: nick,
-                <% if (login) { %>
                 userId: <%= user.id %>
-                <% } else { %>
-                userId: null
-                <% } %>
             });
         }
         
@@ -84,8 +80,8 @@
         <div class="content">
             <div class="maincon">
                 <section>
-                    <h1>안녕, <%=name%></h1>
-                    <img src="<%=picture%>" id="profilePic" alt="" />
+                    <h1>안녕, <%=user.name%></h1>
+                    <img src="<%=user.picture%>" id="profilePic" alt="" />
                     <input type="text" id="nameField" name="nickname" placeholder="닉네임" maxLength=64 autocomplete="off">
                     <div id="status"></div>
                     <button id="register" onClick="register()">가입!</button><br>
