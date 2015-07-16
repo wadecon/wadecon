@@ -66,7 +66,7 @@ function checkAuth(req, res, next) {
     // Facebook 로그인이 안 되어 있으면, login 페이지로 진행
 	else {
 		console.log("로그인 안 됨");
-		res.redirect('/');
+		return res.redirect('/');
 	}
 }
 
@@ -111,7 +111,7 @@ function checkAuthRegi(req, res, next) {
     } else {
         req.regiState = false;
 		console.log("로그인 안 됨");
-		res.redirect('/');
+	    res.redirect('/');
     }
 }
 
@@ -120,5 +120,5 @@ module.exports = {
 	getPassport: getPassport,
 	checkAuth: checkAuth,
     inspectRegi: inspectRegi,
-    checkRegi: checkAuthRegi
+    checkAuthRegi: checkAuthRegi
 }
