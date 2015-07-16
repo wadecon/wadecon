@@ -443,7 +443,7 @@ function handle500(error, req, res, next) {
 		pageTitle: '500',
 		isMember: req.regiState,
 		error: error
-	}).end();
+	});
 };
 
 app.use(handle404);
