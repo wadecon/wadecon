@@ -141,7 +141,6 @@
 	<script>
 		var socket = io.connect('http://<%=host%><%=port%>');
 		var disliked = false;
-		
 		socket.on('news', function() {
 			socket.emit('clientGetLogs',{
 				userId: <%= user.id %>,

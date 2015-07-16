@@ -10,23 +10,23 @@ function vomitErr(err, cb) {
 }
 
 function setSession(userId, expire, data, cb) {
-    client.hset(userId, "nickname", data.nickname, redis.print);
-    client.hset(userId, "email", data.email, redis.print);
-    client.hset(userId, "name", data.name, redis.print);
-    client.hset(userId, "picture", data.picture, redis.print);
-    client.hset(userId, "bio", data.bio, redis.print);
-    client.hset(userId, "karma", data.karma, redis.print);
-    client.hset(userId, "fbId", data.fbId, redis.print);
-    client.hset(userId, "fbToken", data.fbToken, redis.print);
-    client.hset(userId, "createdAt", data.createAt, redis.print);
-    client.hset(userId, "updatedAt", data.updateAt, redis.print);
-	client.expire(userId, expire, redis.print);
+    client.hset(userId, "nickname", data.nickname, function(){});
+    client.hset(userId, "email", data.email, function(){});
+    client.hset(userId, "name", data.name, function(){});
+    client.hset(userId, "picture", data.picture, function(){});
+    client.hset(userId, "bio", data.bio, function(){});
+    client.hset(userId, "karma", data.karma, function(){});
+    client.hset(userId, "fbId", data.fbId, function(){});
+    client.hset(userId, "fbToken", data.fbToken, function(){});
+    client.hset(userId, "createdAt", data.createAt, function(){});
+    client.hset(userId, "updatedAt", data.updateAt, function(){});
+	client.expire(userId, expire, function(){});
     cb(null);
 }
 
 function getSession(userId, cb) {
     client.hgetall(userId, function (err, obj) {
-        console.dir(obj);
+        // console.dir(obj);
         cb(obj);    // 해시 테이블에 저장되어 있는 오브젝트 반환 (json)
     });
 }
