@@ -87,68 +87,72 @@ app.get('/logout', function(req, res){
 });
 
 app.route("/")
-	.get(auth.checkAuthRegi, function(req, res) {
-		systemMod.checkBrowser(req.headers['user-agent'],function(browserName){
-			// && browserVersion <= 9
-			if (browserName == 'IE') {
-				res.write("<script>window.open('http://www.opera.com/ko/computer');</script>");
-				res.write("<script>window.open('https://www.mozilla.org/ko/firefox/new/');</script>");
-				res.end("<script>location.href='https://www.google.com/chrome/browser/desktop/index.html';</script>");
-			}
-		});
+	.get(auth.inspectRegi, function(req, res) {
+		try {
+			systemMod.checkBrowser(req.headers['user-agent'],function(browserName){
+				// && browserVersion <= 9
+				if (browserName == 'IE') {
+					res.write("<script>window.open('http://www.opera.com/ko/computer');</script>");
+					res.write("<script>window.open('https://www.mozilla.org/ko/firefox/new/');</script>");
+					res.end("<script>location.href='https://www.google.com/chrome/browser/desktop/index.html';</script>");
+				}
+			});
 
-		async.parallel([
-			function(callback) {
-				Works.findAll({
-					order: ['dislikes', 'DESC']
-				}).then(function(works, err) {
-		            if(err) callback(err, null);
-		            else {
-						callback(null, works);
-		            }
-		        });
-			},
-			function(callback) {
-				Dislikes.findAll().then(function(dislikes, err){
-					if(err)	callback(err, null);
-					else{
-						callback(null, dislikes);
-					}
-				});
-			},
-			function(callback) {
-				Joins.findAll().then(function(joins, err){
-					if(err) callback(err, null);
-					else{
-						callback(null, joins);
-					}
-				});
-			}
-		], function(err, results) {
-			if(err) console.error(err);
-			else{
-				if(req.user != null) {
-					redisMod.setSession(req.user.id, set.expire, req.user, function() { // 널을 반환하므로 받을 필요가 없다
-						console.log("세션 설정!!".cyan);
+			async.parallel([
+				function(callback) {
+					Works.findAll({
+						order: ['dislikes', 'DESC']
+					}).then(function(works, err) {
+			            if(err) callback(err, null);
+			            else {
+							callback(null, works);
+			            }
+			        });
+				},
+				function(callback) {
+					Dislikes.findAll().then(function(dislikes, err){
+						if(err)	callback(err, null);
+						else{
+							callback(null, dislikes);
+						}
+					});
+				},
+				function(callback) {
+					Joins.findAll().then(function(joins, err){
+						if(err) callback(err, null);
+						else{
+							callback(null, joins);
+						}
 					});
 				}
-				var works = results[0];
-				var dislikes = results[1];
-				var joins = results[2];
-				dbdislikes.getWorksDislikesNum(works, function(arrWorksDislikesNum) {
-					res.render("frontpage.ejs", {
-						works: works,
-						isMember: true,
-						user: req.user,
-						dislikes: dislikes,
-						numDislikes: arrWorksDislikesNum,
-						joins: joins,
-						host: set.host,
-						port: ((set.main)?'':':'+set.port)
+			], function(err, results) {
+				if(err) throw err;
+				else {
+					if(req.user != null) {
+						redisMod.setSession(req.user.id, set.expire, req.user, function() { // 널을 반환하므로 받을 필요가 없다
+							console.log("세션 설정!!".cyan);
+						});
+					}
+					var works = results[0];
+					var dislikes = results[1];
+					var joins = results[2];
+					dbdislikes.getWorksDislikesNum(works, function(arrWorksDislikesNum) {
+						res.render("frontpage.ejs", {
+							works: works,
+							isMember: req.regiState,
+							user: req.user,
+							dislikes: dislikes,
+							numDislikes: arrWorksDislikesNum,
+							joins: joins,
+							host: set.host,
+							port: ((set.main)?'':':'+set.port)
+						});
 					});
-				});
-			}
-		});
+				}
+			});
+		} catch(err) {
+			handle500(err, req, res);
+		}
 	});
 
 app.route("/makework")
@@ -214,11 +218,11 @@ app.route("/makework")
 				else res.send({code: 201, url: '/work/'+encodeURIComponent(work.name)});
 			});
 		} catch(err) {
-			console.error(err);
-			res.status(500).end();
+			handle500(err, req, res);
 		}
 	});
 
+// try catch로 묶을것.
 app.route("/join")
 	.get(auth.checkAuth, function(req, res) {
 		dbusers.searchByFbid(req.user.fbId, function(user, err) {
@@ -254,8 +258,7 @@ app.route("/join")
 							res.send("201").end();
 							dbusers.changeNickname(user, req.body.nickname, function(user, err) {
 								if(err) {
-									console.error(err);
-									res.send("500").end();
+									handle500(err, req, res);
 								}
 								else {
 									dbusers.cacheUserImage(user.picture, user.id, request, fs, function() {
@@ -316,8 +319,7 @@ app.route("/work/:workName")
 				}
 			});
 		} catch(err) {
-			console.error(err);
-			res.send(500).end();
+			handle500(err, req, res);
 		}
 	})
 	.post(auth.checkAuthRegi, function(req, res){
@@ -377,8 +379,7 @@ app.route("/work/:workName")
 				}
 			});
 		} catch(err) {
-			console.error(err);
-			res.status(500).end();
+			handle500(err, req, res);
 		}
 	});
 
@@ -424,20 +425,29 @@ app.route("/user/:userNick")
 				}
 			});
 		} catch(err) {
-			console.error(err);
-			res.send("500");
+			handle500(err, req, res);
 		}
 	});
 
 // handle 404
-app.use(function(req, res) {
+function handle404(req, res) {
 	res.status(404).sendFile( __dirname+"/public/status/404NF.html");
-});
+};
 
 // handle 500
-// app.use(function(error, req, res, next) {
-// 	res.status(500).send('500: Internal Server Error\n'+error);
-// });
+function handle500(error, req, res, next) {
+	console.error(error);
+	res.status(200).render('error.ejs', {
+		host: set.host,
+		port: ((set.main)?'':':'+set.port),
+		pageTitle: '500',
+		isMember: req.regiState,
+		error: error
+	}).end();
+};
+
+app.use(handle404);
+app.use(handle500);
 
 server.listen(set.port || 8080);
 console.log((set.host+":"+(set.port || 8080)).cyan+"에서 서버 시작".green);

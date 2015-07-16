@@ -62,7 +62,7 @@ h2 {
 #originMD {
 	display: none;
 }
-button {
+#editBio, #saveBio {
     float: right;
     margin: 8px;
     padding: 5px 12px;

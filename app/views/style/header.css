@@ -4,12 +4,16 @@ header {
     background-color: lightsalmon;
     border-bottom: 3px solid darksalmon;
 }
-a {
+button#login {
+    margin: 1em;
+    float: right;
+    padding: 5px 12px;
+    font-size: 1.4em;
+    vertical-align: bottom;
+}
+.logotype a {
     text-decoration: none;
     color: black;
-}
-button#login {
-    margin: 1.2em;
 }
 .logotype a:hover {
     color: #444;
