@@ -74,14 +74,6 @@ module.exports = function(global) {
             type: DOMAIN.MIDDLE_CHAR,
             allowNull: false
         }, //plain text
-        frontboard: {
-            type: DOMAIN.URL, //path
-            allowNull: true
-        },
-        needs: {
-            type: DOMAIN.URL,
-            allowNull: true
-        }, //path
         dislikes:{
             type: DOMAIN.INT32,
             defaultValue: 0,

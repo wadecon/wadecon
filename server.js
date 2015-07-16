@@ -71,13 +71,23 @@ app.get('/auth/fb/callback',
 	})
 );
 
+app.get('/login', function(req, res) {
+	res.render("login.ejs", {
+		isIntro: true, //메인페이지에서 헤더에 로그인버튼을 보여주지 않는데 사용
+		host: set.host,
+		user: req.user,
+		port: ((set.main)?'':':'+set.port),
+		isMember: false
+	});
+});
+
 app.get('/logout', function(req, res){
     req.logout();
     res.redirect('/');
 });
 
 app.route("/")
-	.get(auth.inspect, function(req, res) {
+	.get(auth.checkAuthRegi, function(req, res) {
 		systemMod.checkBrowser(req.headers['user-agent'],function(browserName){
 			// && browserVersion <= 9
 			if (browserName == 'IE') {
@@ -128,14 +138,13 @@ app.route("/")
 				dbdislikes.getWorksDislikesNum(works, function(arrWorksDislikesNum) {
 					res.render("frontpage.ejs", {
 						works: works,
-						login: req.authState,
+						isMember: true,
 						user: req.user,
 						dislikes: dislikes,
 						numDislikes: arrWorksDislikesNum,
 						joins: joins,
 						host: set.host,
-						port: ((set.main)?'':':'+set.port),
-						isIntro: true //메인페이지에서 헤더에 로그인버튼을 보여주지 않는데 사용
+						port: ((set.main)?'':':'+set.port)
 					});
 				});
 			}
@@ -143,17 +152,17 @@ app.route("/")
 	});
 
 app.route("/makework")
-	.get(auth.checkAuthState, function(req, res){
+	.get(auth.checkAuthRegi, function(req, res){
 			res.render('makework.ejs', {
 				host: set.host,
-				login: true,
+				isMember: true,
 				port: ((set.main)?'':':'+set.port),
 				userId: req.user.id,
 				user: req.user,
 				pageTitle: '공작 모의'
 			});
 	})
-	.post(auth.checkAuthState, function(req, res){
+	.post(auth.checkAuthRegi, function(req, res){
 		try {
 			async.waterfall([
 				function(callback) {
@@ -173,24 +182,24 @@ app.route("/makework")
 					})
 				},
 				function(work, callback) {
-					fs.mkdir("./public/workpage/" + work.name, function(err) {
+					fs.mkdir("./public/workpage/" + work.id, function(err) {
 						if(err) callback(err);
 						else {
 							async.parallel([
 								function(cb) {
-									fs.writeFileSync("./public/workpage/" + work.name + "/front.html", md(req.body.readme));
+									fs.writeFileSync("./public/workpage/" + work.id + "/front.html", md(req.body.readme));
 									cb(null);
 								},
 								function(cb) {
-									fs.writeFileSync("./public/workpage/" + work.name + "/needs.html", md(req.body.needs));
+									fs.writeFileSync("./public/workpage/" + work.id + "/needs.html", md(req.body.needs));
 									cb(null);
 								},
 								function(cb) {
-									fs.writeFileSync("./public/workpage/" + work.name + "/front.md", req.body.readme);
+									fs.writeFileSync("./public/workpage/" + work.id + "/front.md", req.body.readme);
 									cb(null);
 								},
 								function(cb) {
-									fs.writeFileSync("./public/workpage/" + work.name + "/needs.md", req.body.needs);
+									fs.writeFileSync("./public/workpage/" + work.id + "/needs.md", req.body.needs);
 									cb(null);
 								},
 							], function(err, results) {
@@ -211,16 +220,15 @@ app.route("/makework")
 	});
 
 app.route("/join")
-	.get(auth.checkAuthState, function(req, res) {
+	.get(auth.checkAuth, function(req, res) {
 		dbusers.searchByFbid(req.user.fbId, function(user, err) {
 			if(err) console.error(err);
 			else if(user) {
 				if(user.nickname == null)
 					res.render('join.ejs', {
 						pageTitle: '가입',
-						name: req.user.name,
-						login: false, //예외사항: 항시 거짓
-						picture: req.user.picture,
+						user: req.user,
+						isMember: false, //예외사항: 항시 거짓
 						host: set.host,
 						port: ((set.main)?'':':'+set.port),
 						isIntro: true
@@ -231,7 +239,7 @@ app.route("/join")
 			}
 		})
 	})
-	.post(auth.checkAuthState, function(req, res) {
+	.post(auth.checkAuth, function(req, res) {
 		if(req.body.nickname) {
 			dbusers.searchByNickname(req.body.nickname, function(user, err) {
 				if(err) console.error(err);
@@ -270,11 +278,11 @@ app.route("/join")
 	});
 
 app.route("/work/:workName")
-	.get(auth.inspect, function(req, res) {
+	.get(auth.inspectRegi, function(req, res) {
 		try {
 			async.parallel([
 				function(callback) {
-					if(req.authState) {
+					if(req.regiState) {
 						dbworks.searchByName(req.params.workName, function(work, err) {
 							if(err) callback(err);
 							else {
@@ -300,11 +308,11 @@ app.route("/work/:workName")
 						work: results[1][2],
 						numDislikes: results[1][1].length,
 						members: results[1][0],
-						login: req.authState,
-						isJoined: results[0],
+						isMember: req.regiState, // 조합원
+						isJoined: results[0], // 공작 참여
 						host: set.host,
 						port: ((set.main)?'':':'+set.port),
-						user: (req.authState)?req.user:null
+						user: (req.regiState)?req.user:null
 					});
 				}
 			});
@@ -313,7 +321,7 @@ app.route("/work/:workName")
 			res.send(500).end();
 		}
 	})
-	.post(auth.checkAuthState, function(req, res){
+	.post(auth.checkAuthRegi, function(req, res){
 		try {
 			var inputData = {};
 			async.waterfall([
@@ -328,26 +336,26 @@ app.route("/work/:workName")
 					async.parallel([
 						function(cb) {
 							if(req.body.readme) {
-								fs.writeFileSync("./public/workpage/" + work.name + "/front.html", md(req.body.readme));
-								inputData.frontboard = "./public/workpage/" + work.name + "/front.html";
+								fs.writeFileSync("./public/workpage/" + work.id + "/front.html", md(req.body.readme));
+								inputData.frontboard = "./public/workpage/" + work.id + "/front.html";
 							}
 							cb(null);
 						},
 						function(cb) {
 							if(req.body.needs) {
-								fs.writeFileSync("./public/workpage/" + work.name + "/needs.html", md(req.body.needs));
-								inputData.frontboard = "./public/workpage/" + work.name + "/needs.html";
+								fs.writeFileSync("./public/workpage/" + work.id + "/needs.html", md(req.body.needs));
+								inputData.needs = "./public/workpage/" + work.id + "/needs.html";
 							}
 							cb(null);
 						},
 						function(cb) {
 							if(req.body.readme)
-								fs.writeFileSync("./public/workpage/" + work.name + "/front.md", req.body.readme);
+								fs.writeFileSync("./public/workpage/" + work.id + "/front.md", req.body.readme);
 							cb(null);
 						},
 						function(cb) {
 							if(req.body.needs)
-								fs.writeFileSync("./public/workpage/" + work.name + "/needs.md", req.body.needs);
+								fs.writeFileSync("./public/workpage/" + work.id + "/needs.md", req.body.needs);
 							cb(null);
 						},
 					], function(err, results) {
@@ -376,7 +384,7 @@ app.route("/work/:workName")
 	});
 
 app.route("/user/:userNick")
-	.get(auth.inspect, function(req, res){
+	.get(auth.inspectRegi, function(req, res){
 		dbusers.searchByNickname(req.params.userNick, function(user, err){
 			if(err) console.error(err);
 			else if(!user) {
@@ -387,14 +395,14 @@ app.route("/user/:userNick")
 					host: set.host,
 					port: ((set.main)?'':':'+set.port),
 					pageTitle: '얘의 정보',
-					login: req.authState,
+					isMember: req.regiState,
 					user: req.user,
 					object: user
 				});
 			}
 		});
 	})
-	.post(auth.checkAuthState, function(req, res){
+	.post(auth.checkAuthRegi, function(req, res){
 		try {
 			async.parallel([
 				function(callback) {

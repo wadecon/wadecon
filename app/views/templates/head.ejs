@@ -3,31 +3,27 @@
 <title><%# = pageTitle %></title>
 <script src="/js/socket.io-1.3.5.js"></script>
 <script src="/js/jquery-2.1.4.min.js"></script>
-<script>
-    var socket = io.connect('http://<%=host%><%=port%>');
-    socket.on('news', function () {
-        <% if (login) { %>
-        socket.emit('reqNotices',{
-            userId: <%=user.id%>
-        });	// 로그를 가져옴
-        <% } %>
-        
-        socket.on('downNotices', function(data){
-            for(var i in data) {
-                if( window.confirm( "알림!: " + data[i].msg ) == true) {
-                    socket.emit('readNotice', {
-                        msgId: data[i].msgId,
-                        <% if( login ) { %>
-                        userId: <%= user.id %>
-                        <% } else { %>
-                        userId: null
-                        <% } %>
-                    });
+<% if(isMember) { %>
+    <script>
+        var socket = io.connect('http://<%=host%><%=port%>');
+        socket.on('news', function () {
+            socket.emit('reqNotices',{
+                userId: <%=user.id%>
+            });	// 로그를 가져옴
+            
+            socket.on('downNotices', function(data){
+                for(var i in data) {
+                    if( window.confirm( "알림!: " + data[i].msg ) == true) {
+                        socket.emit('readNotice', {
+                            msgId: data[i].msgId,
+                            userId: <%= user.id %>
+                        });
+                    }
                 }
-            }
+            });
         });
-    });
-</script>
+    </script>
+<% } %>
 <style>
     <% include ../style/reset.css %>
 </style>

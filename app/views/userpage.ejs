@@ -4,7 +4,7 @@
 	<style>
 		<% include ./style/userpage.css %>
 	</style>
-	<% if(login && user.nickname == object.nickname) { %>
+	<% if(isMember && user.nickname == object.nickname) { %>
 		<link rel="stylesheet" href="//cdn.jsdelivr.net/editor/0.1.0/editor.css">
 	    <script src="/js/editor.js"></script>
 	    <script src="/js/marked.js"></script>
@@ -100,7 +100,7 @@
 				<section>
 					<div class='sectionTitle'>
 						<h1>소개</h1>
-						<% if(login && user.nickname == object.nickname) { %>
+						<% if(isMember && user.nickname == object.nickname) { %>
 							<% if(!object.bio) { %>
 								<button id='editBio' onClick='editBio()'>쓰자</button>
 							<% } else { %>
