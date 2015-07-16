@@ -58,34 +58,67 @@ function getPassport(){
 	return passport;
 }
 
-function checkAuthState(req, res, next) {
+// OAuth 인증되지 않으면 접근조차 불가능한 페이지에 사용
+function checkAuth(req, res, next) {
 	console.log("auth check", req.user);
-    // 로그인이 되어 있으면, 다음 파이프라인으로 진행
+    // Facebook 로그인이 되어 있으면, 다음 파이프라인으로 진행
     if (req.isAuthenticated()) { return next(); }
-    // 로그인이 안되어 있으면, login 페이지로 진행
+    // Facebook 로그인이 안 되어 있으면, login 페이지로 진행
 	else {
-		console.log("not logged");
+		console.log("로그인 안 됨");
 		res.redirect('/');
 	}
 }
 
-function inspect(req, res, next) {
-    req.authState = req.isAuthenticated();
-    // if(req.authState) {
-    //     Users.findOne({
-    //         where: {
-    //             nickname: req.user.nickname
-    //     }}).then(function(user, err) {
-    //         if(err) console.log(err);
-    /*         else if(user)*/ return next();
-    //         else res.redirect('/join');
-    //     });
-    // } else return res.redirect('/');
+// 단순 가입여부 검사. 미인증자도 통과됨.(ejs에서 regiState 여부로 정보가 필터링됨)
+function inspectRegi(req, res, next) {
+    if(req.isAuthenticated()) {
+        Users.findOne({
+            where: {
+                nickname: req.user.nickname
+        }}).then(function(user, err) {
+            if(err) console.log(err);    
+            else if(user) {
+                req.regiState = true;
+                return next();
+            } else {
+                req.regiState = false;
+                return next();
+            }
+        });
+    } else {
+        req.regiState = false;
+        return next();
+    }
+}
+
+// 미인증자는 인증하도록, 미가입자는 가입하도록 하고 regiState 저장
+function checkAuthRegi(req, res, next) {
+    if(req.isAuthenticated()) {
+        Users.findOne({
+            where: {
+                nickname: req.user.nickname
+        }}).then(function(user, err) {
+            if(err) console.log(err);    
+            else if(user) {
+                req.regiState = true;
+                return next();
+            } else {
+                req.regiState = false;
+                res.redirect('/join');
+            }
+        });
+    } else {
+        req.regiState = false;
+		console.log("로그인 안 됨");
+		res.redirect('/');
+    }
 }
 
 module.exports = {
 	init: init,
 	getPassport: getPassport,
-	checkAuthState: checkAuthState,
-    inspect: inspect
+	checkAuth: checkAuth,
+    inspectRegi: inspectRegi,
+    checkRegi: checkAuthRegi
 }
