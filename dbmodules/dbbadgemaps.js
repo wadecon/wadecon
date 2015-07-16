@@ -102,7 +102,7 @@ function removeBadge(userId, badgeId, callback) {
 						if(badgemap.count > 1) {
 							badgemap.updateAttributes({
 								count: badgemap.count - 1
-							}),then(function(bm, err) {
+							}).then(function(bm, err) {
 								if(err) throw err;
 								else dbusers.addKarma(userId, -Number(badge.karma), function() {
 									callback(null);

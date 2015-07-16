@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<head>
+    <% include ./templates/head.ejs %>
+</head>
+<body>
+    <% include ./templates/header.ejs %>
+    <div class="contentBox maxWrapper">
+        <div class="content">
+            <div class="maincon">
+            	<section id="error">
+            		<style>
+            		</style>
+                    <img src='/images/badges/<%=badge.id%>'>
+            		<h1><%= badge.name %></h1>
+                    <h2>업보 : <%= badge.karma %>, <%= (badge.multi)?'중복 가능':'중복 안됨' %> </h2>
+            		<p>
+            			<%= badge.desc %>
+            		</p>
+            	</section>
+            </div>
+        </div>
+    </div>
+    <% include ./templates/footer.ejs %>
+</body>
+</html>

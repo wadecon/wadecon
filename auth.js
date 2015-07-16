@@ -8,7 +8,7 @@ function init(app) {
 	app.use(passport.session());
 };
 
-function getPassport(){
+function getPassport() {
 	// serialize
 	// 인증후 사용자 정보를 세션에 저장
 	passport.serializeUser(function(user, done) {
@@ -29,28 +29,26 @@ function getPassport(){
 	        callbackURL: ("http://"+set.host+((set.main)?'':':'+set.port)+"/auth/fb/callback")
 	    },
 	    function(accessToken, refreshToken, profile, done) {
-			console.log("P",profile)
 			//console.log(user);
 			Users.findOne({
                 where: {fbId: profile.id}
 			}).then(function(user, err) {
-				console.log("USER?".red, user)
-				if(err) {
-					
-				} else if(!user) { // 해당 액세스토큰을 가진 유저가 DB에 없음
-					console.log("no user")
+				if(err) done(err);
+				else if(!user) { // 해당 액세스토큰을 가진 유저가 DB에 없음
 					Users.create({
 						fbId: profile.id,
 						fbToken: accessToken,
 						name: profile.displayName,
 						picture: 'https://graph.facebook.com/v2.4/'+profile.id+'/picture'
 					}).then(function(user, err) {
-						console.log(user);
 						return done(null, user);
 					});
 				} else {
-					console.log("user is")
-					return done(null, user);
+                    user.updateAttributes({
+                        fbToken: accessToken
+                    }).then(function(user, err) {
+	                   return done(null, user);
+                   });
 				}
 			});
 	    }

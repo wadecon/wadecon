@@ -87,7 +87,7 @@ app.get('/logout', function(req, res){
 });
 
 app.route("/")
-	.get(auth.inspectRegi, function(req, res) {
+	.get(auth.checkAuthRegi, function(req, res) {
 		try {
 			systemMod.checkBrowser(req.headers['user-agent'],function(browserName){
 				// && browserVersion <= 9
@@ -97,7 +97,7 @@ app.route("/")
 					res.end("<script>location.href='https://www.google.com/chrome/browser/desktop/index.html';</script>");
 				}
 			});
-
+			
 			async.parallel([
 				function(callback) {
 					Works.findAll({
@@ -245,39 +245,44 @@ app.route("/join")
 		})
 	})
 	.post(auth.checkAuth, function(req, res) {
-		if(req.body.nickname) {
-			dbusers.searchByNickname(req.body.nickname, function(user, err) {
-				if(err) console.error(err);
-				else if(!user) { // 가능한 닉네임
-					dbusers.searchByFbid(req.user.fbId, function(user, err) {
-						if(err) console.error(err);
-						else if(!user){ // 그 세션의 uid에 해당하는 게 등록 안되어있음 (이상한 케이스)
-							res.redirect('/login');
-						} else {
-							// 여기서 검사는 다 끝남
-							console.log("유저 생성 :".cyan, user.name);
-							res.send("201").end();
-							dbusers.changeNickname(user, req.body.nickname, function(user, err) {
-								if(err) {
-									handle500(err, req, res);
-								}
-								else {
-									dbusers.cacheUserImage(user.picture, user.id, request, fs, function() {
-										fs.mkdir('./public/userbios/' + user.id, function(err) {
-											if(err) console.error(err);
-											else console.log('이미지 저장')
+		try {
+			if(req.body.nickname) {
+				dbusers.searchByNickname(req.body.nickname, function(user, err) {
+					if(err) throw err;
+					else if(!user) { // 가능한 닉네임
+						dbusers.searchByFbid(req.user.fbId, function(user, err) {
+							if(err) throw err;
+							else if(!user){ // 그 세션의 uid에 해당하는 게 등록 안되어있음 (이상한 케이스)
+								res.redirect('/login');
+							} else {
+								// 여기서 검사는 다 끝남
+								console.log("유저 생성 :".cyan, user.name);
+								res.send("201").end();
+								dbusers.changeNickname(user, req.body.nickname, function(user, err) {
+									if(err) throw err;
+									else {
+										dbusers.cacheUserImage(user.picture, user.id, request, fs, function() {
+											fs.mkdir('./public/userbios/' + user.id, function(err) {
+												if(err) throw err;
+												else {
+													console.log('이미지 저장')
+													passport.authenticate('facebook')
+												}
+											});
 										});
-									});
-								}
-							});
-						}
-					});
-				} else {
-					// 이미 존재하는 닉네임
-					res.send("409").end();
-				}
-			})
-		} else res.send("400").end();
+									}
+								});
+							}
+						});
+					} else {
+						// 이미 존재하는 닉네임
+						res.send("409").end();
+					}
+				})
+			} else res.send("400").end();
+		} catch(err) {
+			handle500(err, req, res);
+		}
 	});
 
 app.route("/work/:workName")
@@ -401,7 +406,7 @@ app.route("/user/:userNick")
 						object: user,
 						badges: badges
 					});
-				})
+				});
 			}
 		});
 	})
@@ -432,6 +437,25 @@ app.route("/user/:userNick")
 		}
 	});
 
+app.get('/badge/:badgeName', auth.inspectRegi, function(req, res) {
+	try {
+		dbbadges.findByName(req.params.badgeName, function(badge, err) {
+			if(err) throw err;
+			else res.render('badgepage.ejs', {
+				isMember: req.regiState,
+				user: req.user,
+				badge: badge,
+				host: set.host,
+				port: ((set.main)?'':':'+set.port),
+				pageTitle: badge.name
+			});
+		});
+	} catch(err) {
+		handle500(err, req, res);	
+	}
+	
+})
+
 // handle 404
 function handle404(req, res) {
 	res.status(404).sendFile( __dirname+"/public/status/404NF.html");
@@ -456,5 +480,5 @@ app.use(handle500);
 server.listen(set.port || 8080);
 console.log((set.host+":"+(set.port || 8080)).cyan+"에서 서버 시작".green);
 
-dbbadges.createBadge("반동놈의자식", "이놈은빨갱입니다", 10, true, function(a, err) {
+dbbadges.createBadge("반동분자", "자기가 참여해놓고 자기가 싫어하는 자아분열 불순 반동분자.", 18, true, function(a, err) {
 });
