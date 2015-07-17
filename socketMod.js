@@ -108,12 +108,16 @@ function updateDislike(data) {
 						function(err, result) {
 							if(result[1] != null) {
 								if(result[0] == null) {
-									dbnotices.putNotice(data.userId, "이런반동놈의자식!!!", function(){
-										dbbadgemaps.giveBadge(data.userId, 1, function(badgemaps, err) {
-											if(err) console.error(err);
-											else if(badgemaps) console.log('뱃지 수여됨') // 업보 반영까지 된 상태
-											callback(null); // 이미 뱃지를 가지고 있었다면 null 을 반환한다
-										});
+									dbnotices.putNotice(data.userId, ee1(), function(notice, err) {
+										if(err) console.error(err);
+										else {
+											socket.emit('downNotices', [notice]);
+											dbbadgemaps.giveBadge(data.userId, 1, function(badgemaps, err) {
+												if(err) console.error(err);
+												else if(badgemaps) console.log('뱃지 수여됨') // 업보 반영까지 된 상태
+												callback(null); // 이미 뱃지를 가지고 있었다면 null 을 반환한다
+											});
+										}
 									});
 								} else {
 									dbbadgemaps.removeBadge(data.userId, 1, function(err) {
@@ -250,4 +254,16 @@ function readNotice(data) {
 module.exports = {
 	setDBs: setDBs,
 	setIoAsyncRedis: setIoAsyncRedis
+}
+
+
+// 이스터 에그 #1
+function ee1() {
+	var strings = [
+		"이런반동놈의자식!!!",
+		"자기혐오는 네녀석의 업보다",
+		"*축* 반동분자",
+		"야이 갸샤꺄"
+	];
+	return strings[ Math.floor(Math.random()*strings.length) ];
 }
