@@ -1,9 +1,13 @@
 var redis = require("redis");
 var client = redis.createClient();
 
-client.auth('321654', function(err){
-	console.log("Error(null 이아니면 레디스를 실행시켜라 패스워드는 321654로):  ".red + err);
-});
+function initRedis(pass) {
+	client.auth(pass, function(err){
+		console.log("Error(null 이아니면 레디스를 실행시켜라 패스워드는 321654로):  ".red + err);
+	});
+}
+
+
 
 function vomitErr(err, cb) {
     if(err) cb(err);
@@ -59,5 +63,6 @@ function refreshSession(userId, expire, cb) {
 module.exports = {
 	setSession: setSession,
     getSession: getSession,
-    useRedis: useRedis
+    useRedis: useRedis,
+	initRedis: initRedis
 }

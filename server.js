@@ -52,7 +52,7 @@ var redisMod = require("./redisMod.js");
 var socketMod = require("./socketMod.js");
 socketMod.setIoAsyncRedis(io, async, redisMod);
 socketMod.setDBs(dbnotices, dbusers, dbdislikes, dbjoins, dbworks, dbbadgemaps, dbbadgemaps, dblogs);
-
+redisMod.initRedis(set.redispass);
 
 
 var auth = require("./auth.js");
