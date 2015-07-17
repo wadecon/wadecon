@@ -1,0 +1,12 @@
+{
+	"db": {
+		"user":"YOUR_DB_USERNAME",
+		"database": "wadecon"
+	},
+	"fb": {
+		"secret": "YOUR_FB_SECRET"
+	},
+	"host": "YOUR_DB_HOST",
+	"port": 3000,
+	"expire": 600
+}
