@@ -260,17 +260,19 @@ app.route("/join")
 								res.send("201").end();
 								dbusers.changeNickname(user, req.body.nickname, function(user, err) {
 									if(err) throw err;
-									else {
-										dbusers.cacheUserImage(user.picture, user.id, request, fs, function() {
-											fs.mkdir('./public/userbios/' + user.id, function(err) {
-												if(err) throw err;
-												else {
-													console.log('이미지 저장')
-													passport.authenticate('facebook')
-												}
-											});
-										});
-									}
+								});
+								if((new Date()).getFullYear() === 2015)
+									dbbadgemaps.giveBadge(user.id, 2, function(badgemap, err) {
+										if(err) throw err;
+									})
+								dbusers.cacheUserImage(user.picture, user.id, request, fs, function() {
+									fs.mkdir('./public/userbios/' + user.id, function(err) {
+										if(err) throw err;
+										else {
+											console.log('이미지 저장')
+											passport.authenticate('facebook')
+										}
+									});
 								});
 							}
 						});
@@ -480,5 +482,7 @@ app.use(handle500);
 server.listen(set.port || 8080);
 console.log((set.host+":"+(set.port || 8080)).cyan+"에서 서버 시작".green);
 
-dbbadges.createBadge("반동분자", "자기가 참여해놓고 자기가 싫어하는 자아분열 불순 반동분자.", 18, true, function(a, err) {
+dbbadges.createBadge(1, "반동분자", "자기가 참여해놓고 자기가 싫어하는 자아분열 불순 반동분자.", 18, true, function(a, err) {
+});
+dbbadges.createBadge(2, "원년멤버", "와데콘 첫 해 2015년에 가입한 멤버", -2015, false, function(a, err) {
 });

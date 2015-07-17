@@ -13,16 +13,54 @@
             
             socket.on('downNotices', function(data){
                 for(var i in data) {
-                    if( window.confirm( "알림!: " + data[i].msg ) == true) {
-                        socket.emit('readNotice', {
-                            msgId: data[i].id,
-                            userId: <%= user.id %>
-                        });
-                    }
+                    $('#notiSection')
+                    .prepend(
+                        "<div class='thin notiField' msgId=" + data[i].id + " onClick='readNotice(this)'>" +
+                            "<div class='notiMsg'>" + data[i].msg + "</div>" +
+                        "</div>"
+                    );
                 }
             });
+            
+            readNotice = function(dom) {
+                console.log(dom)
+                socket.emit('readNotice', {
+                    msgId: $(dom).attr('msgId'),
+                    userId: <%= user.id %>
+                });
+                dom.remove();
+            }
         });
     </script>
+    <style>
+        #notiSection {
+            position: fixed;
+            width: auto;
+            margin: 0 20px 20px 0;
+            padding: 0;
+            bottom: 0px;
+            right: 0px;
+        }
+        .notiField {
+            display: inline-block;
+            float: right;
+            clear: both;
+            cursor: pointer;
+            margin: 5px;
+            padding: 15px;
+            font-size: 1.2em;
+            max-width: 250px;
+            background-color: coral;
+            color: white
+        }
+        .notiField:hover {
+            background-color: lightsalmon;
+        }
+    </style>
+    <div id='notiSection'>
+    </div>
+    
+    
 <% } %>
 <style>
     <% include ../style/reset.css %>

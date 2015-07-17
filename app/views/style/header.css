@@ -1,8 +1,8 @@
 header {
     height: 90px;
     min-width: 960px;
-    background-color: lightsalmon;
-    border-bottom: 3px solid darksalmon;
+    background-color: lightsalmon ;
+    border-bottom: 1px solid darksalmon;
 }
 button#login {
     margin: 1em;
