@@ -1,11 +1,12 @@
 {
 	"db": {
-		"user":"YOUR_DB_USERNAME",
+		"user":"DB_USERNAME",
 		"password": "DB_PASSWORD"
 		"database": "wadecon"
 	},
 	"fb": {
-		"secret": "YOUR_FB_SECRET"
+		"id": "FB_APP_ID"
+		"secret": "FB_APP_SECRET"
 	},
 	"host": "YOUR_DB_HOST",
 	"port": 3000,

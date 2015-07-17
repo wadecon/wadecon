@@ -24,7 +24,7 @@ function getPassport() {
 	    //});
 	});
 	passport.use(new FacebookStrategy({
-	        clientID: '1610016475924040',
+	        clientID: set.fb.id,
 	        clientSecret: set.fb.secret,
 	        callbackURL: ("http://"+set.host+((set.main)?'':':'+set.port)+"/auth/fb/callback")
 	    },
