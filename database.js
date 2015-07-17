@@ -89,6 +89,10 @@ module.exports = function(global) {
         }
     });
     Badges = sqlize.define('Badges', {
+        id: {
+            type: DOMAIN.INT,
+            primaryKey: true
+        },
         name: {
             type: DOMAIN.SHORT_CHAR,
             unique: true

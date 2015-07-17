@@ -8,9 +8,10 @@ function findByName(name, callback) {
 	}).then(callback);
 }
 
-function createBadge(name, desc, karma, multi, cb) {
+function createBadge(id, name, desc, karma, multi, cb) {
 	Badges.findOrCreate({
 		where: {
+			id: id,
 			name: name,
 			desc: desc,
 			karma: karma,
