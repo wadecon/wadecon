@@ -11,17 +11,21 @@ var session = require('express-session');
 var path = require('path');
 var async = require('async');
 var md = require("node-markdown").Markdown;
-var fs = require("fs");
+var fs = require("fs-extra");
 var request = require("request");
 
 require('colors');	// for fantastic debug
 
 // setting app -> too dizzy to fuck with
+var set = require('./setting.json');
 app.use(cookieParser());
 app.use(session({ secret: "secret", resave: false, saveUninitialized: false}));
+app.set("view engine", "ejs");
+app.set("views", __dirname+"/app/views");
+app.use( express.static( __dirname + "/public" ));
+app.use(bodyParser.urlencoded({ extended: false }));
 
-var set = require('./setting.json');
-
+// 서버 실행 옵션
 var options = process.argv;
 for( var num in options){
 	if(options[num] == "--port" || options[num] == "-p"){
@@ -30,14 +34,13 @@ for( var num in options){
 	if(options[num] == "--quiet" || options[num] == "-q"){
 		console.log = function(){};
 	}
+	if(options[num] == "--clear" || options[num] == "-c"){
+		require('./handmades/clear.js')(this);
+	}
 }
 
-app.set("view engine", "ejs");
-app.set("views", __dirname+"/app/views");
-app.use( express.static( __dirname + "/public" ));
-app.use(bodyParser.urlencoded({ extended: false }));
-
 // homemade modules
+require('./database.js')();
 var dbnotices = require("./dbmodules/dbnotices.js");
 var dbusers = require("./dbmodules/dbusers.js");
 var dbdislikes = require("./dbmodules/dbdislikes.js");
@@ -47,6 +50,7 @@ var dbbadges = require("./dbmodules/dbbadges.js");
 var dbbadgemaps = require("./dbmodules/dbbadgemaps.js");
 var dblogs = require("./dbmodules/dblogs.js");
 
+// socket, redis(소켓 세션 공유를 위한)
 var systemMod = require("./systemMod.js");
 var redisMod = require("./redisMod.js");
 var socketMod = require("./socketMod.js");
@@ -54,14 +58,12 @@ socketMod.setIoAsyncRedis(io, async, redisMod);
 socketMod.setDBs(dbnotices, dbusers, dbdislikes, dbjoins, dbworks, dbbadgemaps, dbbadgemaps, dblogs);
 redisMod.initRedis(set.redispass);
 
-
+// 인증
 var auth = require("./auth.js");
 auth.init(app);
 var passport = auth.getPassport();
 
-require('./database.js')();
-
-// fucking routing
+// 인증을 위한 라우팅
 app.get('/auth/fb', passport.authenticate('facebook'));
 
 app.get('/auth/fb/callback',
@@ -86,6 +88,7 @@ app.get('/logout', function(req, res){
     res.redirect('/');
 });
 
+// fucking routing
 app.route("/")
 	.get(auth.checkAuthRegi, function(req, res) {
 		try {
@@ -270,7 +273,7 @@ app.route("/join")
 										if(err) throw err;
 										else {
 											console.log('이미지 저장')
-											passport.authenticate('facebook')
+											redisMod.refreshSession(user.id, set.expire, function() {});
 										}
 									});
 								});
