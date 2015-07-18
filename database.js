@@ -17,7 +17,7 @@ module.exports = function(global) {
     var sqlize = new Sqlize(set.db.database, set.db.user, set.db.password, {
         host :'localhost',
         port : 3306,
-        log: false,
+        logging: false,
         define: {
             charset: 'utf8',
             timestamps: true,
@@ -209,20 +209,6 @@ module.exports = function(global) {
     Badges.belongsToMany(Users, {foreignKey: 'badgeId', through: 'BadgeMaps'});
     
     //DB 싱크 : 테이블 없으면 생성 그리고 동기화
-    Users.sync();
-    Works.sync();
-    Joins.sync();
-    Badges.sync();
-    Logs.sync();
-    Dislikes.sync();
-    BadgeMaps.sync();
-    Notices.sync();
-    // Users.sync({force: true});
-    // Works.sync({force: true});
-    // Badges.sync({force: true});
-    // Dislikes.sync({force: true});
-    // Joins.sync({force: true});
-    // Logs.sync({force: true});
-    // BadgeMaps.sync({force: true});
-    // Notices.sync({force: true});
+    var force = (set.clearData)?{force: true}:'';
+    sqlize.sync(force);
 };

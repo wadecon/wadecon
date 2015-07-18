@@ -24,6 +24,7 @@
     "ejs": "^2.3.2",
     "express-session": "^1.11.3",
     "facebook-node": "0.0.3",
+    "fs-extra": "^0.22.1",
     "node-markdown": "^0.1.1",
     "passport": "^0.2.2",
     "passport-facebook": "^2.0.0",
