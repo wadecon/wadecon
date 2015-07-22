@@ -1,0 +1,17 @@
+{
+	"db": {
+		"user":"DB_USERNAME",
+		"password": "DB_PASSWORD"
+		"database": "wadecon",
+		"logging": "Sequlize 로그 여부(Boolean)"
+	},
+	"fb": {
+		"id": "FB_APP_ID"
+		"secret": "FB_APP_SECRET"
+	},
+	"host": "YOUR_DB_HOST",
+	"port": 3000,
+	"expire": 600,
+	"redispass": "REDIS_PASSWORD",
+	"clearData": "디렉토리와 DB 레코드 초기화 여부(Boolean)"
+}

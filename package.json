@@ -24,7 +24,11 @@
     "ejs": "^2.3.2",
     "express-session": "^1.11.3",
     "facebook-node": "0.0.3",
+<<<<<<< HEAD
     "mecab-ffi": "^0.1.0",
+=======
+    "fs-extra": "^0.22.1",
+>>>>>>> cb9a6a98906b1c6ab831c9dbb5aaac28f1268cac
     "node-markdown": "^0.1.1",
     "passport": "^0.2.2",
     "passport-facebook": "^2.0.0",

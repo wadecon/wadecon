@@ -64,5 +64,6 @@ module.exports = {
 	setSession: setSession,
     getSession: getSession,
     useRedis: useRedis,
-	initRedis: initRedis
+	initRedis: initRedis,
+	refreshSession: refreshSession
 }
