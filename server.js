@@ -54,6 +54,10 @@ socketMod.setIoAsyncRedis(io, async, redisMod);
 socketMod.setDBs(dbnotices, dbusers, dbdislikes, dbjoins, dbworks, dbbadgemaps, dbbadgemaps, dblogs);
 redisMod.initRedis(set.redispass);
 
+var mecab = require("mecab-ffi");
+mecab.parse('한글 형태소 분석기를 테스트', function(err, result) {
+	console.log (result);
+});
 
 var auth = require("./auth.js");
 auth.init(app);
